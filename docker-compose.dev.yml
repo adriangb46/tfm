@@ -1,0 +1,70 @@
+services:
+  db:
+    image: postgres:15
+    container_name: db_dev
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgress
+      POSTGRES_DB: tfm
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    networks:
+      - tfm_net_dev
+
+  db_server:
+    image: eclipse-temurin:25-jdk
+    container_name: db_server_dev
+    working_dir: /app
+    volumes:
+      - ./db_back:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8080:8080"
+    # Runs the app directly using the Maven wrapper, enabling hot-reload if configured
+    command: ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+    networks:
+      - tfm_net_dev
+    depends_on:
+      - db
+
+  middle_server:
+    image: node:20-alpine
+    container_name: middle_server_dev
+    working_dir: /app
+    volumes:
+      - ./middle_server:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    # Assumes index.js is the entry point. You can add nodemon here if available
+    command: node index.js
+    networks:
+      - tfm_net_dev
+    depends_on:
+      - db_server
+
+  front:
+    image: node:20-alpine
+    container_name: front_dev
+    working_dir: /app
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    ports:
+      - "4200:4200"
+    # Runs ng serve for hot-module replacement
+    command: sh -c "npm install && npx ng serve --host 0.0.0.0 --disable-host-check"
+    networks:
+      - tfm_net_dev
+    depends_on:
+      - middle_server
+
+volumes:
+  postgres_data_dev:
+    driver: local
+
+networks:
+  tfm_net_dev:
+    driver: bridge

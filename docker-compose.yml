@@ -20,7 +20,7 @@ services:
   
   db_server:
     build:
-      context: ./db_server
+      context: ./db_back
       dockerfile: dockerfile
     container_name: db_server
     ports:
@@ -31,16 +31,13 @@ services:
       - db
     restart: unless-stopped
 
-  middel:
+  middle_server:
     build:
-      context: ./middel_server
+      context: ./middle_server
       dockerfile: dockerfile
-    image: node:18
-    container_name: middel
+    container_name: middle_server
     ports:
       - "3000:3000"
-    volumes:
-      - ./middel:/app
     networks:      
       - tfm_net
     depends_on:
@@ -58,9 +55,8 @@ services:
       - "${FRONTEND_PUBLISH_PORT:-4200}:80"
     networks:
       - tfm_net
-    
     depends_on:
-     - middel
+     - middle_server
     restart: unless-stopped
       
 
