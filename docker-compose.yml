@@ -10,6 +10,64 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - tfm_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  db_server:
+    build:
+      context: ./db_server
+      dockerfile: dockerfile
+    container_name: db_server
+    ports:
+      - "8080:8080"
+    networks:      
+      - tfm_net
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  middel:
+    build:
+      context: ./middel_server
+      dockerfile: dockerfile
+    image: node:18
+    container_name: middel
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./middel:/app
+    networks:      
+      - tfm_net
+    depends_on:
+      - db_server
+    restart: unless-stopped
+  
+  front:
+    build:
+      context: ./front
+      dockerfile: dockerfile
+      args: 
+        - BACKEND_URL=http://localhost:3000
+    container_name: front
+    ports:
+      - "${FRONTEND_PUBLISH_PORT:-4200}:80"
+    networks:
+      - tfm_net
+    
+    depends_on:
+     - middel
+    restart: unless-stopped
+      
 
 volumes:
   postgres_data:
+    driver: local
+
+networks:
+  tfm_net:
+    driver: bridge
