@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview Estático — Estadísticas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- PREVIEW ONLY — not production code -->
+    <style>
+        :root {
+            /* Colores extraídos de front_color_guide.md (Dark Theme) */
+            --color-bg-primary: #0d0c18;
+            --color-bg-secondary: #1a1830;
+            --color-bg-card: #211f38;
+            --color-text-primary: #e8e0d0;
+            --color-text-secondary: #b8a898;
+            --color-gold: #c9a84c;
+            --color-gold-muted: rgba(201, 168, 76, 0.15);
+            --color-border-default: #3a3555;
+            --color-border-faint: #252342;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            font-family: 'Lato', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Navbar placeholder */
+        .navbar-placeholder {
+            width: 100%;
+            height: 64px;
+            background-color: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border-default);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            box-sizing: border-box;
+            color: var(--color-gold);
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+        }
+
+        .stats-page {
+            width: 100%;
+            max-width: 800px;
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .stats-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            color: var(--color-gold);
+            margin: 0 0 50px 0;
+            letter-spacing: 6px;
+            text-shadow: 0 0 25px rgba(201, 168, 76, 0.4);
+            text-align: center;
+        }
+
+        .stats-card {
+            width: 100%;
+            background-color: var(--color-bg-secondary);
+            border: 1px solid var(--color-border-default);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stats-panel-bar {
+            background-color: var(--color-bg-card);
+            padding: 20px 30px;
+            border-bottom: 2px solid var(--color-gold);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .glory-text {
+            font-family: 'Cinzel', serif;
+            color: var(--color-text-primary);
+            font-size: 1.25rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .stats-list {
+            padding: 10px 0;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--color-border-faint);
+            transition: background-color 0.3s;
+            cursor: default;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-item:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background-color: var(--color-bg-primary);
+            border: 1px solid var(--color-border-default);
+            border-radius: 8px;
+            color: var(--color-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 25px;
+            flex-shrink: 0;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .stat-label {
+            font-size: 1.15rem;
+            color: var(--color-text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        .stat-spacer {
+            flex: 1;
+            margin: 0 30px;
+            border-bottom: 1px dotted var(--color-border-default);
+            opacity: 0.4;
+        }
+
+        .stat-value {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--color-gold);
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(201, 168, 76, 0.2);
+        }
+
+        /* Micro-animación de aparición */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-item {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .stat-item:nth-child(1) { animation-delay: 0.1s; }
+        .stat-item:nth-child(2) { animation-delay: 0.2s; }
+        .stat-item:nth-child(3) { animation-delay: 0.3s; }
+        .stat-item:nth-child(4) { animation-delay: 0.4s; }
+        .stat-item:nth-child(5) { animation-delay: 0.5s; }
+        .stat-item:nth-child(6) { animation-delay: 0.6s; }
+
+    </style>
+</head>
+<body>
+
+    <div class="stats-page">
+        <h1 class="stats-title">ESTADÍSTICAS</h1>
+
+        <main class="stats-card">
+            <div class="stats-panel-bar">
+                <span class="glory-text">Gloria Eterna: 4.800</span>
+            </div>
+
+            <div class="stats-list">
+                <!-- Tiempo de juego -->
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.6-.8 1.4z"/></svg>
+                    </div>
+                    <span class="stat-label">Tiempo de juego total</span>
+                    <div class="stat-spacer"></div>
+                    <span class="stat-value">14h 25m</span>
+                </div>
+
+                <!-- Dinero gastado -->
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 2.1L3.5 6.4c-.6.3-.9 1-.9 1.6v8c0 .6.3 1.3.9 1.6l8.3 4.3c.1.1.3.1.5.1s.4 0 .5-.1l8.3-4.3c.6-.3.9-1 .9-1.6v-8c0-.6-.3-1.3-.9-1.6l-8.3-4.3c-.2-.1-.4-.1-.5-.1s-.4 0-.5.1zM12 4.1l6.1 3.2-6.1 3.2-6.1-3.2L12 4.1zM4.6 15.1v-6.2l6.4 3.3v6.2l-6.4-3.3zm8.4 3.3v-6.2l6.4-3.3v6.2l-6.4 3.3z"/></svg>
+                    </div>
+                    <span class="stat-label">Dinero total gastado</span>
+                    <div class="stat-spacer"></div>
+                    <span class="stat-value">124.500</span>
+                </div>
+
+                <!-- Tropas entrenadas -->
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.2 16.1l3.5 3.5 1.4-1.4-3.5-3.5-1.4 1.4zM20.8 14.7l-4.2-4.2 1.4-1.4-1.4-1.4-1.4 1.4-1.4-1.4L15.3 5l2.8-2.8c.4-.4.4-1 0-1.4s-1-.4-1.4 0L13.9 3.6 12.5 2.2 6.8 7.9c-.8.8-.8 2 0 2.8s2 .8 2.8 0l2.1-2.1L21.4 19.3l1.4-1.4-2-3.2z"/></svg>
+                    </div>
+                    <span class="stat-label">Tropas entrenadas</span>
+                    <div class="stat-spacer"></div>
+                    <span class="stat-value">1.240</span>
+                </div>
+
+                <!-- Tropas desplegadas -->
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.4 5L8 1V22h2V14h3l1 1h7V6h-7l-1-1h-1.6z"/></svg>
+                    </div>
+                    <span class="stat-label">Tropas desplegadas</span>
+                    <div class="stat-spacer"></div>
+                    <span class="stat-value">850</span>
+                </div>
+
+                <!-- Ataques -->
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 2L9 4l4 4-4 4 2 2 4-4 4 4 2-2-4-4 4-4-2-2-4 4-4-4zM2 11v2h2v2H2v2h2v2h2v-2h2v2h2v-2h2v2h2v-2h2v2h2v-9H2zm16 7H4v-5h14v5z"/></svg>
+                    </div>
+                    <span class="stat-label">Ataques realizados</span>
+                    <div class="stat-spacer"></div>
+                    <span class="stat-value">312</span>
+                </div>
+
+                <!-- Victorias -->
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H6v2H2v7c0 2.2 1.8 4 4 4h2v2c0 2.2 1.8 4 4 4v2h2v-2c2.2 0 4-1.8 4-4v-2h2c2.2 0 4-1.8 4-4V4h-4V2zM4 11V6h2v6.1C5.1 11.8 4.3 11.5 4 11zm13 1.1V6h2v5c-.3.5-1.1.8-2 1.1z"/></svg>
+                    </div>
+                    <span class="stat-label">Partidas ganadas</span>
+                    <div class="stat-spacer"></div>
+                    <span class="stat-value">24</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

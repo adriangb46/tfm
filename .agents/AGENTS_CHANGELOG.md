@@ -1,5 +1,61 @@
 # Agents Activity Changelog
 
+## [2026-04-18] NavBar: Lógica de Autenticación y Navegación Condicional
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Condicionar la visibilidad de elementos de la NavBar y el menú de usuario según el estado de la sesión, integrando con `AuthService`.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Visibilidad Condicional (Angular `@if`)**:
+   - **Lobby**: Ahora solo visible si `authService.isLoggedIn()` es verdadero.
+   - **Menú de Usuario**: Opciones "Configuración", "Estadísticas", "Administración" y "Salir" solo se renderizan si hay sesión.
+   - **Desplegable**: Se impide la apertura del menú si no hay sesión (`toggleDropdown()` bloqueado).
+   - **Avatar**: Se mantiene siempre visible (imagen genérica por ahora).
+
+2. **Navegación y Funcionalidad**:
+   - **Estadísticas**: Enlace corregido a `/stats/user`.
+   - **Cierre de Sesión**: El botón "Salir de la cuenta" ahora invoca `authService.clearSession()` para limpiar el estado en memoria.
+
+3. **Workflow `/refine-ui`**:
+   - Iteración completa sobre `.agents/previews/navbar-preview.html` incluyendo controles de testeo (Login/Admin) aprobados por el usuario.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción |
+|---|---|
+| `front/src/app/shared/components/navbar/navbar.component.ts` | Modificado (Lógica `toggleDropdown`) |
+| `front/src/app/shared/components/navbar/navbar.component.html` | Modificado (Estructura condicional y logout) |
+| `.agents/previews/navbar-preview.html` | Modificado (Preview interactivo con testeo) |
+
+---
+
+## [2026-04-18] Creación de la Página de Estadísticas de Usuario
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la vista de estadísticas de usuario siguiendo el mockup y el sistema de diseño "Mythic Viking".
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Ruta de Navegación**:
+   - Añadida ruta `/stats/user` con carga perezosa (*Lazy Loading*) en `app.routes.ts`.
+
+2. **Componente de Estadísticas (`StatisticsComponent`)**:
+   - **Ubicación**: `front/src/app/pages/statistics-view/` (renombrado de `stats` para evitar conflictos y refrescar el tracking del compilador).
+   - **Lógica (`statistics.component.ts`)**: Componente *standalone* con `ChangeDetectionStrategy.OnPush`. Uso de `signals` para los 6 indicadores requeridos (tiempo, dinero, tropas, ataques, victorias).
+   - **Template (`statistics.component.html`)**: Diseño fiel al mockup con cabecera de panel ("Barra"), iconos SVG integrados y lista de métricas.
+   - **Estilos (`statistics.component.scss`)**: Aplicación del sistema de diseño (fuentes `Cinzel`/`Lato`, colores oro y fondos oscuros). Incluye micro-animaciones de entrada para los elementos.
+
+3. **Corrección de Error de Compilación**:
+   - Se resolvió el error `Could not resolve "./pages/stats/stats.component"` realizando un renombrado preventivo a `statistics-view` y sanitizando los archivos para asegurar que el compilador de Angular/Vite los indexe correctamente.
+
+### 🗂️ Archivos:
+| Archivo | Acción |
+|---|---|
+| `front/src/app/app.routes.ts` | Modificado |
+| `front/src/app/pages/statistics-view/statistics.component.ts` | **CREADO** |
+| `front/src/app/pages/statistics-view/statistics.component.html` | **CREADO** |
+| `front/src/app/pages/statistics-view/statistics.component.scss` | **CREADO** |
+
+---
+
 Registro de los cambios sustanciales realizados por agentes de asistencia para mantener el contexto persistente en el entorno de desarrollo. Este archivo ayuda a otros futuros agentes a entender qué fue lo último que se montó en el proyecto.
 
 ---
