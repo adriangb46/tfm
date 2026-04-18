@@ -59,11 +59,20 @@ services:
       - MINIO_SECRET_KEY=minioadmin
       - MINIO_BUCKET_AVATARS=avatars
       - MINIO_PUBLIC_BASE_URL=http://localhost:9000/avatars
+      - REDIS_URL=redis://redis:6379
     networks:      
       - tfm_net
     depends_on:
       - db_server
       - minio
+      - redis
+    restart: unless-stopped
+  
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    networks:
+      - tfm_net
     restart: unless-stopped
   
   minio:

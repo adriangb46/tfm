@@ -22,9 +22,11 @@ The system is composed of four independent services that communicate over HTTP a
 │                                         │  │  (avatars)     │
 │  - Issues and validates user JWTs       │  └────────────────┘
 │  - Holds ALL active game state in memory│
-│  - Runs the Time Wheel (game loop)      │
-│  - Dumps state to DB Server periodically│
-│  - Issues signed upload URLs for MinIO  │
+│  - Runs the Time Wheel (game loop)      │  ┌────────────────┐
+│  - Dumps state to DB Server periodically│  │     REDIS      │
+│  - Issues signed upload URLs for MinIO  │  │ JWT blacklist  │
+│  - JWT blacklist + rate limiting→ Redis │  │ Rate limiting  │
+│                                         │  └────────────────┘
 │                                         │
 │           HTTP REST (internal JWT)      │
 └─────────────────┬───────────────────────┘
@@ -44,6 +46,7 @@ The system is composed of four independent services that communicate over HTTP a
 **Key principle:** The Middle Server is the single source of truth for live game state.
 The DB Server is the persistence layer only — it never drives game logic.
 MinIO is the object storage layer — it only stores avatar images and is never accessed by the DB Server.
+Redis is the ephemeral store — it only holds JWT blacklist entries and rate limit counters. No game data ever goes through Redis.
 
 ---
 
@@ -89,6 +92,33 @@ MinIO is the object storage layer — it only stores avatar images and is never 
   - `9000` — S3-compatible API (used by Middle to store images and generate public URLs)
   - `9001` — Web console (admin only, not exposed publicly)
 - Avatar bucket name: `avatars`. Bucket policy: public-read (avatars are not sensitive).
+
+### 2.5 Redis — Ephemeral Store (JWT blacklist + rate limiting)
+
+- Lightweight in-memory key-value store running as a Docker container.
+- Used by the Middle Server only, for two specific purposes:
+
+**JWT Blacklist**
+- When a user logs out or is banned, the Middle writes the token's `jti` (JWT ID) to a Redis Set with a TTL equal to the token's remaining validity time.
+- Every inbound request validated by the auth middleware checks Redis for the `jti` after verifying the JWT signature. If found → reject with `401`.
+- Redis auto-expires the entry when the token's natural expiry is reached, so the blacklist never grows unbounded.
+- Requires adding a `jti` field (UUID) to every issued JWT payload: `{ userId, characterId, clanId, jti, iat, exp }`.
+
+**Rate Limiting**
+- Applied to all public HTTP endpoints on the Middle Server (login, register, join game, avatar upload).
+- Pattern: sliding window counter per IP address using Redis `INCR` + `EXPIRE`.
+- Default limits `[PROPOSED — adjust as needed]`:
+  - `POST /auth/login` → 10 requests / 60 s per IP
+  - `POST /auth/register` → 5 requests / 60 s per IP
+  - `POST /games/join` → 20 requests / 60 s per IP
+  - All other public endpoints → 60 requests / 60 s per IP
+- On limit exceeded → `429 Too Many Requests` with `Retry-After` header.
+- Implementation: use `express-rate-limit` with `rate-limit-redis` as the store — minimal boilerplate, production-ready.
+
+**What Redis does NOT store:**
+- Game state (lives in `GameStore` in memory)
+- User data (lives in PostgreSQL)
+- Anything that needs to survive a Redis restart — Redis persistence (`AOF`/`RDB`) is intentionally disabled to keep it lean. A Redis restart only means users need to re-authenticate and rate limit counters reset, which is acceptable.
 
 ---
 
@@ -573,3 +603,9 @@ All values stored in environment variables. No hardcoded secrets or URLs.
 | `MINIO_SECRET_KEY` | Middle | MinIO secret key (set in MinIO container env) |
 | `MINIO_BUCKET_AVATARS` | Middle | Default: `avatars` |
 | `MINIO_PUBLIC_BASE_URL` | Middle | Public base URL for avatar links (e.g. `http://<server-ip>:9000/avatars`) |
+| `REDIS_URL` | Middle | Redis connection URL (e.g. `redis://redis:6379`) |
+| `RATE_LIMIT_WINDOW_MS` | Middle | Default: `60000` (60 s) |
+| `RATE_LIMIT_LOGIN_MAX` | Middle | Default: `10` |
+| `RATE_LIMIT_REGISTER_MAX` | Middle | Default: `5` |
+| `RATE_LIMIT_JOIN_MAX` | Middle | Default: `20` |
+| `RATE_LIMIT_DEFAULT_MAX` | Middle | Default: `60` |

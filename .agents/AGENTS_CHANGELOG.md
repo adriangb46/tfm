@@ -1,5 +1,33 @@
 # Agents Activity Changelog
 
+## [2026-04-18] Infraestructura: Adición de Contenedor Redis (Cache/Rate-Limiting)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Integrar Redis como sistema de almacenamiento efímero para la gestión de lista negra de JWT y control de tasa (rate limiting) en el Middle Server.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Configuración Docker (Producción)**:
+   - Modificado `docker-compose.yml` para incluir el servicio `redis` (Imagen: `redis:7-alpine`).
+   - Integrado en la red `tfm_net`.
+   - Añadida variable de entorno `REDIS_URL=redis://redis:6379` al servicio `middle_server`.
+   - Añadida dependencia de `redis` en `middle_server`.
+
+2. **Configuración Docker (Desarrollo)**:
+   - Modificado `docker-compose.dev.yml` para incluir `redis_dev`.
+   - Expuesto el puerto `6379` para acceso local.
+   - Integrado en la red `tfm_net_dev`.
+   - Añadida variable de entorno `REDIS_URL=redis://redis:6379` al servicio `middle_server_dev`.
+   - Añadida dependencia de `redis` en `middle_server_dev`.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción |
+|---|---|
+| `docker-compose.yml` | Modificado |
+| `docker-compose.dev.yml` | Modificado |
+| `.agents/AGENTS_CHANGELOG.md` | Modificado |
+
+---
+
 ## [2026-04-18] Infraestructura: Adición de Contenedor MinIO (Object Storage)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Integrar MinIO como sistema de almacenamiento de objetos (S3-compatible) para la gestión de avatares de usuario, siguiendo la arquitectura definida.
