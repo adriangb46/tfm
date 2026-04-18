@@ -1,4 +1,4 @@
-# GEMINI.md — Project Rules (High Precedence)
+# CLAUDE.md — Project Rules (High Precedence)
 
 This file is loaded with maximum priority by Antigravity. All rules defined here override any conflicting instruction from other sources.
 

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Preview: Navbar con Dropdown (Viking Style)</title>
+<style>
+  :root {
+    --color-bg-primary: #0d0c18;
+    --color-bg-secondary: #1a1830;
+    --color-bg-tertiary: #141220;
+    --color-bg-card: #211f38;
+    --color-bg-modal: #252342;
+    --color-text-primary: #e8e0d0;
+    --color-text-secondary: #b8a898;
+    --color-gold: #c9a84c;
+    --color-gold-light: #e8c96a;
+    --color-gold-muted: rgba(201, 168, 76, 0.15);
+    --color-border-faint: #252342;
+    --color-border-default: #3a3555;
+    --color-error: #c0392b; /* Rojo para salir */
+    --color-error-bg: rgba(192, 57, 43, 0.15);
+  }
+  
+  body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+    margin: 0;
+    padding: 3rem 2rem;
+  }
+  
+  /* Navbar baseline */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem;
+    height: 64px;
+    background-color: var(--color-bg-card);
+    border-bottom: 1px solid var(--color-border-faint);
+    box-shadow: 0 4px 12px rgba(0,0,0, 0.5);
+    border-radius: 8px;
+  }
+
+  .nav-group {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 0.5rem;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0 1.2rem;
+    height: 100%;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 0.05rem;
+    transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
+  }
+
+  .nav-link:hover, .nav-link.active {
+    color: var(--color-gold-light);
+    border-bottom: 2px solid var(--color-gold);
+    background-color: transparent;
+  }
+  
+  .nav-link.active {
+    color: var(--color-gold);
+    font-weight: 600;
+  }
+
+  .spacer {
+    flex-grow: 1;
+  }
+
+  /* ============================
+     NUEVO DISEÑO DEL DROPDOWN
+     ============================ */
+  
+  .dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    cursor: pointer;
+    margin-left: 1rem;
+    /* Eliminado el padding lateral para que el cálculo del right sea exacto respecto al avatar */
+  }
+
+  .user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-gold);
+    border: 2px solid var(--color-border-default);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .dropdown:hover .user-avatar {
+    border-color: var(--color-gold);
+    box-shadow: 0 0 10px var(--color-gold-muted);
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    /* Alineado completamente al borde derecho del navbar compensando el padding del navbar */
+    right: -1.5rem;
+    top: 60px;
+    background-color: var(--color-bg-modal);
+    min-width: 180px;
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.8);
+    border: 1px solid var(--color-border-default);
+    border-top: 3px solid var(--color-gold);
+    border-radius: 4px;
+    padding: 0.5rem 0;
+    z-index: 100;
+    
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .dropdown:hover .dropdown-content {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Pico / Flecha apuntando al avatar (Ajustado porque el dropdown se movió hacia la derecha) */
+  .dropdown-content::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    /* La flecha apunta ahora exactamente al centro del avatar circular compensando el right: -1.5rem */
+    right: calc(1.5rem + 10px); 
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid var(--color-gold);
+  }
+
+
+  .dropdown-item {
+    color: var(--color-text-primary);
+    padding: 10px 20px;
+    text-decoration: none;
+    display: flex; /* Flex para poder poner icono opcional en el futuro si quisiera */
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+  }
+
+  .dropdown-item:hover {
+    background-color: var(--color-gold-muted);
+    color: var(--color-gold-light);
+    border-left: 3px solid var(--color-gold);
+    padding-left: 24px; /* Efecto sutil de desplazamiento al hacer hover */
+  }
+
+  .dropdown-item.danger {
+    color: var(--color-error);
+  }
+
+  .dropdown-item.danger:hover {
+    background-color: var(--color-error-bg);
+    color: #ff6b6b; /* Un rojo más claro/brillante al hover */
+    border-left: 3px solid var(--color-error);
+  }
+
+  .dropdown-divider {
+    height: 1px;
+    background-color: var(--color-border-default);
+    margin: 8px 16px;
+    opacity: 0.5;
+  }
+
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- PREVIEW ONLY — not production code -->
+  
+  <p style="color: var(--color-text-secondary); margin-bottom: 2rem;">
+    <em>Rediseño de Dropdown: Temática más Mythic/Viking. Con borde dorado superior, un pequeño pico apuntando al usuario, animación sutil, hover más dinámico y botón de Salir en color destructivo (--color-error).</em>
+  </p>
+
+  <nav class="navbar">
+    
+    <div class="nav-group">
+      <a href="#" class="nav-link active">Home</a>
+      <a href="#" class="nav-link">Lobby</a>
+      <a href="#" class="nav-link">Personajes</a>
+      <a href="#" class="nav-link">Reglas</a>
+    </div>
+    
+    <div class="spacer"></div>
+    
+    <div class="dropdown" title="Perfil / Menú de Usuario">
+      <div class="user-avatar">
+        <svg fill="currentColor" viewBox="0 0 24 24" width="20" height="20">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+        </svg>
+      </div>
+
+      <div class="dropdown-content">
+        <a href="#" class="dropdown-item">Configuración</a>
+        <a href="#" class="dropdown-item">Estadísticas</a>
+        <a href="#" class="dropdown-item">Administración</a>
+        <div class="dropdown-divider"></div>
+        <a href="#" class="dropdown-item danger">Salir de la cuenta</a>
+      </div>
+    </div>
+
+  </nav>
+
+</body>
+</html>

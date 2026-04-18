@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard Preview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Colors based on front_color_guide.md - Dark Theme */
+            --color-bg-primary: #0d0c18;
+            --color-bg-secondary: #1a1830;
+            --color-bg-card: #211f38;
+            
+            --color-text-primary: #e8e0d0;
+            --color-text-secondary: #b8a898;
+            --color-text-disabled: #5a5068;
+            
+            --color-gold: #c9a84c;
+            --color-gold-dark: #9a7a30;
+            --color-gold-muted: rgba(201, 168, 76, 0.15);
+            
+            --color-border-strong: #c9a84c;
+            --color-border-default: #3a3555;
+            
+            --color-error: #c0392b;
+            --color-error-bg: rgba(192, 57, 43, 0.15);
+            --color-success: #2d8a4e;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            font-family: 'Lato', sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--color-gold);
+            margin-top: 0;
+        }
+
+        /* ========================
+           LEFT PANEL (Sidebar)
+           ======================== */
+        .sidebar {
+            width: 280px;
+            background-color: var(--color-bg-secondary);
+            border-right: 1px solid var(--color-border-default);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            box-sizing: border-box;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            border-bottom: 1px solid var(--color-border-default);
+            padding-bottom: 15px;
+        }
+
+        /* Totals */
+        .global-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-border-default);
+            border-radius: 8px;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card .stat-value {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--color-gold);
+            margin: 10px 0;
+            text-shadow: 0 0 10px var(--color-gold-muted);
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .stat-card.danger {
+            border-color: var(--color-error);
+        }
+        .stat-card.danger .stat-value {
+            color: var(--color-error);
+            text-shadow: 0 0 10px var(--color-error-bg);
+        }
+
+        /* ========================
+           MAIN CONTENT
+           ======================== */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* TOP METRICS (The "Graph" data) */
+        .metrics-container h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: var(--color-text-primary);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .metric-box {
+            background-color: var(--color-bg-secondary);
+            border: 1px solid var(--color-border-default);
+            border-radius: 8px;
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background-color: var(--color-gold);
+        }
+        
+        .metric-box.load::before { background-color: var(--color-error); }
+        .metric-box.load { border-bottom: 1px solid var(--color-error); }
+
+        .metric-value {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            color: var(--color-text-primary);
+            margin-bottom: 5px;
+        }
+
+        .metric-value.highlight { color: var(--color-gold); }
+        .metric-value.warning { color: var(--color-error); }
+        .metric-value span.unit { font-size: 1.2rem; color: var(--color-text-secondary); }
+
+        .metric-label {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        /* BANS SECTION */
+        .bans-container {
+            background-color: var(--color-bg-secondary);
+            border: 1px solid var(--color-border-default);
+            border-radius: 8px;
+            padding: 30px;
+            flex: 1;
+        }
+
+        .bans-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .ban-controls {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start; /* keep input search and button aligned */
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 350px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--color-bg-primary);
+            border: 1px solid var(--color-border-default);
+            color: var(--color-text-primary);
+            border-radius: 4px;
+            font-family: 'Lato', sans-serif;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--color-error);
+        }
+
+        /* Simulated Dropdown */
+        .search-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .dropdown-item {
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-border-default);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--color-bg-primary);
+        }
+
+        .dropdown-item .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dropdown-item .username {
+            font-weight: bold;
+            color: var(--color-text-primary);
+        }
+
+        .dropdown-item .status {
+            font-size: 0.8rem;
+            color: var(--color-text-secondary);
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: transparent;
+            color: var(--color-gold);
+            border: 1px solid var(--color-gold);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background-color: var(--color-gold-muted);
+        }
+
+        .btn-danger {
+            color: var(--color-error);
+            border-color: var(--color-error);
+        }
+        .btn-danger:hover {
+            background-color: var(--color-error-bg);
+            box-shadow: 0 0 8px var(--color-error-bg);
+        }
+        
+        .btn-danger.solid {
+            background-color: var(--color-error);
+            color: #fff;
+        }
+        .btn-danger.solid:hover {
+            background-color: #a02d22;
+        }
+
+        /* Table */
+        .bans-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bans-table th {
+            text-align: left;
+            padding: 15px;
+            color: var(--color-text-secondary);
+            border-bottom: 2px solid var(--color-border-default);
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .bans-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--color-border-default);
+            color: var(--color-text-primary);
+        }
+
+        .bans-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .badge-active {
+            background-color: var(--color-error-bg);
+            color: var(--color-error);
+            border: 1px solid var(--color-error);
+        }
+        
+    </style>
+</head>
+<body>
+
+    <!-- LEFT PANEL: TOTALS -->
+    <aside class="sidebar">
+        <h2>Administración</h2>
+        
+        <div class="global-stats">
+            <div class="stat-card">
+                <div class="stat-label">Usuarios Totales</div>
+                <div class="stat-value">1,248</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Partidas Totales</div>
+                <div class="stat-value">3,592</div>
+            </div>
+            
+            <div class="stat-card danger">
+                <div class="stat-label">Usuarios Baneados</div>
+                <div class="stat-value">42</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        
+        <!-- MONITORING / GRAPH AREA -->
+        <section class="metrics-container">
+            <h3>Monitoreo en Tiempo Real</h3>
+            <div class="metrics-grid">
+                
+                <div class="metric-box">
+                    <div class="metric-value highlight">34</div>
+                    <div class="metric-label">Usuarios Activos</div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value highlight">12</div>
+                    <div class="metric-label">Partidas Activas</div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">8</div>
+                    <div class="metric-label">Partidas Terminadas<br>(Última hora)</div>
+                </div>
+
+                <div class="metric-box load">
+                    <div class="metric-value warning">78<span class="unit">%</span></div>
+                    <div class="metric-label">Carga del Servidor</div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- BANS SECTION -->
+        <section class="bans-container">
+            <div class="bans-header">
+                <h2>Gestión de Baneos</h2>
+                <div class="ban-controls">
+                    <div class="search-wrapper">
+                        <!-- Buscador para añadir un ban -->
+                        <input type="text" class="search-input" placeholder="Buscar usuario para banear..." value="Loki">
+                        
+                        <!-- Dropdown de resultados (visible para el preview) -->
+                        <div class="search-dropdown">
+                            <div class="dropdown-item">
+                                <div class="user-info">
+                                    <span class="username">LokiTrickster</span>
+                                    <span class="status">Activo</span>
+                                </div>
+                                <button class="btn btn-danger solid">BANEAR</button>
+                            </div>
+                            <div class="dropdown-item">
+                                <div class="user-info">
+                                    <span class="username">Loki99</span>
+                                    <span class="status">Activo</span>
+                                </div>
+                                <button class="btn btn-danger solid">BANEAR</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de baneos activos sólamente -->
+            <table class="bans-table">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Motivo</th>
+                        <th>Expira en</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Ragnar_Troll</strong></td>
+                        <td>Insultos reiterados en el chat</td>
+                        <td>48 horas</td>
+                        <td><span class="badge badge-active">Activo</span></td>
+                        <td><button class="btn">LEVANTAR BAN</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>HackerViking</strong></td>
+                        <td>Exploit de recursos</td>
+                        <td>Permanente</td>
+                        <td><span class="badge badge-active">Activo</span></td>
+                        <td><button class="btn">LEVANTAR BAN</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bot123</strong></td>
+                        <td>Uso de bots</td>
+                        <td>7 días</td>
+                        <td><span class="badge badge-active">Activo</span></td>
+                        <td><button class="btn">LEVANTAR BAN</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+</body>
+</html>
