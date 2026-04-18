@@ -1,4 +1,28 @@
 # Agents Activity Changelog
+
+## [2026-04-18] Infraestructura: Adición de Contenedor MongoDB
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Añadir un contenedor de MongoDB a la configuración de Docker para futuras analíticas del proyecto.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Configuración Docker (Producción/General)**:
+   - Modificado `docker-compose.yml` para incluir el servicio `mongodb` (Imagen: `mongo:7.0`).
+   - Añadido volumen persistente `mongodb_data`.
+   - Configurado con credenciales por defecto (`admin`/`password`) y puerto `27017`.
+
+2. **Configuración Docker (Desarrollo)**:
+   - Modificado `docker-compose.dev.yml` para incluir `mongodb_dev`.
+   - Añadido volumen `mongodb_data_dev`.
+   - Integrado en la red `tfm_net_dev`.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción |
+|---|---|
+| `docker-compose.yml` | Modificado |
+| `docker-compose.dev.yml` | Modificado |
+
+---
 2: 
 3: ## [2026-04-18] Actualización de Reglas: Sync Obligatorio (Git Pull + Changelog)
 4: **Agente**: Antigravity (Google DeepMind)

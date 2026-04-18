@@ -1,5 +1,5 @@
 services:
-  db:
+  db_sql:
     image: postgres:15
     container_name: db
     environment:
@@ -18,6 +18,20 @@ services:
       timeout: 5s
       retries: 5
   
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    networks:
+      - tfm_net
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+  
   db_server:
     build:
       context: ./db_back
@@ -28,7 +42,8 @@ services:
     networks:      
       - tfm_net
     depends_on:
-      - db
+      - db_sql
+      - mongodb
     restart: unless-stopped
 
   middle_server:
@@ -59,9 +74,12 @@ services:
      - middle_server
     restart: unless-stopped
       
+  
 
 volumes:
   postgres_data:
+    driver: local
+  mongodb_data:
     driver: local
 
 networks:
