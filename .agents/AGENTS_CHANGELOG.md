@@ -1,4 +1,22 @@
 # Agents Activity Changelog
+2: 
+3: ## [2026-04-18] Actualización de Reglas: Sync Obligatorio (Git Pull + Changelog)
+4: **Agente**: Antigravity (Google DeepMind)
+5: **Objetivo**: Implementar una salvaguarda para evitar conflictos en un entorno de dos desarrolladores, obligando al agente a sincronizar y revisar el historial previo a cambios importantes.
+6: 
+7: ### 📝 Resumen de Tareas Realizadas:
+8: 1. **Modificación de rules/collaboration.md**:
+9:    - Añadida "RULE 0" que obliga a realizar `git pull` y leer `AGENTS_CHANGELOG.md` antes de cambios significativos.
+10: 2. **Modificación de GEMINI.md**:
+11:    - Añadida sección crítica "BEFORE ANY BIG CHANGE" con los pasos de sincronización, revisión de changelog y análisis de impacto.
+12: 
+13: ### 🗂️ Archivos Modificados:
+14: | Archivo | Cambio |
+15: |---|---|
+16: | `GEMINI.md` | Nueva sección "BEFORE ANY BIG CHANGE" |
+17: | `.agents/rules/collaboration.md` | Nueva "RULE 0" |
+18: 
+19: ---
 
 ## [2026-04-18] NavBar: Lógica de Autenticación y Navegación Condicional
 **Agente**: Antigravity (Google DeepMind)

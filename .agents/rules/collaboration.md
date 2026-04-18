@@ -6,6 +6,17 @@ This project is developed by **two people working simultaneously** on the same c
 
 ---
 
+## RULE 0 — Mandatory Sync for Significant Tasks
+
+Before starting any task that qualifies as a **"Big Change"** (defined in `GEMINI.md`), the agent **MUST**:
+
+1. **Synchronize**: Run `git pull` to avoid conflicts with the other developer's work.
+2. **Context Check**: Read `.agents/AGENTS_CHANGELOG.md`. This file contains the most up-to-date information on what has been implemented recently, which may not yet be reflected in the code you are reading.
+3. **Validate Scope**: Re-read the current task instructions in light of the newly pulled version.
+4. **Ask if Unsure**: If the pulls create conflicts or clarify that the task is partially done, stop and ask the user for directions.
+
+---
+
 ## RULE 1 — Never touch files outside the explicit scope
 
 Before modifying, creating, or generating content in **any file**, verify that the file is within the scope of what was explicitly requested in the current task.

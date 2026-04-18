@@ -8,6 +8,13 @@ This file is loaded with maximum priority by Antigravity. All rules defined here
 
 put in the Agents_changelog.md, all that you do
 
+## 🔴 CRITICAL — BEFORE ANY BIG CHANGE
+
+Before performing a "Big Change" (e.g., modifying core mechanics, database schema, refactoring shared services, or adding features that span multiple layers):
+1. **Pull everything**: Execute `git pull` to ensure you have the latest work from the human developer.
+2. **Review Changelog**: Read `.agents/AGENTS_CHANGELOG.md` to understand recent manual or agentic updates.
+3. **Analyze Impact**: Consider how your changes interact with the latest modifications.
+
 ## 🔴 CRITICAL — Two-Person Team: Always Ask Before Acting
 
 **This project is developed by two people working simultaneously on the same repository.**
