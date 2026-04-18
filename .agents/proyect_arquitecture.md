@@ -7,26 +7,27 @@
 
 ## 1. System Overview
 
-The system is composed of three independent services that communicate over HTTP and WebSockets.
+The system is composed of four independent services that communicate over HTTP and WebSockets.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                        CLIENT                               │
 │                   Angular 20 (SPA)                          │
-│         HTTPS (login, join)  |  Socket.IO (game)            │
-└─────────────────┬────────────┴──────────────────────────────┘
-                  │
-┌─────────────────▼────────────────────────────────────────────┐
-│                    MIDDLE SERVER                             │
-│              Node.js + Express + Socket.IO                   │
-│                                                              │
-│  - Issues and validates user JWTs                            │
-│  - Holds ALL active game state in memory                     │
-│  - Runs the Time Wheel (game loop)                           │
-│  - Dumps state to DB Server periodically                     │
-│                                                              │
-│              HTTP REST (internal JWT)                        │
-└─────────────────┬────────────────────────────────────────────┘
+│   HTTPS (login, join)  |  Socket.IO (game)  |  PUT (avatar) │
+└──────┬─────────────────┴──────────────────────────┬─────────┘
+       │                                             │ PUT (signed URL)
+┌──────▼──────────────────────────────────┐  ┌──────▼─────────┐
+│              MIDDLE SERVER              │  │     MINIO      │
+│       Node.js + Express + Socket.IO     │  │ Object Storage │
+│                                         │  │  (avatars)     │
+│  - Issues and validates user JWTs       │  └────────────────┘
+│  - Holds ALL active game state in memory│
+│  - Runs the Time Wheel (game loop)      │
+│  - Dumps state to DB Server periodically│
+│  - Issues signed upload URLs for MinIO  │
+│                                         │
+│           HTTP REST (internal JWT)      │
+└─────────────────┬───────────────────────┘
                   │
 ┌─────────────────▼────────────────────────────────────────────┐
 │                     DB SERVER                                │
@@ -42,6 +43,7 @@ The system is composed of three independent services that communicate over HTTP 
 
 **Key principle:** The Middle Server is the single source of truth for live game state.
 The DB Server is the persistence layer only — it never drives game logic.
+MinIO is the object storage layer — it only stores avatar images and is never accessed by the DB Server.
 
 ---
 
@@ -75,6 +77,18 @@ The DB Server is the persistence layer only — it never drives game logic.
   - **PostgreSQL:** users, characters, games, participants, state dumps.
   - **MongoDB:** analytics snapshots for statistics queries.
 - Validates the handshake JWT on every inbound request from the Middle.
+
+### 2.4 MinIO — Object Storage (avatars)
+
+- Self-hosted S3-compatible object storage running as a Docker container alongside the other services.
+- Stores only user avatar images. No game data, no dumps, no analytics.
+- The Middle Server is the only service that communicates with MinIO directly.
+- The frontend sends the raw image to the Middle. The Middle resizes it to **200x200 px** using `sharp`, then stores the result directly in MinIO. The image never touches the DB Server.
+- The public URL of the stored avatar is persisted in `users.avatar_url` in PostgreSQL via the DB Server.
+- MinIO exposes two ports:
+  - `9000` — S3-compatible API (used by Middle to store images and generate public URLs)
+  - `9001` — Web console (admin only, not exposed publicly)
+- Avatar bucket name: `avatars`. Bucket policy: public-read (avatars are not sensitive).
 
 ---
 
@@ -120,6 +134,14 @@ PERSISTENCE DUMP (background, every 15 min):
 ANALYTICS DUMP (background, every 2 h):
   Middle  --HTTPS POST /internal/analytics/snapshots-->  DB Server
   DB Server --writes to MongoDB-->
+
+AVATAR UPLOAD:
+  Front  --HTTPS POST /users/avatar (multipart, JWT)-->  Middle
+  Middle --resize to 200x200 with sharp-->
+  Middle --PUT object to MinIO bucket 'avatars'-->  MinIO
+  Middle --HTTPS PUT /internal/users/{id}/avatar-->  DB Server (persist URL)
+  DB Server --UPDATE users SET avatar_url-->  PostgreSQL
+  Middle --HTTPS 200 { avatarUrl }-->  Front
 ```
 
 ---
@@ -168,6 +190,12 @@ ANALYTICS DUMP (background, every 2 h):
 |--------|------|-------------|
 | `POST` | `/internal/analytics/snapshots` | Write a full game state snapshot to MongoDB. |
 
+### Users — avatar
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `PUT` | `/internal/users/{id}/avatar` | Persist the MinIO public URL after upload. Body: `{ avatarUrl }`. |
+
 ---
 
 ## 5. PostgreSQL Schema
@@ -179,6 +207,7 @@ CREATE TABLE users (
   username      VARCHAR(50)  UNIQUE NOT NULL,
   email         VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
+  avatar_url    VARCHAR(512),            -- URL pública en MinIO; NULL hasta que el usuario suba un avatar
   created_at    TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
 
@@ -539,3 +568,8 @@ All values stored in environment variables. No hardcoded secrets or URLs.
 | `MONGODB_DUMP_INTERVAL_MS` | Middle | Default: `7200000` (2 h) |
 | `TIME_WHEEL_TICK_MS` | Middle | Default: `500` |
 | `ADVANTAGE_MULTIPLIER` | Middle | Default: `1.25` [PROPOSED] |
+| `MINIO_ENDPOINT` | Middle | MinIO API URL (e.g. `http://minio:9000`) |
+| `MINIO_ACCESS_KEY` | Middle | MinIO access key (set in MinIO container env) |
+| `MINIO_SECRET_KEY` | Middle | MinIO secret key (set in MinIO container env) |
+| `MINIO_BUCKET_AVATARS` | Middle | Default: `avatars` |
+| `MINIO_PUBLIC_BASE_URL` | Middle | Public base URL for avatar links (e.g. `http://<server-ip>:9000/avatars`) |

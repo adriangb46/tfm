@@ -1,5 +1,40 @@
 # Agents Activity Changelog
 
+## [2026-04-18] Infraestructura: Adición de Contenedor MinIO (Object Storage)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Integrar MinIO como sistema de almacenamiento de objetos (S3-compatible) para la gestión de avatares de usuario, siguiendo la arquitectura definida.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Configuración Docker (Producción)**:
+   - Modificado `docker-compose.yml` para incluir el servicio `minio` (Imagen: `minio/minio`).
+   - Añadido servicio `minio_init` (Imagen: `minio/mc`) para la creación automática del bucket `avatars` y configuración de política `public-read`.
+   - Añadido volumen persistente `minio_data`.
+   - Configurado con credenciales por defecto (`minioadmin`/`minioadmin`).
+
+2. **Configuración Docker (Desarrollo)**:
+   - Modificado `docker-compose.dev.yml` para incluir `minio` y `minio_init`.
+   - Añadido volumen `minio_data_dev`.
+   - Integrado en la red `tfm_net_dev`.
+
+3. **Integración con Middle Server**:
+   - Actualizados ambos archivos de compose para que `middle_server` dependa de `minio`.
+   - Inyectadas las variables de entorno necesarias:
+     - `MINIO_ENDPOINT`: `http://minio:9000`
+     - `MINIO_ACCESS_KEY`: `minioadmin`
+     - `MINIO_SECRET_KEY`: `minioadmin`
+     - `MINIO_BUCKET_AVATARS`: `avatars`
+     - `MINIO_PUBLIC_BASE_URL`: `http://localhost:9000/avatars`
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción |
+|---|---|
+| `docker-compose.yml` | Modificado |
+| `docker-compose.dev.yml` | Modificado |
+| `.agents/AGENTS_CHANGELOG.md` | Modificado |
+
+---
+
 ## [2026-04-18] Infraestructura: Adición de Contenedor MongoDB
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Añadir un contenedor de MongoDB a la configuración de Docker para futuras analíticas del proyecto.
