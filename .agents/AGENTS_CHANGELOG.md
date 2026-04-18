@@ -1,5 +1,30 @@
 # Agents Activity Changelog
 
+## [2026-04-18] Documentación: Creación de README.md y LICENSE
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Establecer la documentación base del proyecto y definir los términos de uso educativo.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Creación de `README.md`**:
+   - Redactada la presentación del proyecto "Viking Clan Wars".
+   - Detallada la arquitectura de microservicios y el stack tecnológico.
+   - Añadida guía de inicio rápido con comandos Docker Compose.
+   - Listado de servicios y puertos correspondientes.
+
+2. **Creación de `LICENSE`**:
+   - Implementada una licencia MIT.
+   - Añadida una cláusula de exclusividad para fines educativos y académicos en el marco de un proyecto intermodular/TFM.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción |
+|---|---|
+| `README.md` | **CREADO** |
+| `LICENSE` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | Modificado |
+
+---
+
 ## [2026-04-18] Infraestructura: Adición de Contenedor Redis (Cache/Rate-Limiting)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Integrar Redis como sistema de almacenamiento efímero para la gestión de lista negra de JWT y control de tasa (rate limiting) en el Middle Server.
