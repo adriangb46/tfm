@@ -176,7 +176,7 @@
 
 ## 6. lobbyPrevia (waiting room)
 
-**Route:** `/game/:gameId/lobby`
+**Route:** `/lobby-previa`
 **Angular component:** `LobbyPreviaComponent`
 **Prerequisites:** Active session + created or joined a game.
 
@@ -202,7 +202,7 @@
 
 ## 7. gamePage (battle screen)
 
-**Route:** `/game/:gameId`
+**Route:** `/game`
 **Angular component:** `GamePageComponent`
 **Prerequisites:** Active session + game created + player is in that game.
 
@@ -397,7 +397,7 @@
 
 ## 15. estadísticas
 
-**Route:** `/stats/user` (global) or `/stats/game/:gameId` (per game)
+**Route:** `/stats/user` (global) or `/stats/game` (current game)
 **Angular component:** `EstadisticasComponent`
 **Prerequisites:** Active session + accessed from lobby or user menu.
 

@@ -6,7 +6,8 @@ This file is loaded with maximum priority by Antigravity. All rules defined here
 
 ## 🔴 CRITICAL — AFTER DO ANITHING
 
-put in the Agents_changelog.md, all that you do
+- put in the Agents_changelog.md, all that you do
+- review the security.md before do any change
 
 ## 🔴 CRITICAL — BEFORE ANY BIG CHANGE
 
@@ -83,3 +84,4 @@ See `.agents/rules/` for technology-specific rules:
 - `javascript_good_practices.md`
 - `typescript_good_practices.md`
 - `collaboration.md`
+

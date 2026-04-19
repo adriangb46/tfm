@@ -1,5 +1,63 @@
 # Agents Activity Changelog
 
+## [2026-04-19] Refinamiento Visual Completo del GamePage (Workflow /refine-ui)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Iterar sobre el preview `gamePage-preview.html` hasta tener el diseño definitivo aprobado por el usuario y aplicarlo al componente Angular.
+
+### 📝 Cambios Aplicados en el Preview (iteraciones):
+1. **Mapa**: ocupa el 100% del ancho y alto del contenedor (`background-size: 100% 100%`), sin mantener relación de aspecto. Sin zoom al hacer hover.
+2. **Botones laterales**: eliminada la barra (`<aside>`), reemplazada por botones flotantes semitransparentes con glassmorphism (`.actions-overlay`). Cambiados de texto a **iconos SVG** (espadas, tropas, rayo, pergamino).
+3. **Jugadores en el mapa**: 6 círculos de colores (uno por clan) posicionados con `top/left` en porcentaje sobre los continentes del mapa. `transform: translate(-50%, -50%)` asegura que sigan su posición al redimensionar.
+4. **Tarjeta de stats flotante**: centrada encima del mapa (`position: absolute`, `left: 50%`). Layout interno: Vida a la izquierda (grande, en verde), divisor dorado, Dinero + Ptos. de Investigación en columna a la derecha.
+5. **Indicador de fase**: convertido en tarjeta con borde de color según la fase (`PREPARACIÓN` = azul, `GUERRA` = rojo, `FIN` = dorado) y efecto glow.
+6. **Barra superior izquierda**: logo del juego (placeholder) + nombre de usuario + código de partida (solo `#XXXXXX` sin prefijo "Partida").
+7. **Barra superior derecha**: añadido botón **Reglas** (icono + texto) con borde sutil, a la izquierda del botón Abandonar.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción |
+|---|---|
+| `front/src/app/pages/game/game.component.ts` | Reescrito (tipos, signals, handlers) |
+| `front/src/app/pages/game/game.component.html` | Reescrito (layout completo final) |
+| `front/src/app/pages/game/game.component.scss` | Reescrito (estilos SCSS completos) |
+| `.agents/previews/gamePage-preview.html` | Modificado (iteraciones de diseño) |
+| `.agents/AGENTS_CHANGELOG.md` | Modificado |
+
+---
+
+## [2026-04-19] Creación de la Pantalla Principal de Juego (GamePage) y Ocultación Condicional del Navbar
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la vista del juego base (sin el componente Navbar global) de acuerdo con los mockups del mapa `viking-map-continents.png` y siguiendo el flujo preestablecido `/refine-ui`.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Flujo de Refinamiento (`/refine-ui`)**:
+   - Generación de `.agents/previews/gamePage-preview.html` simulando la disposición completa del GamePage (mapa principal inmersivo y Acciones de Mando).
+   
+2. **Implementación de Componente `GamePageComponent` (`pages/game`)**:
+   - Componente independiente `standalone: true` con `ChangeDetectionStrategy.OnPush`. 
+   - Uso de `signals` para los marcadores en tiempo real (Salud, Dinero, Puntos de Investigación y Fase actual).
+   - Estilo configurado con `flex: 1` para ocupar toda la pantalla, imagen de fondo interactiva para el tablero / mapa y un panel interactivo derecho (`aside`) con las futuras acciones (ej. Entrenar tropas).
+   
+3. **Mecanismo Condicional para Localización Immersiva**:
+   - Modificados `app.ts` y `app.html` inyectando dependencias del `Router` y `NavigationEnd` para verificar que la ruta actual pertenece a una partida. El `NavbarComponent` está envuelto interactuando con la señal generada `showNavbar()`.
+   
+4. **Enrutamiento Perezoso**:
+   - Agregada la ruta `game` en `app.routes.ts` cargando `GamePageComponent`.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción |
+|---|---|
+| `front/src/app/pages/game/game.component.ts` | **CREADO** |
+| `front/src/app/pages/game/game.component.html` | **CREADO** |
+| `front/src/app/pages/game/game.component.scss` | **CREADO** |
+| `.agents/previews/gamePage-preview.html` | **CREADO** |
+| `front/src/app/app.ts` | Modificado |
+| `front/src/app/app.html` | Modificado |
+| `front/src/app/app.routes.ts` | Modificado |
+| `.agents/AGENTS_CHANGELOG.md` | Modificado |
+
+---
+
 ## [2026-04-18] Documentación: Creación de README.md y LICENSE
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Establecer la documentación base del proyecto y definir los términos de uso educativo.
