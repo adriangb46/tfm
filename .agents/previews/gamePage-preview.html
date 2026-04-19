@@ -266,7 +266,42 @@
             inset: 0;
             pointer-events: none; /* Let clicks pass unless on specific shapes */
         }
-        
+
+        .attack-path-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .attack-path {
+            stroke: #c9a84c;
+            stroke-width: 0.8;
+            fill: none;
+            opacity: 0.18;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 2px rgba(201, 168, 76, 0.45));
+        }
+
+        .attack-text {
+            font-family: var(--font-title, 'Inter'), system-ui, sans-serif;
+            font-size: 3px;
+            fill: rgba(201, 168, 76, 0.95);
+            fill-opacity: 0.6;
+            font-weight: 900;
+            pointer-events: none;
+        }
+
+        .attack-text textPath {
+            dominant-baseline: central;
+        }
+
+        .attack-path-marker {
+            fill: transparent;
+        }
+
         .player-node {
             position: absolute;
             width: 70px;
@@ -404,11 +439,21 @@
         <div class="map-container">
             <div class="map-bg"></div>
             
+            <svg class="attack-path-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                <path class="attack-path" id="attack-path-preview" d="M 71 51 C 70 38, 68 27, 66 17" />
+                <text class="attack-text">
+                    <textPath xlink:href="#attack-path-preview" startOffset="0%">
+                        >
+                        <animate attributeName="startOffset" from="0%" to="100%" dur="4s" repeatCount="indefinite" />
+                    </textPath>
+                </text>
+            </svg>
+
             <div class="territory-overlay">
                 <!-- Players placed on the map continents -->
                 <div class="player-node node-divine" title="Clan Divine">Divine</div>
                 <div class="player-node node-death" title="Clan Death">Death</div>
-                <div class="player-node node-fury" title="Tú (FURY)">Te (FURY)</div>
+                <div class="player-node node-fury" title="Tú (FURY)">Tú</div>
                 <div class="player-node node-iron" title="Clan Iron">Iron</div>
                 <div class="player-node node-song" title="Clan Song">Song</div>
                 <div class="player-node node-rune" title="Clan Rune">Rune</div>

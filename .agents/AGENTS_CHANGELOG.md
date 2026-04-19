@@ -1,5 +1,264 @@
 # Agents Activity Changelog
 
+## [2026-04-19] Implementación de Caminos de Ataque Animados (SVG Attack Path Visualization)
+
+**Agente**: GitHub Copilot (Claude Haiku 4.5)  
+**Objetivo**: Añadir visualización de caminos de ataque animados utilizando SVG con curvas Bezier cúbicas, gradientes dinámicos y autoelimpiación automática tras 5 segundos.
+
+### 📝 Cambios Realizados:
+
+#### 1. **Estilos SVG en `game.component.scss`**
+   - Nuevo contenedor `.attack-path-svg`:
+     - Posicionamiento absoluto cubriendo todo el contenedor
+     - `pointer-events: none` para que no interfiera con clicks
+     - Z-index: 15 (por encima de nodos pero bajo modales)
+   
+   - Estilo del path `.attack-path`:
+     - Stroke con gradiente lineal (6 colores rojo degradado: #e74c3c → #c0392b → #a93226)
+     - `stroke-dasharray: 10, 5` para patrón de línea punteado
+     - Animación `attackPathFlow` (3s, linear, infinito)
+       - Offset de stroke viaja de 0 a -15px creando efecto de flujo
+     - Filter `drop-shadow` con glow rojo (#c0392b, 8px, 60% de opacidad)
+   
+   - Animación de punta de flecha `.attack-arrow-head circle`:
+     - `arrowPulse` (2s, ease-in-out, infinito)
+     - Varía el radio de 4px → 6px → 4px
+     - Varía opacidad del fill manteniendo glow
+
+#### 2. **Template SVG en `game.component.html`**
+   - Contenedor condicional: `@if (activeAttack())`
+   - Elemento `<svg xmlns="http://www.w3.org/2000/svg">` con:
+     - `<defs>`: Define gradiente lineal `attack-gradient`
+       - 3 stops: #e74c3c (0%), #c0392b (50%), #a93226 (100%)
+       - Dirección diagonal: x1=0% y1=0% x2=100% y2=100%
+     - Elemento `<path>`:
+       - Clase `attack-path` (aplica animación)
+       - `[attr.d]="generateAttackPath()"` (curva Bezier dinámica)
+       - `[attr.id]="activeAttack()!.pathId"` (ID único per ataque)
+     - Grupo `<g class="attack-arrow-head">`:
+       - Circle con clase `arrow-dot` animada (pulso)
+       - Atributos cx/cy inicialmente en 0
+
+#### 3. **Lógica de Auto-Limpieza en `game.component.ts`**
+   - Método `onLaunchAttack()` modificado:
+     - Establecer el signal `activeAttack` con el objeto de ataque
+     - Añadir `setTimeout(() => { this.activeAttack.set(null); }, 5000)`
+     - Limpia automáticamente la visualización después de 5 segundos
+     - Comportamiento: "solo debe salir cuando se haya un ataque y durante el ataque"
+
+### ✨ Características Implementadas
+
+| Requisito | Implementación |
+|-----------|-----------------|
+| **Visualización SVG** | Overlay absoluto con path Bezier dinámico |
+| **Gradiente lineal** | Definido en `<defs>` con 3 stops de color rojo |
+| **Animación fluida** | `stroke-dasharray` offset (3s) crea efecto de flujo constante |
+| **Punta animada** | Circle pulsa entre 4px-6px (efecto de movimiento) |
+| **Auto-limpieza** | setTimeout 5s limpia activeAttack automáticamente |
+| **Condicional** | Solo renderiza cuando `activeAttack() !== null` |
+| **Z-indexing** | 15: visible sobre la mayoría, bajo modales |
+| **Sin interferencia** | `pointer-events: none` no bloquea interacciones |
+
+### 📋 Cambios Archivos:
+
+| Archivo | Cambios |
+|---------|---------|
+| `front/src/app/pages/game/game.component.scss` | Nuevos estilos: `.attack-path-svg`, `.attack-path`, `.attack-arrow-head` con @keyframes |
+| `front/src/app/pages/game/game.component.html` | @if condicional + SVG con defs, gradiente, path y arrow-head animado |
+| `front/src/app/pages/game/game.component.ts` | setTimeout(5s) en `onLaunchAttack()` para limpiar activeAttack |
+
+### 🎨 Efectos Visuales:
+
+- **Animación de flujo**: patrón punteado que se mueve continuamente a lo largo del path
+- **Glow rojo**: sombra difusa (#c0392b) de 8px alrededor del stroke
+- **Pulso de punta**: circle que crece/encoge (4px → 6px → 4px) dando sensación de movimiento
+- **Desvanecimiento automático**: 5s después de ejecutar el ataque
+
+### ⏱️ Timeline:
+
+1. Usuario hace clic en territorio enemigo → abre modal atacar
+2. Selecciona tropas → click ATACAR → `onLaunchAttack(troopIds)`
+3. SVG aparece instantáneamente con animación de flujo y pulso
+4. Después de 5s, `activeAttack` se establece a `null`
+5. Condicional `@if` elimina SVG del DOM
+
+### ✅ Validación:
+
+- ✓ TypeScript compilation: No errors
+- ✓ HTML template: Sintaxis SVG correcta con bindings
+- ✓ SCSS: @keyframes definidas correctamente
+- ✓ Lógica: `onLaunchAttack()` incluye setTimeout
+
+---
+
+## [2026-04-19] Mejora: Selección Múltiple de Tropas en Modal Añadir (Multiple Troop Selection)
+
+**Agente**: GitHub Copilot (Claude Haiku 4.5)  
+**Objetivo**: Permitir seleccionar múltiples tropas en el modal de "Añadir Tropas" antes de confirmar con botones OK y Cancelar.
+
+### 📝 Cambios Realizados:
+
+#### 1. **Anademodalización en `AnadirTropaAtaqueModalComponent`**
+   - Nuevo signal local: `localSelectedIds` para gestionar selección temporal
+   - Constructor inicializa `localSelectedIds` con los valores del input `selectedTroopIds`
+   - Cambio de salida: `troopSelected: string` → `troopsSelected: string[]` (emite array)
+   - Métodos actualizados:
+     - `onTroopClick()`: toggle en `localSelectedIds` (no emite directamente)
+     - `onOkClick()`: emite array de IDs seleccionadas y cierra
+     - `onCancelClick()`: descarta cambios y cierra
+
+#### 2. **Template (`anadir-tropa-ataque.modal.html`)**
+   - Cambio en binding de event: `(troopSelected)` → `(troopsSelected)`
+   - Footer: añadido botón "OK" (verde) junto a "CANCELAR" (gris)
+   - Justificación: `justify-content: flex-end` para alinear botones a la derecha
+
+#### 3. **Estilos (`anadir-tropa-ataque.modal.scss`)**
+   - Nuevo botón `.btn-ok`:
+     - Gradiente verde (#27ae60 → #229954)
+     - Glow effect al hover
+     - Transición suave y shadow
+   - Footer ahora con `justify-content: flex-end` y gap de 12px
+
+#### 4. **Integración en `AtacarModalComponent`**
+   - Actualización del método `onTroopSelected(newTroopIds: string[])`:
+     - Recibe array de IDs en lugar de string único
+     - Añade todas las nuevas tropas a `selectedTroopIds`
+     - Evita duplicados mediante verificación
+   - Template: `(troopSelected)` → `(troopsSelected)`
+
+### ✨ Flujo de Uso
+
+1. **Usuario abre modal Atacar** con tropas previas o vacío
+2. **Click en "+"** → abre modal de selección
+3. **Selecciona múltiples tropas** con click (checkmark)
+4. **Click deselecciona** (toggle behavior)
+5. **Click "OK"** → añade todas las seleccionadas y vuelve a atacar
+6. **Click "CANCELAR"** → descarta cambios y cierra
+
+### 📋 Cambios Archivos:
+
+| Archivo | Cambios |
+|---------|---------|
+| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.ts` | Signal local, constructor, nuevo output array, métodos actualizados |
+| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.html` | Binding event, botones dobles (OK + CANCELAR) |
+| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.scss` | Nuevos estilos `.btn-ok` (verde), footer ajustado |
+| `front/src/app/pages/game/modals/atacar.modal.ts` | Método `onTroopSelected()` actualizado (array) |
+| `front/src/app/pages/game/modals/atacar.modal.html` | Binding event actualizado |
+
+---
+
+## [2026-04-19] Creación de Modales de Ataque: Atacar + Añadir Tropa (Attack Modal System)
+
+**Agente**: GitHub Copilot (Claude Haiku 4.5)
+**Objetivo**: Implementar el sistema de modales para el ataque de tropas en el GamePage siguiendo patrón Forge of Empires con UI grid de tropas y health bars por unidad.
+
+### 📝 Cambios Realizados:
+
+#### 1. **Creación de Sistema de Tipos (`attack.types.ts`)**
+   - Tipo `ClanId`: unión de 6 clanes posibles
+   - Interfaz `Troop`: datos completos de una tropa (id, name, type, clan, health actual/máxima, icon, costo, etc.)
+   - Interfaz `EnemyTarget`: información del enemigo objetivo
+   - Interfaz `TroopGridCell`: representación visual de celda en grid
+   - Enum `TroopType`: tipos de tropas (infanteria, arqueria, caballeria)
+
+#### 2. **Componente Principal: `AtacarModalComponent`**
+   - **Entrada**: `target` (enemigo), `availableTroops` (tropas disponibles)
+   - **Salida**: `closeModal`, `launchAttack` (IDs de tropas)
+   - **UI**: 
+     - Grid dinámico de tropas seleccionadas (Forge of Empires style)
+     - Cada celda muestra: icono + barra de vida (con % de salud actual)
+     - Botón "+" para añadir más tropas
+     - Botón "ATACAR" (habilitado solo si hay tropas)
+   - **Interacción**: Click en celda de tropa → la elimina de selección
+   - **Mock data**: 6 tropas de prueba con diferentes tipos y salud variable
+
+#### 3. **Componente Secundario: `AñadirTropaAtaqueModalComponent`**
+   - **Entrada**: `availableTroops`, `selectedTroopIds` (IDs ya seleccionadas)
+   - **Salida**: `troopSelected` (emite ID), `closeModal`
+   - **UI**:
+     - Grid 2 columnas de tropas disponibles
+     - Cada tarjeta: icono + nombre + health bar + costo
+     - Tropas seleccionadas previamente muestran checkmark (✓) y fondo/borde dorado
+   - **Interacción**: 
+     - Click en tropa no seleccionada → se añade a selección y muestra checkmark
+     - Click en tropa seleccionada → se elimina (toggle comportamiento)
+     - Click "CANCELAR" → cierra modal sin cambios
+   - **Z-index**: modal 2 por encima del modal 1
+
+#### 4. **Estilos (`atacar.modal.scss` + `añadir-tropa-ataque.modal.scss`)**
+   - Tema vikingo: colores #d4af37 (dorado), #2a2a2a (gris oscuro), degradados
+   - Bordes dorados con glow effects
+   - Grid responsive con gap coherente
+   - Transiciones suaves (hover, active)
+   - Health bars con gradiente verde (#2ecc71 → #27ae60)
+   - Botones:
+     - "+" (dorado, grande, 48x48px)
+     - "ATACAR" (rojo, solo habilitado con tropas)
+     - "CANCELAR" (gris)
+
+#### 5. **Integración en `GamePageComponent`**
+   - Imports: `AtacarModalComponent`, `AñadirTropaAtaqueModalComponent`, tipos
+   - Signals de control: `showAtacarModal`, `targetEnemy`, `selectedTroopsForAttack`
+   - Signal de datos: `availableTroops` (mock con 6 tropas)
+   - Método `onTerritoryClick(player)`:
+     - ✅ Comprueba que no sea el jugador local (no abre si haces clic en ti)
+     - ✅ Comprueba que fase !== PREPARACIÓN
+     - ✅ Abre modal con enemigo objetivo
+   - Métodos: `closeAtacarModal()`, `onLaunchAttack(troopIds)`
+   - Template: `@if (showAtacarModal() && targetEnemy())` para renderizar modal anidado
+
+#### 6. **Previews HTML Generados**
+   - `.agents/previews/attack-modal-preview.html`: muestra modal vacío vs con 4 tropas
+   - `.agents/previews/add-troops-modal-preview.html`: grid 2x3 de tropas, algunas seleccionadas
+
+### ✨ Características Clave
+
+| Requisito | Implementación |
+|-----------|-----------------|
+| **Grid visual** | CSS Grid dinámico, adapta columnas según raíz cuadrada de tropas |
+| **Health bars** | Barra de progreso animada, muestra `currentHealth/maxHealth` |
+| **Selección previa** | Al abrir modal añadir, tropas ya seleccionadas aparecen marcadas |
+| **Toggle selection** | Click en tropa seleccionada → se deselecciona (inversa lógica) |
+| **No ataque a ti mismo** | Comprobación en `onTerritoryClick()` del jugador local |
+| **Fase PREPARACIÓN** | Bloquea apertura del modal en fase prep |
+| **Botón ATACAR** | Deshabilitado si no hay tropas, emit con IDs al servidor |
+| **Estilo Forge of Empires** | Grid de celdas cuadradas con iconos, degradados dorados |
+
+### 🗂️ Archivos Creados:
+
+| Archivo | Tipo | Descripción |
+|---------|------|------------|
+| `front/src/app/pages/game/modals/attack.types.ts` | TypeScript | Tipos e interfaces |
+| `front/src/app/pages/game/modals/atacar.modal.ts` | Component | Lógica del modal principal |
+| `front/src/app/pages/game/modals/atacar.modal.html` | Template | UI del modal atacar |
+| `front/src/app/pages/game/modals/atacar.modal.scss` | Styles | Estilos grid + health bars |
+| `front/src/app/pages/game/modals/añadir-tropa-ataque.modal.ts` | Component | Lógica de selección |
+| `front/src/app/pages/game/modals/añadir-tropa-ataque.modal.html` | Template | UI grid de tropas |
+| `front/src/app/pages/game/modals/añadir-tropa-ataque.modal.scss` | Styles | Estilos tarjetas + checkmark |
+| `.agents/previews/attack-modal-preview.html` | HTML | Preview visual del modal atacar |
+| `.agents/previews/add-troops-modal-preview.html` | HTML | Preview grid de añadir tropas |
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/game/game.component.ts` | Imports, signals, mock data, métodos de control |
+| `front/src/app/pages/game/game.component.html` | Añadido `@if` condicional para renderizar modal |
+| `.agents/AGENTS_CHANGELOG.md` | Documentación de cambios |
+
+### 📋 Pruebas Manuales Sugeridas
+
+1. En game.component, cambiar `currentPhase()` a `'GUERRA'`
+2. Hacer clic en otro jugador → debe abrir modal atacar
+3. Hacer clic en ti mismo (username === 'Ragnar_Fury') → no debe abrir
+4. Hacer clic en "+" → abre modal de selección
+5. Seleccionar 3 tropas → checkmark visible, cierra y vuelve a atacar modal
+6. Volver a abrir "+" → las 3 tropas siguen seleccionadas
+7. Click en una seleccionada → se deselecciona
+8. Botón "ATACAR" habilitado solo si hay tropas seleccionadas
+
+---
+
 ## [2026-04-19] Refinamiento Visual Completo del GamePage (Workflow /refine-ui)
 
 **Agente**: Antigravity (Google DeepMind)

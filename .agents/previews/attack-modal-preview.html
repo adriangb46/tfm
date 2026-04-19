@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview - Modal Atacar</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #1a1a1a;
+      color: #ccc;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .preview-section {
+      flex: 1;
+      min-width: 400px;
+      background: #222;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .preview-section h2 {
+      color: #d4af37;
+      margin-bottom: 15px;
+      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .preview-canvas {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 600px;
+      position: relative;
+    }
+
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      backdrop-filter: blur(2px);
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+      border: 2px solid #d4af37;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(212, 175, 55, 0.1);
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #d4af37;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(212, 175, 55, 0.05);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #d4af37;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #aaa;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-close:hover {
+      background: rgba(212, 175, 55, 0.2);
+      color: #d4af37;
+    }
+
+    .modal-body {
+      padding: 20px;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .troops-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      min-height: 100px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px dashed #d4af37;
+    }
+
+    .grid-cell {
+      background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+      border: 1px solid #555;
+      border-radius: 6px;
+      padding: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      aspect-ratio: 1;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .grid-cell:hover {
+      background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);
+      border-color: #d4af37;
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .troop-icon {
+      font-size: 24px;
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .health-bar {
+      width: 100%;
+      height: 4px;
+      background: #1a1a1a;
+      border-radius: 2px;
+      overflow: hidden;
+      border: 1px solid #555;
+    }
+
+    .health-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2ecc71 0%, #27ae60 100%);
+      width: 75%;
+    }
+
+    .health-text {
+      font-size: 10px;
+      color: #aaa;
+      text-align: center;
+      line-height: 1;
+      font-weight: bold;
+    }
+
+    .empty-message {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: #999;
+      font-style: italic;
+      padding: 20px;
+    }
+
+    .add-troop-section {
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-add-troop {
+      background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+      border: none;
+      border-radius: 8px;
+      width: 48px;
+      height: 48px;
+      font-size: 24px;
+      color: #1a1a1a;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-add-troop:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(212, 175, 55, 0.5);
+    }
+
+    .modal-footer {
+      padding: 16px 20px;
+      border-top: 1px solid #d4af37;
+      background: rgba(212, 175, 55, 0.05);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn-attack {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      border: none;
+      border-radius: 6px;
+      padding: 10px 24px;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+    }
+
+    .btn-attack:hover {
+      background: linear-gradient(135deg, #f05a3a 0%, #d13a24 100%);
+      transform: translateY(-2px);
+    }
+
+    .description {
+      background: rgba(212, 175, 55, 0.1);
+      border-left: 3px solid #d4af37;
+      padding: 12px;
+      margin-top: 15px;
+      border-radius: 4px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #bbb;
+    }
+
+    .description strong {
+      color: #d4af37;
+    }
+
+    .state-indicator {
+      background: rgba(46, 204, 113, 0.1);
+      border: 1px solid #2ecc71;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #2ecc71;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .state-indicator.empty {
+      background: rgba(231, 76, 60, 0.1);
+      border-color: #e74c3c;
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Preview 1: Modal Atacar (vacío) -->
+    <div class="preview-section">
+      <h2>📋 Modal Atacar (Sin tropas)</h2>
+      <div class="preview-canvas">
+        <div class="modal-overlay">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="modal-title">ATACAR A Iron</div>
+              <button class="btn-close">✕</button>
+            </div>
+            <div class="modal-body">
+              <div class="troops-grid">
+                <div class="empty-message">Selecciona tropas para atacar</div>
+              </div>
+              <div class="add-troop-section">
+                <button class="btn-add-troop">+</button>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn-attack" disabled style="opacity: 0.5;">ATACAR</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="description">
+        <strong>Estado:</strong> Modal de ataque abierto sin tropas seleccionadas. El botón "ATACAR" está deshabilitado. Usuario debe hacer clic en "+" para añadir tropas desde el modal de selección.
+      </div>
+      <div class="state-indicator empty">❌ Botón ATACAR deshabilitado (sin tropas)</div>
+    </div>
+
+    <!-- Preview 2: Modal Atacar (con tropas) -->
+    <div class="preview-section">
+      <h2>⚔️ Modal Atacar (Con tropas)</h2>
+      <div class="preview-canvas">
+        <div class="modal-overlay">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="modal-title">ATACAR A Iron</div>
+              <button class="btn-close">✕</button>
+            </div>
+            <div class="modal-body">
+              <div class="troops-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="grid-cell">
+                  <div class="troop-icon">⚔️</div>
+                  <div class="health-bar">
+                    <div class="health-fill" style="width: 100%;"></div>
+                  </div>
+                  <span class="health-text">100/100</span>
+                </div>
+                <div class="grid-cell">
+                  <div class="troop-icon">🏹</div>
+                  <div class="health-bar">
+                    <div class="health-fill" style="width: 75%;"></div>
+                  </div>
+                  <span class="health-text">60/80</span>
+                </div>
+                <div class="grid-cell">
+                  <div class="troop-icon">⚔️</div>
+                  <div class="health-bar">
+                    <div class="health-fill" style="width: 60%;"></div>
+                  </div>
+                  <span class="health-text">75/100</span>
+                </div>
+                <div class="grid-cell">
+                  <div class="troop-icon">🐴</div>
+                  <div class="health-bar">
+                    <div class="health-fill" style="width: 50%;"></div>
+                  </div>
+                  <span class="health-text">75/150</span>
+                </div>
+              </div>
+              <div class="add-troop-section">
+                <button class="btn-add-troop">+</button>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn-attack">ATACAR</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="description">
+        <strong>Estado:</strong> Modal de ataque con 4 tropas seleccionadas en grid 2x2. Cada celda muestra icono de tropa, barra de vida y valores de salud. Usuario puede seguir añadiendo tropas o lanzar el ataque. Hacer clic en una celda la elimina de la selección.
+      </div>
+      <div class="state-indicator">✅ Botón ATACAR habilitado (4 tropas)</div>
+    </div>
+  </div>
+</body>
+</html>

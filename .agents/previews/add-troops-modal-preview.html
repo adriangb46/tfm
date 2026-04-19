@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview - Modal Añadir Tropa Ataque</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #1a1a1a;
+      color: #ccc;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .preview-section {
+      flex: 1;
+      min-width: 500px;
+      background: #222;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .preview-section h2 {
+      color: #d4af37;
+      margin-bottom: 15px;
+      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .preview-canvas {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 600px;
+      position: relative;
+    }
+
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      backdrop-filter: blur(3px);
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+      border: 2px solid #d4af37;
+      border-radius: 8px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(212, 175, 55, 0.1);
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #d4af37;
+      background: rgba(212, 175, 55, 0.05);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #d4af37;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .modal-body {
+      padding: 20px;
+      flex: 1;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .troop-card {
+      position: relative;
+      background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+      border: 2px solid #555;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .troop-card:hover {
+      background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);
+      border-color: #d4af37;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .troop-card.selected {
+      background: linear-gradient(135deg, #4a3820 0%, #3a2810 100%);
+      border-color: #d4af37;
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), inset 0 0 10px rgba(212, 175, 55, 0.1);
+    }
+
+    .selection-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+      color: #1a1a1a;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4);
+    }
+
+    .troop-icon {
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    .troop-name {
+      font-weight: bold;
+      color: #d4af37;
+      font-size: 14px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .health-bar {
+      width: 100%;
+      height: 6px;
+      background: #1a1a1a;
+      border-radius: 3px;
+      overflow: hidden;
+      border: 1px solid #555;
+    }
+
+    .health-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2ecc71 0%, #27ae60 100%);
+    }
+
+    .health-text {
+      font-size: 11px;
+      color: #aaa;
+      text-align: center;
+      line-height: 1;
+      font-weight: bold;
+    }
+
+    .cost-badge {
+      background: rgba(212, 175, 55, 0.2);
+      border: 1px solid #d4af37;
+      color: #d4af37;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .modal-footer {
+      padding: 16px 20px;
+      border-top: 1px solid #d4af37;
+      background: rgba(212, 175, 55, 0.05);
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-cancel {
+      background: linear-gradient(135deg, #555 0%, #444 100%);
+      border: 1px solid #666;
+      border-radius: 6px;
+      padding: 10px 24px;
+      color: #ddd;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-cancel:hover {
+      background: linear-gradient(135deg, #666 0%, #555 100%);
+      border-color: #d4af37;
+      color: #d4af37;
+    }
+
+    .description {
+      background: rgba(212, 175, 55, 0.1);
+      border-left: 3px solid #d4af37;
+      padding: 12px;
+      margin-top: 15px;
+      border-radius: 4px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #bbb;
+    }
+
+    .description strong {
+      color: #d4af37;
+    }
+
+    .features-list {
+      background: rgba(46, 204, 113, 0.1);
+      border: 1px solid #2ecc71;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #2ecc71;
+    }
+
+    .features-list li {
+      margin-left: 20px;
+      margin-top: 4px;
+    }
+
+    .features-list strong {
+      color: #d4af37;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Preview 1: Grid de tropas disponibles (algunas seleccionadas) -->
+    <div class="preview-section">
+      <h2>🎯 Modal Añadir Tropa (Grid 2 columnas)</h2>
+      <div class="preview-canvas">
+        <div class="modal-overlay">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="modal-title">Tropas Disponibles</div>
+            </div>
+            <div class="modal-body">
+              <!-- Tropa 1: Guerrero 1 (seleccionada) -->
+              <div class="troop-card selected">
+                <div class="selection-badge">✓</div>
+                <div class="troop-icon">⚔️</div>
+                <span class="troop-name">Guerrero 1</span>
+                <div class="health-bar">
+                  <div class="health-fill" style="width: 100%;"></div>
+                </div>
+                <span class="health-text">100/100</span>
+                <div class="cost-badge">💰 50</div>
+              </div>
+
+              <!-- Tropa 2: Guerrero 2 (no seleccionada) -->
+              <div class="troop-card">
+                <div class="troop-icon">⚔️</div>
+                <span class="troop-name">Guerrero 2</span>
+                <div class="health-bar">
+                  <div class="health-fill" style="width: 75%;"></div>
+                </div>
+                <span class="health-text">75/100</span>
+                <div class="cost-badge">💰 50</div>
+              </div>
+
+              <!-- Tropa 3: Arquero 1 (seleccionada) -->
+              <div class="troop-card selected">
+                <div class="selection-badge">✓</div>
+                <div class="troop-icon">🏹</div>
+                <span class="troop-name">Arquero 1</span>
+                <div class="health-bar">
+                  <div class="health-fill" style="width: 60%;"></div>
+                </div>
+                <span class="health-text">60/80</span>
+                <div class="cost-badge">💰 75</div>
+              </div>
+
+              <!-- Tropa 4: Arquero 2 (no seleccionada) -->
+              <div class="troop-card">
+                <div class="troop-icon">🏹</div>
+                <span class="troop-name">Arquero 2</span>
+                <div class="health-bar">
+                  <div class="health-fill" style="width: 100%;"></div>
+                </div>
+                <span class="health-text">80/80</span>
+                <div class="cost-badge">💰 75</div>
+              </div>
+
+              <!-- Tropa 5: Caballería 1 (no seleccionada) -->
+              <div class="troop-card">
+                <div class="troop-icon">🐴</div>
+                <span class="troop-name">Caballería 1</span>
+                <div class="health-bar">
+                  <div class="health-fill" style="width: 80%;"></div>
+                </div>
+                <span class="health-text">120/150</span>
+                <div class="cost-badge">💰 150</div>
+              </div>
+
+              <!-- Tropa 6: Caballería 2 (seleccionada) -->
+              <div class="troop-card selected">
+                <div class="selection-badge">✓</div>
+                <div class="troop-icon">🐴</div>
+                <span class="troop-name">Caballería 2</span>
+                <div class="health-bar">
+                  <div class="health-fill" style="width: 33%;"></div>
+                </div>
+                <span class="health-text">50/150</span>
+                <div class="cost-badge">💰 150</div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn-cancel">CANCELAR</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="description">
+        <strong>Estado:</strong> Modal mostrando 6 tropas disponibles en grid de 2 columnas. Tres tropas ya seleccionadas (Guerrero 1, Arquero 1, Caballería 2) muestran checkmark y fondo oscuro/dorado. Cada tropa muestra nombre, icono, barra de vida y costo. Usuario puede:
+      </div>
+      <ul class="features-list">
+        <li>Click en tropa no seleccionada → se añade a la selección y se marca con ✓</li>
+        <li>Click en tropa seleccionada → se elimina de la selección</li>
+        <li>Click "CANCELAR" → cierra modal y vuelve al modal atacar con tropas previas intactas</li>
+        <li><strong>Cada tropa color diferente</strong> según tipo: ⚔️ gris, 🏹 marrón, 🐴 dorado</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
