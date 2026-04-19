@@ -354,24 +354,26 @@ Game data is loaded from `clans.yml` at Middle Server startup. This file is the 
 | Seidr | RUNE | Acólito Rúnico (ATK, 30 power — high AP cost, slow but resilient) |
 | Draugr | DEATH | Campeón Renacido (ATK, 150 power — very high cost and long training) |
 
-### 7.2 Clan Advantage Cycle [PROPOSED]
+### 7.2 Clan Advantage Cycle
 
 A closed 6-way cycle, similar to a type-advantage system. Each clan deals bonus damage against the next clan in the chain.
 
 ```
-FURY → IRON → RUNE → DIVINE → DEATH → SONG → FURY
+FURY → SONG → DEATH → DIVINE → RUNE → IRON → FURY
 ```
 
 | Attacker | Advantage over | Lore reason |
 |----------|----------------|-------------|
-| FURY (Berserkers) | IRON (Jarls) | Berserk rage shatters iron discipline |
-| IRON (Jarls) | RUNE (Seidr) | Cold steel disrupts runic focus |
-| RUNE (Seidr) | DIVINE (Valkirias) | Ancient runes unravel divine light |
-| DIVINE (Valkirias) | DEATH (Draugr) | Sacred light banishes undeath |
-| DEATH (Draugr) | SONG (Skalds) | Death silences every song |
-| SONG (Skalds) | FURY (Berserkers) | Bardic chants soothe berserker fury |
+| **FURY** (Berserkers) | **SONG** (Skalds) | Primal rage silences the mystical melodies |
+| **SONG** (Skalds) | **DEATH** (Draugr) | Divine harmonies bring peace and rest to the restless dead |
+| **DEATH** (Draugr) | **DIVINE** (Valkirias) | The entropy of Helheim consumes even celestial light |
+| **DIVINE** (Valkirias) | **RUNE** (Seidr) | Celestial authority overrides ancient primal runes |
+| **RUNE** (Seidr) | **IRON** (Jarls) | Magic bypasses and corrupts the strongest steel |
+| **IRON** (Jarls) | **FURY** (Berserkers) | Disciplined steel and heavy armor withstand the wild rage |
 
-**Advantage multiplier:** `[PROPOSED — TBD]` Applied to the advantaged clan's total troop points before battle resolution. Suggested value: `×1.25`. Must be confirmed by the team.
+**Multipliers:**
+- **Attacker Advantage:** `1.5x` (Applied to damage output).
+- **Defender Fortification:** `1.1x` (Applied to damage output of the player defending their capital).
 
 ### 7.3 Troop Structure
 
@@ -441,54 +443,52 @@ res_1 ──► res_2 ──► res_4 ──► res_ult
 
 ---
 
-## 9. Combat Resolution Algorithm
+## 9. Combat Resolution Algorithm (Total War)
 
 ```
 GIVEN:
   attackerTroops   = list of deployed troops arriving at target
-  defenderTroops   = all troops with deployed=false in the target capital
+  defenderTroops   = all troops with deployed=false in the target capital (defense shield)
+  targetCapital    = the health of the target capital structure
   attackerClan     = clan of the attacking character
   defenderClan     = clan of the defending character
 
-STEP 1 — Calculate totals with advantage
-  advantageMultiplier = 1.25 if attackerClan has advantage over defenderClan, else 1.0
-  [NOTE: reverse advantage (defender over attacker) is not currently modelled — TBD]
-  attackerTotal = sum(troop.currentPoints for troop in attackerTroops) × advantageMultiplier
-  defenderTotal = sum(troop.currentPoints for troop in defenderTroops)
+STEP 1 — Calculate Damage Potentials
+  atkMultiplier = 1.5 if attackerClan has advantage over defenderClan, else 1.0
+  defMultiplier = 1.1 (Fortification bonus for defending the capital)
 
-STEP 2 — Determine outcome
-  diff = attackerTotal - defenderTotal
-  if diff > 0 → ATTACKER_WIN
-  if diff ≤ 0 → DEFENDER_WIN (ties go to defender)
+  attackerDamage = sum(troop.currentPoints for troop in attackerTroops) × atkMultiplier
+  defenderDamage = sum(troop.currentPoints for troop in defenderTroops) × defMultiplier
 
-STEP 3 — Resolve surviving troops (same algorithm for both sides)
-  pointsToAbsorb = abs(diff)  // the losing side absorbs the full diff, winner absorbs none
-  
-  Sort losing side troops by priority (ascending):
-    1. Damaged troops first (currentPoints < maxPoints), sorted by currentPoints ASC
-    2. Then healthy troops, sorted by maxPoints ASC (weakest base tier first)
-  
-  For each troop in sorted list:
-    if troop.currentPoints <= pointsToAbsorb:
-      troop dies, pointsToAbsorb -= troop.currentPoints
-    else:
-      troop.currentPoints -= pointsToAbsorb
-      pointsToAbsorb = 0
-      break
+STEP 2 — SIMULTANEOUS RESOLUTION (Mutual Subtraction)
 
-STEP 4 — Post-battle
-  ATTACKER_WIN:
-    - Surviving attacker troops return home (deployed=false, travelTargetGameId=null)
-    - Target capital health is reduced (mechanism TBD — not yet specified)
-  DEFENDER_WIN:
-    - Surviving defender troops remain in capital
-    - Attacker troops that died are removed
-    - Surviving attacker troops... [TBD — do they return home damaged?]
+  RESOLUTION A: Defender Side (Troops -> Capital)
+    pointsToAbsorb = attackerDamage
+    
+    1. Apply damage to defenderTroops (Sort: Damaged first, then weakest base points ASC)
+    2. For each troop in sorted list:
+       if troop.currentPoints <= pointsToAbsorb:
+         troop dies, pointsToAbsorb -= troop.currentPoints
+       else:
+         troop.currentPoints -= pointsToAbsorb, pointsToAbsorb = 0, break
+    
+    3. Overflow Damage: If pointsToAbsorb > 0:
+       targetCapital.health -= pointsToAbsorb
 
-SPECIAL CASE — Eliminated player's troops:
-  If a player is eliminated while troops are traveling, those troops continue their journey
-  and resolve combat normally upon arrival.
-  EXCEPTION: If only 2 players remain, orphan troops do not resolve (to avoid mutual elimination).
+  RESOLUTION B: Attacker Side (Casualties for Attacker)
+    pointsToAbsorb = defenderDamage
+    
+    1. Apply damage to attackerTroops (Sort: Damaged first, then weakest base points ASC)
+    2. For each troop in sorted list:
+       if troop.currentPoints <= pointsToAbsorb:
+         troop dies, pointsToAbsorb -= troop.currentPoints
+       else:
+         troop.currentPoints -= pointsToAbsorb, pointsToAbsorb = 0, break
+
+STEP 3 — Outcome & Cleanup
+  - ATTACKER_WIN: If targetCapital.health <= 0 → Attacker conquers/wins.
+  - SURVIVORS: Any attacker troops with currentPoints > 0 return home.
+  - SYNC: Persist all troop health and capital health changes.
 ```
 
 ---
@@ -597,7 +597,8 @@ All values stored in environment variables. No hardcoded secrets or URLs.
 | `POSTGRES_DUMP_INTERVAL_MS` | Middle | Default: `900000` (15 min) |
 | `MONGODB_DUMP_INTERVAL_MS` | Middle | Default: `7200000` (2 h) |
 | `TIME_WHEEL_TICK_MS` | Middle | Default: `500` |
-| `ADVANTAGE_MULTIPLIER` | Middle | Default: `1.25` [PROPOSED] |
+| `ADVANTAGE_MULTIPLIER` | Middle | Default: `1.5` |
+| `DEFENSE_MULTIPLIER` | Middle | Default: `1.1` |
 | `MINIO_ENDPOINT` | Middle | MinIO API URL (e.g. `http://minio:9000`) |
 | `MINIO_ACCESS_KEY` | Middle | MinIO access key (set in MinIO container env) |
 | `MINIO_SECRET_KEY` | Middle | MinIO secret key (set in MinIO container env) |

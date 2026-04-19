@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview: Modal Entrenar Tropas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* PREVIEW ONLY — not production code */
+        :root {
+            --color-bg-primary:   #0d0c18;
+            --color-bg-modal:     #252342;
+            --color-bg-overlay:   rgba(0, 0, 0, 0.72);
+            --color-text-primary:   #e8e0d0;
+            --color-text-secondary: #b8a898;
+            --color-gold:        #c9a84c;
+            --color-gold-light:  #e8c96a;
+            --color-gold-muted:  rgba(201, 168, 76, 0.15);
+            --color-border-default: #3a3555;
+            --color-success:     #2d8a4e;
+            --color-error:       #c0392b;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Lato', sans-serif;
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--color-bg-overlay);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--color-bg-modal) 0%, var(--color-bg-primary) 100%);
+            border: 2px solid var(--color-gold);
+            border-radius: 12px;
+            max-width: 550px;
+            width: 95%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(201, 168, 76, 0.1);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--color-border-default);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--color-gold-muted);
+        }
+
+        .header-main {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--color-gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .currency-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            width: fit-content;
+        }
+
+        .currency-label { font-size: 0.75rem; color: var(--color-text-secondary); }
+        .currency-value { font-weight: bold; color: var(--color-gold); }
+
+        .btn-close {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .training-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .training-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--color-border-default);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--color-success);
+        }
+
+        .training-row.unavailable {
+            border-left-color: var(--color-error);
+            opacity: 0.7;
+        }
+
+        .troop-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .troop-icon {
+            font-size: 2rem;
+            width: 3.5rem; height: 3.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px;
+            border: 1px solid rgba(201, 168, 76, 0.2);
+        }
+
+        .troop-details { display: flex; flex-direction: column; }
+        .troop-name { font-weight: bold; font-size: 1.1rem; }
+        .troop-desc { font-size: 0.8rem; color: var(--color-text-secondary); }
+
+        .troop-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        .cost-tag { color: var(--color-gold); font-weight: bold; }
+
+        .btn-train {
+            background: linear-gradient(135deg, var(--color-gold) 0%, #9a7a30 100%);
+            color: #0d0c18;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .btn-train:disabled {
+            background: #3a3555;
+            color: #5a5068;
+            cursor: not-allowed;
+        }
+
+        .modal-footer {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--color-border-default);
+            background: var(--color-gold-muted);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-close-modal {
+            background: transparent;
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border-default);
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <!-- Header -->
+            <div class="modal-header">
+                <div class="header-main">
+                    <h1 class="modal-title">ENTRENAR</h1>
+                    <div class="currency-badge">
+                        <span class="currency-label">Ptos.</span>
+                        <span class="currency-value">150</span>
+                        <span class="currency-icon">💰</span>
+                    </div>
+                </div>
+                <button class="btn-close">✕</button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <div class="training-list">
+                    <!-- Fila 1: Asequible -->
+                    <div class="training-row">
+                        <div class="troop-info">
+                            <div class="troop-icon">⚔️</div>
+                            <div class="troop-details">
+                                <span class="troop-name">Infantería</span>
+                                <span class="troop-desc">Guerreros básicos con hachas y escudos.</span>
+                            </div>
+                        </div>
+                        <div class="troop-actions">
+                            <div class="cost-tag">50 💰</div>
+                            <button class="btn-train">ENTRENAR</button>
+                        </div>
+                    </div>
+
+                    <!-- Fila 2: Asequible -->
+                    <div class="training-row">
+                        <div class="troop-info">
+                            <div class="troop-icon">🏹</div>
+                            <div class="troop-details">
+                                <span class="troop-name">Arquería</span>
+                                <span class="troop-desc">Unidades a distancia para hostigar al enemigo.</span>
+                            </div>
+                        </div>
+                        <div class="troop-actions">
+                            <div class="cost-tag">75 💰</div>
+                            <button class="btn-train">ENTRENAR</button>
+                        </div>
+                    </div>
+
+                    <!-- Fila 3: No asequible -->
+                    <div class="training-row unavailable">
+                        <div class="troop-info">
+                            <div class="troop-icon">🐴</div>
+                            <div class="troop-details">
+                                <span class="troop-name">Caballería</span>
+                                <span class="troop-desc">Unidades rápidas y poderosas montadas. (Falta tech: Establos)</span>
+                            </div>
+                        </div>
+                        <div class="troop-actions">
+                            <div class="cost-tag">150 💰</div>
+                            <button class="btn-train" disabled>BLOQUEADO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button class="btn-close-modal">CERRAR</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

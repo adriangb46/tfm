@@ -1,5 +1,294 @@
 # Agents Activity Changelog
 
+---
+
+## [2026-04-19] Creación del Modal de Reglas (Leyes de Midgard)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar un modal informativo que detalle las reglas del juego, fases, recursos y sistemas de clanes para mejorar la experiencia del usuario y la comprensión de las mecánicas básicas.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Nuevo Componente `ReglasModalComponent`**:
+   - **Visual**: Modal centrado con estética de pergamino digital, glassmorphism enriquecido (`$color-bg-glass-rich`) y detalles dorados.
+   - **Contenido**: Secciones estructuradas para:
+     - **Objetivo**: Explicación de la condición de victoria.
+     - **Fases**: Detalle de Preparación (5 min), Guerra (ticks de 30-60s) y Final.
+     - **Recursos**: Diferenciación entre Oro (entrenamiento) e Investigación (daño en batalla).
+     - **Clanes**: Resumen del sistema de ventajas tácticas (tipos).
+     - **Tecnología**: Mención al árbol de 8 niveles.
+
+2. **Integración en `GamePageComponent`**:
+   - **Signals**: Nueva señal `showReglasModal` para el control de visibilidad.
+   - **Binding**: Vinculado el botón "Reglas" de la barra superior para abrir el modal.
+   - **Lógica**: Implementados métodos `openRules()` y `closeReglasModal()`.
+
+3. **Estilos y UX**:
+   - Animación de entrada con escalado suave (`scale-up`).
+   - Scrollbar personalizada para contenido extenso.
+   - Diseño responsivo que adapta la grilla de recursos y clanes a dispositivos móviles.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/game/modals/reglas.modal.ts` | **CREADO** |
+| `front/src/app/pages/game/modals/reglas.modal.html` | **CREADO** |
+| `front/src/app/pages/game/modals/reglas.modal.scss` | **CREADO** |
+| `front/src/app/pages/game/game.component.ts` | Modificado |
+| `front/src/app/pages/game/game.component.html` | Modificado |
+
+---
+
+## [2026-04-19] Alineación con la Guía de Colores (Front Color Guide)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Eliminar la deuda técnica de estilos mediante la eliminación de todos los colores hexadecimales hardcodeados en los componentes Angular, asegurando el cumplimiento estricto de `front_color_guide.md`.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Unificación de Temas (Dark/Light)**:
+   - **Adaptabilidad al Sistema**: Se ha configurado el proyecto para que los modales y componentes respeten la preferencia del sistema operativo (`prefers-color-scheme`) o la elección del usuario via `ThemeService`.
+   - **Nuevos Tokens de Overlay**:
+     - `$color-overlay-soft`: Reemplaza transparencias fijas de negro/blanco, adaptándose al fondo actual.
+     - `$color-overlay-strong`: Reemplaza fondos de rejillas y capas de profundidad hardcodeadas.
+   
+2. **Eliminación de Colores Absolutos**:
+   - Limpieza de `black`, `white`, `#000` y `#fff` en todos los archivos SCSS de `src/app`.
+   - Sustitución por `var(--color-text-primary)` y `var(--color-text-inverse)` para garantizar contraste automático.
+
+3. **Estandarización de Modales**:
+   - El **Log de Batalla** ha sido migrado al sistema de degradados premium (`$color-bg-modal` + `$color-bg-primary`) para ser consistente con los modales de Ataque y Entrenamiento.
+   - Refactorizados los 5 modales de juego para asegurar que no existan interfaces "oscuras" forzadas en temas claros.
+
+4. **Herramientas de Desarrollo (Debug)**:
+   - Se ha añadido un botón en el **Panel de Debug** para alternar entre Tema Claro y Oscuro en tiempo real, facilitando el QA visual.
+
+5. **Calidad y Verificación**:
+   - Corregido error de importación SCSS en `game.component.scss`.
+   - Auditoría final con `grep` confirmando la ausencia de colores hardcodeados en la capa de aplicación.
+
+2. **Refactorización de Componentes Principales**:
+   - `game.component.scss`: Eliminación de `#hex` en barras de vida, paneles de debug y fondos de clanes (migrados a `color-mix`).
+   - `admin.component.scss`: Corrección de colores en botones de acción de peligro.
+   - `navbar.component.scss`: Ajuste de colores semantic en el menú desplegable.
+
+3. **Refactorización de Modales de Juego**:
+   - `game-log.modal.scss`: Rediseño completo usando las nuevas variables de glassmorphism y eliminando fallbacks de `var()`.
+   - `entrenar.modal.scss`, `visualizar-tropas.modal.scss`, `atacar.modal.scss`, `anadir-tropa-ataque.modal.scss`: Sustitución masiva de dorados hardcodeados (#d4af37) y rojos por los tokens oficiales `$color-gold` y `$color-error`.
+
+4. **Calidad y Verificación**:
+   - Ejecutada auditoría con `grep` para asegurar la ausencia total de `#` arbitrarios en la carpeta `src/app`.
+   - Verificada la compatibilidad con los temas **Dark** y **Light**.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Cambio |
+|---------|--------|
+| `.agents/front_color_guide.md` | Actualizado con nuevos tokens |
+| `front/src/styles/tokens.scss` | Implementación de custom properties |
+| `front/src/styles/variables.scss` | Implementación de variables SCSS |
+| `front/src/app/pages/game/game.component.scss` | Refactorizado |
+| `front/src/app/pages/admin/admin.component.scss` | Refactorizado |
+| `front/src/app/shared/components/navbar/navbar.component.scss` | Refactorizado |
+| `front/src/app/pages/game/modals/*.scss` | Refactorización de todos los modales (5 archivos) |
+
+---
+
+## [2026-04-19] Implementación de Log de Batalla Global
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Crear un sistema de registro de eventos global para la partida, permitiendo visualizarlos en un modal dedicado con estética vikinga y registro automático de acciones de juego.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Definición de Modelo (`attack.types.ts`)**:
+   - Creada la interfaz `GameLogEntry` con campos para jugador, acción, timestamp y tipo (ataque, entrenamiento, investigación, sistema).
+
+2. **Nuevo Componente `GameLogModalComponent`**:
+   - **Visual**: Modal con glassmorphism, scrollbar personalizada y bordes dorados.
+   - **Funcional**: Clasificación de mensajes por colores según el tipo (Rojo para ataques, Azul para entrenamiento, Dorado para sistema).
+   - **Iconografía**: Uso de emojis/iconos dinámicos según el tipo de acción.
+
+3. **Integración en `GamePageComponent`**:
+   - **Signals**: Añadida señal `gameLogs` para gestionar la lista de eventos y `showLogModal` para la visibilidad.
+   - **Logging Automático**:
+     - `onTrainTroop`: Registra el entrenamiento de nuevas unidades.
+     - `onLaunchAttack`: Registra el lanzamiento de ataques contra otros jugadores.
+   - **Método `addLogEntry`**: Implementada lógica para generar timestamps automáticos y IDs únicos para las entradas.
+
+4. **UI/UX**:
+   - Vinculado el botón de pergamino (📜) de la barra lateral derecha para abrir el log.
+   - Modal con animación de entrada y cierre por backdrop o botón.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/game/modals/game-log.modal.ts` | **CREADO** |
+| `front/src/app/pages/game/modals/game-log.modal.html` | **CREADO** |
+| `front/src/app/pages/game/modals/game-log.modal.scss` | **CREADO** |
+| `front/src/app/pages/game/modals/attack.types.ts` | Modificado |
+| `front/src/app/pages/game/game.component.ts` | Modificado |
+| `front/src/app/pages/game/game.component.html` | Modificado |
+
+---
+
+## [2026-04-19] Creación del Panel de Debug (Desarrollo)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar un panel de herramientas flotante para permitir al desarrollador manipular el estado del juego manualmente (Oro, Fases, Progreso) y verificar la UI sin depender del backend.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Interfaz de Debug (`GamePageComponent`)**:
+   - Añadido un botón de engranaje (⚙️) en la esquina inferior izquierda.
+   - Panel desplegable con controles de Economía, Fases y Entrenamiento.
+
+2. **Funcionalidades de Simulación**:
+   - **Economía**: Botones para añadir/quitar oro (`+50`, `+500`, `-100`).
+   - **Fases**: Ciclo dinámico entre `PREPARACIÓN`, `GUERRA` y `FIN`.
+   - **Entrenamiento Secuencial**:
+     - Control manual del progreso (%) de la tropa activa.
+     - Botón **Completar Entrenamiento**: Convierte instantáneamente la unidad activa en una tropa lista (visible en el modal de tropas).
+
+3. **Estilos de Panel**:
+   - Estética oscura translúcida (glassmorphism) coherente con el juego.
+   - Posicionamiento fijo para no interferir con los botones de acción principales.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo                                     | Cambio                                                       |
+| ------------------------------------------- | ------------------------------------------------------------ |
+| `front/src/app/pages/game/game.component.ts` | Añadidos signals de visibilidad y métodos de manipulación de estado. |
+| `front/src/app/pages/game/game.component.html` | Inclusión del panel y controles de debug.                    |
+| `front/src/app/pages/game/game.component.scss` | Estilos del panel de debug y botón disparador.               |
+
+---
+
+---
+
+## [2026-04-19] Visualización de Progreso de Entrenamiento Secuencial
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la visualización del progreso de entrenamiento tanto en la pantalla principal (botón flotante) como en el modal de tropas, siguiendo el requisito de entrenamiento de una en una.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Lógica de Entrenamiento en `GamePageComponent`**:
+   - Añadidas señales `computed` para detectar la tropa activa en entrenamiento y su progreso.
+   - Actualizado el mock de entrenamiento para inicializar tropas con `trainingProgress: 0` y `isTraining: true`.
+
+2. **Feedback Visual en Botones Flotantes (`GamePage`)**:
+   - `game.component.scss`: Añadido un efecto de llenado vertical (`::before`) en los botones de acción (`.action-btn`) que responde a la variable CSS `--progress`.
+   - `game.component.html`: Vinculado el progreso de la tropa activa al botón de "Ver Tropas".
+
+3. **Refactor del Modal de Tropas (`VisualizarTropasModalComponent`)**:
+   - **Lógica**: Implementado ordenamiento automático para mostrar primero las tropas listas, luego la activa en entrenamiento y finalmente las unidades en cola.
+   - **Template**: Rediseñadas las tarjetas de tropas para soportar tres estados:
+     - **READY**: Borde dorado y barra de vida verde.
+     - **TRAINING**: Fondo animado con el progreso de entrenamiento (azul `--color-progress-training`).
+     - **QUEUED**: Desaturado y con opacidad reducida (modo espera).
+   - **Estilos**: Aplicado el efecto de "fondo progress bar" mediante gradientes dinámicos y pseudoelementos.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo                                          | Cambio                                                       |
+| ------------------------------------------------ | ------------------------------------------------------------ |
+| `front/src/app/pages/game/game.component.ts`      | Lógica de cola y progreso computado                          |
+| `front/src/app/pages/game/game.component.html`    | Binding de progreso al botón flotante                        |
+| `front/src/app/pages/game/game.component.scss`    | Estilo de llenado de fondo para botones                      |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.ts`   | Lógica de estados y ordenamiento                             |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.html` | UI con badges y estados de entrenamiento                     |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.scss` | Efectos visuales de progreso y unidades en espera (grayscale) |
+
+---
+
+---
+
+## [2026-04-19] Creación del Modal de Entrenamiento de Tropas
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar el modal "Entrenar" para que los jugadores puedan comprar nuevas unidades usando créditos económicos, con una lista de tropas dinámica controlada por el padre (anticipando integración con el middle server).
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Definición de Tipos (`attack.types.ts`)**:
+   - Añadida la interfaz `TrainableTroopOption` para manejar las opciones de compra (nombre, coste, icono, descripción).
+
+2. **Creación del Componente `EntrenarModalComponent`**:
+   - `entrenar.modal.ts`: Lógica con `signals` de Angular 20, validación de presupuesto (`canAfford`) y emisión de eventos de entrenamiento.
+   - `entrenar.modal.html`: Layout basado en el mockup del usuario. Incluye cabecera con balance de "Ptos.", lista dinámica de tropas con estados visuales (asequible/no asequible).
+   - `entrenar.modal.scss`: Estilo premium "Mythic Viking" con glassmorphism, gradientes dorados y animaciones de entrada (`fadeIn`, `slideIn`).
+
+3. **Integración en `GamePageComponent`**:
+   - `game.component.ts`: imports actualizados, señales para controlar la visibilidad del modal (`showEntrenarModal`) y mock data de las opciones de entrenamiento disponibles inicialmente (Infantería, Arquería, Caballería).
+   - `game.component.html`: Inclusión del tag `<app-entrenar-modal>` con vinculación de datos y eventos.
+
+4. **Lógica de Mock (Entrenamiento)**:
+   - Implementado método `onTrainTroop` que descuenta el oro y añade la nueva tropa a la lista de `availableTroops` con estado `isTraining: true`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo                                          | Acción     |
+| ------------------------------------------------ | ---------- |
+| `front/src/app/pages/game/modals/entrenar.modal.ts`   | **CREADO** |
+| `front/src/app/pages/game/modals/entrenar.modal.html` | **CREADO** |
+| `front/src/app/pages/game/modals/entrenar.modal.scss` | **CREADO** |
+| `front/src/app/pages/game/modals/attack.types.ts`     | Modificado |
+| `front/src/app/pages/game/game.component.ts`          | Modificado |
+| `front/src/app/pages/game/game.component.html`        | Modificado |
+
+---
+
+
+## [2026-04-19] Creación del Modal de Visualización de Tropas (Read-Only)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar un modal informativo para visualizar las tropas de un territorio, siguiendo la estética del modal de ataque pero sin funcionalidades de edición o ataque.
+
+### 📝 Cambios Realizados:
+
+#### 1. **Componente `VisualizarTropasModalComponent`**
+   - **Lógica (`visualizar-tropas.modal.ts`)**:
+     - Componente independiente con `ChangeDetectionStrategy.OnPush`.
+     - Inputs: `title` y `troops` (usando `Signal` de Angular).
+     - Atributo computado `gridCols` para organizar la grilla dinámicamente.
+   - **Template (`visualizar-tropas.modal.html`)**:
+     - Estructura de modal con overlay y contenido centrado.
+     - Grilla de tropas que muestra icono, barra de vida y texto detallado (actual/máxima).
+     - Botón de cierre en el header y footer para facilitar la navegación.
+   - **Estilos (`visualizar-tropas.modal.scss`)**:
+     - Reutilización del diseño "vikingo": bordes dorados (#d4af37), fondos oscuros con degradados y glassmorphism.
+     - Ajuste de interactividad: celdas de tropas en modo `read-only` (sin cursor de mano ni efectos de escala).
+     - Barra de vida con gradiente verde (#2ecc71 → #27ae60).
+
+#### 2. **Preview Estático**
+   - **Archivo (`.agents/previews/visualizar-tropas-preview.html`)**:
+     - Creado para validación visual inmediata.
+     - Simula el estado del modal con 5 tropas de ejemplo con salud variable.
+
+### ✨ Características Implementadas
+
+| Requisito | Implementación |
+|-----------|-----------------|
+| **Consistencia Visual** | Mismo aspecto que el modal de ataque (grid 1x1, colores, fuentes). |
+| **Informativo** | Muestra el estado actual de las tropas (salud) de forma clara. |
+| **Read-Only** | Sin botones de añadir tropas o ejecutar ataque. |
+| **Grilla Dinámica** | El número de columnas se ajusta según la cantidad de tropas. |
+
+### 🗂️ Archivos Creados:
+
+| Archivo | Tipo | Descripción |
+|---------|------|------------|
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.ts` | Component | Lógica del modal informativo |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.html` | Template | UI del modal de visualización |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.scss` | Styles | Estilos vikingos y health bars |
+| `.agents/previews/visualizar-tropas-preview.html` | HTML | Vista previa estática interactiva |
+
+---
+
+
 ## [2026-04-19] Implementación de Caminos de Ataque Animados (SVG Attack Path Visualization)
 
 **Agente**: GitHub Copilot (Claude Haiku 4.5)  
@@ -441,18 +730,6 @@
 
 2:
 3: ## [2026-04-18] Actualización de Reglas: Sync Obligatorio (Git Pull + Changelog)
-4: **Agente**: Antigravity (Google DeepMind)
-5: **Objetivo**: Implementar una salvaguarda para evitar conflictos en un entorno de dos desarrolladores, obligando al agente a sincronizar y revisar el historial previo a cambios importantes.
-6:
-7: ### 📝 Resumen de Tareas Realizadas:
-8: 1. **Modificación de rules/collaboration.md**:
-9: - Añadida "RULE 0" que obliga a realizar `git pull` y leer `AGENTS_CHANGELOG.md` antes de cambios significativos.
-10: 2. **Modificación de GEMINI.md**:
-11: - Añadida sección crítica "BEFORE ANY BIG CHANGE" con los pasos de sincronización, revisión de changelog y análisis de impacto.
-12:
-13: ### 🗂️ Archivos Modificados:
-14: | Archivo | Cambio |
-15: |---|---|
 16: | `GEMINI.md` | Nueva sección "BEFORE ANY BIG CHANGE" |
 17: | `.agents/rules/collaboration.md` | Nueva "RULE 0" |
 18:

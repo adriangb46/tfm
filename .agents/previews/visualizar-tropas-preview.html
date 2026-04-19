@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview: Modal Tropas (Progreso de Entrenamiento)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* PREVIEW ONLY — not production code */
+        :root {
+            --color-bg-primary:   #0d0c18;
+            --color-bg-modal:     #252342;
+            --color-bg-overlay:   rgba(0, 0, 0, 0.72);
+            --color-text-primary:   #e8e0d0;
+            --color-text-secondary: #b8a898;
+            --color-gold:        #c9a84c;
+            --color-gold-muted:  rgba(201, 168, 76, 0.15);
+            --color-border-default: #3a3555;
+            --color-success:     #2d8a4e;
+            --color-progress-training: #4a90d9;
+        }
+
+        body {
+            margin: 0; font-family: 'Lato', sans-serif;
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--color-bg-overlay);
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--color-bg-modal) 0%, var(--color-bg-primary) 100%);
+            border: 2px solid var(--color-gold);
+            border-radius: 12px;
+            max-width: 500px; width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--color-gold);
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--color-gold-muted);
+        }
+
+        .modal-title { font-family: 'Cinzel', serif; margin: 0; color: var(--color-gold); text-transform: uppercase; }
+
+        .modal-body { padding: 1.5rem; }
+
+        .troops-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px dashed var(--color-gold);
+        }
+
+        .grid-cell {
+            background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 8px;
+            aspect-ratio: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- ESTADOS DE ENTRENAMIENTO --- */
+
+        /* 1. ENTRENADO (Normal) */
+        .grid-cell.ready {
+            border-color: var(--color-gold);
+        }
+
+        /* 2. EN PROGRESO (Fondo como Progress Bar) */
+        .grid-cell.training {
+            border-color: var(--color-progress-training);
+        }
+        .grid-cell.training::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: var(--progress, 0%);
+            background: var(--color-progress-training);
+            opacity: 0.25;
+            z-index: 0;
+            transition: width 0.5s ease-in-out;
+        }
+
+        /* 3. EN COLA (Deshabilitado) */
+        .grid-cell.queued {
+            opacity: 0.4;
+            filter: grayscale(1);
+            border-style: dotted;
+        }
+
+        /* Contenido de la celda */
+        .cell-content {
+          z-index: 1;
+          display: flex; flex-direction: column; align-items: center; gap: 8px;
+          height: 100%; width: 100%;
+        }
+
+        .troop-icon { font-size: 2rem; }
+
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .status-ready { background: var(--color-success); color: white; }
+        .status-training { background: var(--color-progress-training); color: white; }
+        .status-queued { background: #555; color: #ccc; }
+
+        .health-bar {
+            width: 100%; height: 5px;
+            background: #111; border-radius: 3px; overflow: hidden;
+            border: 1px solid #444;
+        }
+        .health-fill { height: 100%; background: var(--color-success); width: 100%; }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            display: flex; justify-content: flex-end;
+            border-top: 1px solid var(--color-border-default);
+        }
+
+        .btn-close {
+            background: var(--color-gold); color: #0d0c18;
+            border: none; padding: 0.5rem 1.5rem; border-radius: 4px;
+            font-weight: bold; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">TROPAS</h2>
+                <span class="btn-close" style="background:transparent; color: #aaa; font-size: 1.5rem;">✕</span>
+            </div>
+
+            <div class="modal-body">
+                <div class="troops-grid">
+                    <!-- Tropa 1: LISTA -->
+                    <div class="grid-cell ready">
+                        <div class="cell-content">
+                          <div class="troop-icon">⚔️</div>
+                          <span class="status-badge status-ready">Listo</span>
+                          <div class="health-bar"><div class="health-fill" style="width: 100%"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Tropa 2: ENTRENANDO (65%) -->
+                    <div class="grid-cell training" style="--progress: 65%;">
+                        <div class="cell-content">
+                          <div class="troop-icon">🏹</div>
+                          <span class="status-badge status-training">65%</span>
+                        </div>
+                    </div>
+
+                    <!-- Tropa 3: EN COLA -->
+                    <div class="grid-cell queued">
+                        <div class="cell-content">
+                          <div class="troop-icon">🐴</div>
+                          <span class="status-badge status-queued">En Cola</span>
+                        </div>
+                    </div>
+
+                    <!-- Tropa 4: LISTA -->
+                    <div class="grid-cell ready">
+                        <div class="cell-content">
+                          <div class="troop-icon">⚔️</div>
+                          <span class="status-badge status-ready">Listo</span>
+                          <div class="health-bar"><div class="health-fill" style="width: 80%"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-close">CERRAR</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

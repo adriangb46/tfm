@@ -74,8 +74,13 @@ with `prefers-color-scheme` as the default and a `[data-theme]` attribute overri
   // --- Progress bars ---
   --color-progress-track:    #3a3555;
   --color-progress-health:   #2d8a4e; // green — troop health
+  --color-progress-health-warning: #f59e0b; // orange — low health
   --color-progress-training: #4a90d9; // blue  — training queue
   --color-progress-research: #8b5cf6; // violet — research progress
+
+  // --- Glassmorphism & Overlays ---
+  --color-bg-glass:      rgba(33, 31, 56, 0.7);
+  --color-bg-glass-rich: rgba(20, 25, 40, 0.95);
 
   // --- Scrollbars (webkit) ---
   --color-scrollbar-track:  #1a1830;
@@ -148,8 +153,13 @@ with `prefers-color-scheme` as the default and a `[data-theme]` attribute overri
   // --- Progress bars ---
   --color-progress-track:    #c8b898;
   --color-progress-health:   #1e6b35;
+  --color-progress-health-warning: #d97706;
   --color-progress-training: #1a5fa0;
   --color-progress-research: #5b34d6;
+
+  // --- Glassmorphism & Overlays ---
+  --color-bg-glass:      rgba(240, 230, 210, 0.75);
+  --color-bg-glass-rich: rgba(253, 248, 240, 0.95);
 
   // --- Scrollbars ---
   --color-scrollbar-track:  #ede4d5;
@@ -215,10 +225,17 @@ $color-clan-rune:   var(--color-clan-rune);
 $color-clan-death:  var(--color-clan-death);
 
 // Progress
-$color-progress-track:    var(--color-progress-track);
-$color-progress-health:   var(--color-progress-health);
-$color-progress-training: var(--color-progress-training);
-$color-progress-research: var(--color-progress-research);
+$color-progress-track:          var(--color-progress-track);
+$color-progress-health:         var(--color-progress-health);
+$color-progress-health-warning: var(--color-progress-health-warning);
+$color-progress-training:       var(--color-progress-training);
+$color-progress-research:       var(--color-progress-research);
+
+// Glass & Effects
+$color-bg-glass:      var(--color-bg-glass);
+$color-bg-glass-rich: var(--color-bg-glass-rich);
+$color-overlay-soft:  var(--color-overlay-soft);
+$color-overlay-strong: var(--color-overlay-strong);
 ```
 
 ---
@@ -277,6 +294,8 @@ export class ThemeService {
 | `--color-bg-card` | `#211f38` | `#fdf8f0` | Cards, panels, sidebars |
 | `--color-bg-modal` | `#252342` | `#fff9f0` | Modals, drawers |
 | `--color-bg-overlay` | `rgba(0,0,0,0.72)` | `rgba(30,20,10,0.50)` | Scrim behind modals |
+| `--color-bg-glass` | `rgba(33,31,56,0.7)` | `rgba(240,230,210,0.75)` | Glassmorphism panels |
+| `--color-bg-glass-rich` | `rgba(20,25,40,0.95)` | `rgba(253,248,240,0.95)` | Opaque glass for modals |
 
 ### Text
 

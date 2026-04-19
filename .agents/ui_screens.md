@@ -245,16 +245,18 @@
 ### Layout elements
 - Title: "TROPAS"
 - Close button `✕`
-- List of trained troops, each row:
-  - Troop name
-  - Quantity (grouped by type)
-  - Progress bar:
-    - If training not complete: shows training progress
-    - If training complete: shows health bar (= currentPoints / maxPoints)
+- List of trained/training troops (one visual card per instance):
+  - Troop name and icon
+  - Health bar (if training complete)
+  - **Training state visualization**:
+    - **Completed**: Normal card with health bar.
+    - **Training (Active)**: Card background acts as a progress bar (fill with `--color-progress-training`).
+    - **Queued (Waiting)**: Card appears disabled / monochrome / high transparency.
 
 ### Notes
-- Troops still training and troops ready are shown together.
-- One visual item per troop instance (repeats allowed if multiple of same type).
+- Training is sequential (one by one). Only one troop can have active progress.
+- Troops are listed in order of training (ready first, then active, then queued).
+- One visual card per troop instance.
 
 ---
 
