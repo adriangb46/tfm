@@ -2,6 +2,41 @@
 
 ---
 
+## [2026-04-19] Implementación de Modo Debug Global
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Establecer un sistema de herramientas de desarrollo persistente en toda la aplicación para simular estados de autenticación (Login/Logout), roles (Admin/User) y alternancia de temas (Light/Dark).
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Infraestructura de Debug**:
+   - **`AuthService`**: Implementados métodos `mockLogin()` y `mockLogout()` para inyectar estados de sesión sin bypass real del servidor.
+   - **`DebugService`**: Nuevo servicio centralizado para gestionar la visibilidad de la UI de herramientas.
+
+2. **Componente `GlobalDebugComponent`**:
+   - **Interfaz**: Botón flotante persistente con indicador de estado (punto rojo/verde según login).
+   - **Funcionalidad**: Panel lateral (slide-out) con controles para:
+     - Alternar entre Tema Claro y Oscuro.
+     - Simular inicio/cierre de sesión.
+     - Alternar privilegios de Administrador (activo solo si está logueado).
+   - **Estética**: Diseño estilo "tech-debug" con glassmorphism y bordes dorados, coherente con el estilo "viking-moderno" del proyecto.
+
+3. **Integración Global**:
+   - Inyectado en `AppComponent` para disponibilidad en todas las rutas.
+   - **Limpieza**: Refactorizado `GamePageComponent` para delegar la gestión del tema y auth al componente global, manteniendo solo los debugs específicos de la partida (Oro, Fases, Entrenamiento).
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/core/debug/debug.service.ts` | **CREADO** |
+| `front/src/app/shared/components/debug/global-debug.component.*` | **CREADO** (3 archivos) |
+| `front/src/app/core/auth/auth.service.ts` | Modificado |
+| `front/src/app/app.*` | Modificado |
+| `front/src/app/pages/game/game.component.*` | Modificado |
+
+---
+
 ## [2026-04-19] Creación del Modal de Reglas (Leyes de Midgard)
 
 **Agente**: Antigravity (Google DeepMind)
