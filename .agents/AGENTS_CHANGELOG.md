@@ -2,6 +2,26 @@
 
 ---
 
+## [2026-04-20] Rediseño a Pantalla Completa de Configuración
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Aplicar el flujo `/refine-ui` para rediseñar la vista de configuración desde un formato modal/tarjeta a un formato de pantalla completa.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Iteraciones en el Preview**:
+   - Cambiado el layout a un `grid` de pantalla completa con barra superior simulada.
+   - Perfil de usuario movido a una barra lateral izquierda (`.profile-sidebar`).
+   - Sección de Preferencias cambiada a ancho completo (`.full-width-section`).
+   - Igualadas las alturas de las tarjetas de la cuadrícula mediante `display: flex` y `height: 100%`.
+   - Ajustados márgenes, gaps y tamaños para asegurar que la pantalla sea responsive y encaje sin scroll vertical.
+   - Eliminados los bordes de todas las tarjetas y aplicado el fondo `var(--color-bg-card)` en lugar de `var(--color-bg-secondary)` para seguir estrictamente la guía de estilos.
+
+2. **Paso a Producción (Angular)**:
+   - Sobrescrito `config.component.html` con la nueva estructura de grid.
+   - Sobrescrito `config.component.scss` con los nuevos estilos de cuadrícula, secciones, barra lateral y layout responsive.
+
+---
 ## [2026-04-20] Finalización del CI para db_back
 
 **Agente**: Antigravity (Google DeepMind)
