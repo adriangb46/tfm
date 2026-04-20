@@ -2,6 +2,33 @@
 
 ---
 
+## [2026-04-20] Corrección de errores de navegación y limpieza de código (Front)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver errores de navegación a rutas inexistentes, eliminar advertencias del compilador de Angular y cumplir con la regla de "No any" en el proyecto.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Corrección de Navegación**:
+   - **`HomeComponent`**: Se ha cambiado la navegación de `/lobby` (ruta inexistente) a `/game` para permitir el acceso a la pantalla principal de juego desde el "Hero Section".
+
+2. **Limpieza de Advertencias y Tipado**:
+   - **`HomeComponent`**: Eliminado el import y la inclusión de `RouterLink` en el array de `imports` ya que no se estaba utilizando en el template.
+   - **`GamePageComponent`**: Eliminados 6 usos de `any` en la definición de la señal `availableTroops`, sustituyéndolos por el enum `TroopType` correspondiente.
+
+3. **Optimización SVG**:
+   - **`GamePageComponent.html`**: Actualizada la sintaxis de `xlink:href` a `href` estándar en los elementos del camino de ataque animado.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Cambio |
+|---------|--------|
+| `front/src/app/pages/home/home.component.ts` | Corregida navegación y eliminada advertencia |
+| `front/src/app/pages/game/game.component.ts` | Eliminación de `any` (tipado estricto) |
+| `front/src/app/pages/game/game.component.html` | Corrección de sintaxis SVG |
+
+---
+
 ## [2026-04-20] Finalización del CI para db_back
 
 **Agente**: Antigravity (Google DeepMind)
