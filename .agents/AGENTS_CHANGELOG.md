@@ -2,6 +2,41 @@
 
 ---
 
+## [2026-04-21] Corrección y Centralización de Workflows de GitHub Actions
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver los fallos en los workflows de CI/CD del servidor de base de datos (`db_back`) y poblar los flujos inexistentes del `middle_server` y `frontend`.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Reparación de DB Server (`db_back`)**:
+   - **Fix de Case Sensitivity**: Se ha implementado un paso de shell en `build-docker.yml` para transformar el nombre de la imagen a minúsculas. Esto soluciona el error de "invalid reference format" que impedía el push a GHCR.
+   - **Estabilización de CI**: Verificada la compatibilidad con Java 25 y las versiones de acciones `v6/v5`.
+
+2. **Implementación de Middle Server**:
+   - **Pipeline de CI**: Creado `middle_server_compile.yml` con Node.js 20, instalación de dependencias y validación sintáctica del entrypoint.
+   - **Pipeline de Docker**: Creado `middle-server-docker.yml` para automatizar la construcción y publicación de la imagen.
+
+3. **Implementación de Frontend**:
+   - **Pipeline de CI**: Creado `front_ci.yml` para validar la compilación de Angular en cada push.
+   - **Pipeline de Docker**: Creado `front_docker.yml` para empaquetar la app en una imagen Nginx.
+
+4. **Workflow de Raíz (`tfm`)**:
+   - Creado `main-ci.yml` para validación de estructura de carpetas, asegurando la integridad del repositorio contenedor.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/.github/workflows/build-docker.yml` | Modificado (Fix lowercase) |
+| `middle_server/.github/workflows/middle_server_compile.yml` | Poblado (Node CI) |
+| `middle_server/.github/workflows/middle-server-docker.yml` | **CREADO** |
+| `front/.github/workflows/front_ci.yml` | Poblado (Angular CI) |
+| `front/.github/workflows/front_docker.yml` | **CREADO** |
+| `.github/workflows/main-ci.yml` | **CREADO** |
+
+---
+
 ## [2026-04-20] Refinamiento de Navbar: Layout Centrado y Logo Mythic
 
 **Agente**: Antigravity (Google DeepMind)

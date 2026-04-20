@@ -1,0 +1,22 @@
+name: Main Project Cleanup & Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Basic structure check
+        run: |
+          echo "Verifying project structure..."
+          [ -d "db_back" ] && echo "db_back folder found" || exit 1
+          [ -d "middle_server" ] && echo "middle_server folder found" || exit 1
+          [ -d "front" ] && echo "front folder found" || exit 1
+          echo "All sub-repositories are present."
