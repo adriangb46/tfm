@@ -23,12 +23,11 @@
    - **Pipeline de CI**: Creado `front_ci.yml` para validar la compilación de Angular en cada push.
    - **Pipeline de Docker**: Creado `front_docker.yml` para empaquetar la app en una imagen Nginx.
 
-4. **Workflow de Raíz (`tfm`) - Orquestación Full Stack**:
-   - Rediseñado `main-ci.yml` para actuar como orquestador central.
-   - **Clonación de Repositorios Privados**: Implementada la descarga automática de `db_back`, `middle_server` y `front` mediante el uso de `GH_PAT` (Personal Access Token), permitiendo que el orquestador acceda al código de los sub-proyectos privados.
-   - **Build & Push Multi-recurso**: Ahora el repositorio raíz compila y sube las 3 imágenes personalizadas (`db_server`, `middle_server`, `frontend`) al repositorio principal.
-   - **Empaquetado de Infraestructura**: El workflow descarga, re-etiqueta y sube las imágenes de Postgres, MongoDB, Redis y MinIO al registro del proyecto, creando un "bundle" completo de imágenes bajo el mismo namespace.
-   - **Sincronización de Compose**: Actualizado `docker-compose.yml` para usar el estándar `Dockerfile` (D mayúscula), garantizando la compatibilidad con el nuevo sistema de nombres.
+4. **Workflow de Raíz (`tfm`) - Orquestador Agregador**:
+   - **Estrategia de Agregación**: Rediseñado `main-ci.yml` para actuar como un "hub" de imágenes en lugar de recompilar el código.
+   - **Pull & Re-tag**: El workflow descarga las imágenes ya compiladas y publicadas por cada repositorio independiente (`db_back`, `middle_server`, `frontend`), las re-etiqueta bajo el namespace del proyecto raíz y las vuelve a subir.
+   - **Bundle de Infraestructura**: Incluye la agregación de imágenes de terceros (Postgres, Redis, etc.) para ofrecer un despliegue completo en un solo registro.
+   - **Optimización**: Se ha eliminado la necesidad de clonar los repositorios privados en la raíz, reduciendo el tiempo de ejecución de minutos a segundos y garantizando el uso de binarios ya validados.
 
 ### 🗂️ Archivos Creados/Modificados:
 

@@ -1,4 +1,4 @@
-name: Full Stack Build & Push (TFM Orchestrator)
+name: Full Stack Aggregator (TFM Orchestrator)
 
 on:
   push:
@@ -12,88 +12,58 @@ env:
   IMAGE_BASE: ${{ github.repository }}
 
 jobs:
-  build-and-push:
+  aggregate-and-package:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Checkout repository
+      - name: Checkout root repository
         uses: actions/checkout@v6
-
-      - name: Checkout DB Server
-        uses: actions/checkout@v6
-        with:
-          repository: agb4455/ProyectoIntermodularDamBackend
-          path: db_back
-          token: ${{ secrets.GH_PAT }}
-
-      - name: Checkout Middle Server
-        uses: actions/checkout@v6
-        with:
-          repository: adriangb46/ProyectoIntermodularDamServidorIntermedio
-          path: middle_server
-          token: ${{ secrets.GH_PAT }}
-
-      - name: Checkout Frontend
-        uses: actions/checkout@v6
-        with:
-          repository: agb4455/ProyectoIntermodularDamFrontend
-          path: front
-          token: ${{ secrets.GH_PAT }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
+          # Use GH_PAT to have access to other private repositories' images
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GH_PAT }}
 
       - name: Lowercase IMAGE_BASE
         run: |
           echo "IMAGE_BASE_LOWER=$(echo ${{ env.IMAGE_BASE }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       # ---------------------------------------------------------
-      # 1. Build and Push Custom Services
+      # 1. Pull, Re-tag and Push Custom Services from Sub-repos
       # ---------------------------------------------------------
 
-      - name: Build and Push DB Server
-        uses: docker/build-push-action@v6
-        with:
-          context: ./db_back
-          file: ./db_back/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_BASE_LOWER }}-db-server:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Aggregate Custom Services
+        if: github.event_name != 'pull_request'
+        run: |
+          # Define source and destination mappings
+          # Format: "source_image|destination_suffix"
+          declare -a SERVICES=(
+            "agb4455/proyectointermodulardambackend-db-back|db-server"
+            "adriangb46/proyectointermodulardamservidorintermedio-middle-server|middle-server"
+            "agb4455/proyectointermodulardamfrontend-front|frontend"
+          )
 
-      - name: Build and Push Middle Server
-        uses: docker/build-push-action@v6
-        with:
-          context: ./middle_server
-          file: ./middle_server/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_BASE_LOWER }}-middle-server:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and Push Frontend
-        uses: docker/build-push-action@v6
-        with:
-          context: ./front
-          file: ./front/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_BASE_LOWER }}-frontend:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          for ENTRY in "${SERVICES[@]}"; do
+            IFS='|' read -r SRC_REPO SUFFIX <<< "$ENTRY"
+            
+            SRC="${{ env.REGISTRY }}/$SRC_REPO:latest"
+            DEST="${{ env.REGISTRY }}/${{ env.IMAGE_BASE_LOWER }}-$SUFFIX:latest"
+            
+            echo "Aggregating $SRC into $DEST"
+            docker pull $SRC
+            docker tag $SRC $DEST
+            docker push $DEST
+          done
 
       # ---------------------------------------------------------
-      # 2. Re-tag and Push Infrastructure Images (Full Package)
+      # 2. Package Infrastructure Images (Full Package)
       # ---------------------------------------------------------
 
       - name: Package Infrastructure Images
