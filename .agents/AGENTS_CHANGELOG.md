@@ -2,6 +2,41 @@
 
 ---
 
+## [2026-04-20] Rediseño Estético Premium de Personajes y Reglas (Códice MYTHIC)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Transformar las pantallas informativas de "feísimas" a una experiencia visual "WOW" de alta gama, utilizando tipografía épica, efectos atmosféricos y diseño inmersivo.
+
+### 📝 Resumen de Mejoras Estéticas:
+
+1. **Infraestructura Visual**:
+   - **Tipografía**: Integración de **Cinzel** (para títulos y runas) y **Montserrat** (para lectura fluida) vía Google Fonts en `index.html`.
+   - **Atmósfera**: Implementación de fondos radiales profundos, auroras boreales animadas y partículas de brasas (`embers`) flotantes.
+
+2. **Rediseño de Personajes (Códice de Linajes)**:
+   - **Tarjetas 3D**: Implementación de transformaciones en perspectiva al hacer hover.
+   - **Detalles Forjados**: Bordes con acentos metálicos, runas que brillan intermitentemente y degradados específicos por clan.
+   - **Iconografía**: Enormes iconos de fondo con baja opacidad y glow dinámico según el arquetipo del clan.
+
+3. **Rediseño de Reglas (Leyes de la Guerra)**:
+   - **Visualización Técnica**: La matriz de ventajas ahora utiliza un grid estilizado con degradados semánticos de "Victoria/Derrota".
+   - **Timeline de Eras**: Línea de tiempo vertical con nodos brillantes y efectos de profundidad.
+   - **Bloques de Leyes**: Uso de bordes laterales dorados y cajas de advertencia pulsantes para las reglas críticas.
+
+4. **Experiencia de Usuario (UX)**:
+   - Botones de navegación con efectos de cristal (glassmorphism) y feedback visual mejorado.
+   - Animaciones de entrada escalonadas (`staggered entry`) para todos los elementos de la lista.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/index.html` | Inyección de Google Fonts |
+| `front/src/app/pages/personajes-page/*` | Rediseño completo (HTML/SCSS) |
+| `front/src/app/pages/reglas-page/*` | Rediseño completo (HTML/SCSS) |
+
+---
+
 ## [2026-04-20] Corrección de errores de navegación y limpieza de código (Front)
 
 **Agente**: Antigravity (Google DeepMind)
