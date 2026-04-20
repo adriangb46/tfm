@@ -2,6 +2,29 @@
 
 ---
 
+## [2026-04-20] Finalización del CI para db_back
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Establecer y configurar correctamente el flujo de Integración Continua (CI) para el servidor de base de datos (Java 25 + Spring Boot) utilizando GitHub Actions.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Configuración de GitHub Actions**:
+   - **Reubicación**: Movido `db_back/ci.yml` a `.github/workflows/db-back-ci.yml` para cumplir con el estándar de GitHub.
+   - **Optimización**: Añadidas reglas de filtrado por rutas (`paths: ['db_back/**']`) para ejecutar el CI solo ante cambios relevantes.
+   - **Entorno**: Configurado JDK 25 (Temurin) con caché de Maven habilitado y ruta de dependencias explícita.
+   - **Build**: Implementado comando `./mvnw clean package` con configuración de `working-directory` para el subproyecto.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.github/workflows/db-back-ci.yml` | **CREADO** |
+| `db_back/ci.yml` | **ELIMINADO** |
+
+---
+
+
 ## [2026-04-19] Implementación de Modo Debug Global
 
 **Agente**: Antigravity (Google DeepMind)
