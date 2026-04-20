@@ -25,7 +25,8 @@
 
 4. **Workflow de Raíz (`tfm`) - Orquestador Agregador**:
    - **Estrategia de Agregación**: Rediseñado `main-ci.yml` para actuar como un "hub" de imágenes.
-   - **Simplificación de Seguridad**: Tras hacer los repositorios públicos, se ha eliminado la dependencia de `GH_PAT`. Ahora el orquestador usa exclusivamente el `GITHUB_TOKEN` automático para publicar las imágenes, simplificando la gestión de secretos.
+   - **Simplificación de Seguridad**: Tras hacer los repositorios públicos, se ha eliminado la dependencia de `GH_PAT`.
+   - **Control Manual de Ejecución**: Se han desactivado los disparadores automáticos (`push`, `pull_request`) en todos los workflows (`root`, `db_back`, `middle_server`, `front`). Ahora todos usan `workflow_dispatch`, permitiendo la ejecución manual bajo demanda desde la pestaña Actions de GitHub para optimizar el control y el consumo de recursos.
    - **Pull & Re-tag**: El workflow descarga las imágenes ya compiladas, las re-etiqueta bajo el namespace del proyecto raíz y las publica.
    - **Bundle de Infraestructura**: Incluye Postgres, Redis, MongoDB y MinIO en el mismo namespace para un despliegue unificado.
 
