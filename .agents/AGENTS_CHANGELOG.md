@@ -2,6 +2,37 @@
 
 ---
 
+## [2026-04-20] Integración de Modal de Login y Registro (desde prueba_ia)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Integrar los componentes de autenticación del prototipo externo al proyecto principal, adaptándolos a la guía de estilos Viking/Premium y la arquitectura de Angular 20.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Refactorización de `AuthService`**:
+   - Añadidos métodos `login()` y `register()` que retornan Observables (mock por ahora) para simular latencia de red y éxito de operación.
+   - Estos métodos actualizan la sesión en memoria siguiendo la arquitectura de "token only in memory".
+
+2. **Nuevo Componente `AuthComponent`**:
+   - **Visual**: Implementado un diseño Premium Viking con glassmorphism, sombras profundas, y animaciones de entrada fluidas.
+   - **Funcionalidad**: Switch dinámico entre Inicio de Sesión y Registro dentro del mismo modal.
+   - **Validación**: Implementada validación local con formularios reactivos de Angular.
+   - **Adaptación de Estilos**: Migrado de CSS plano a SCSS utilizando estrictamente las variables de `$color-gold`, `$color-bg-glass-rich`, etc., de la guía oficial.
+
+3. **Integración en `NavbarComponent`**:
+   - Modificada la lógica del avatar de usuario: si no hay sesión, al hacer clic se abre el `AuthComponent` en modo modal.
+   - Vinculada la señal `authModalOpen` para controlar la visibilidad del overlay.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/shared/components/auth/auth.component.*` | **CREADO** (3 archivos) |
+| `front/src/app/core/auth/auth.service.ts` | Modificado |
+| `front/src/app/shared/components/navbar/navbar.component.*` | Modificado |
+
+---
+
 ## [2026-04-20] Finalización del CI para db_back
 
 **Agente**: Antigravity (Google DeepMind)
