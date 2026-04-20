@@ -24,10 +24,10 @@
    - **Pipeline de Docker**: Creado `front_docker.yml` para empaquetar la app en una imagen Nginx.
 
 4. **Workflow de Raíz (`tfm`) - Orquestador Agregador**:
-   - **Estrategia de Agregación**: Rediseñado `main-ci.yml` para actuar como un "hub" de imágenes en lugar de recompilar el código.
-   - **Pull & Re-tag**: El workflow descarga las imágenes ya compiladas y publicadas por cada repositorio independiente (`db_back`, `middle_server`, `frontend`), las re-etiqueta bajo el namespace del proyecto raíz y las vuelve a subir.
-   - **Bundle de Infraestructura**: Incluye la agregación de imágenes de terceros (Postgres, Redis, etc.) para ofrecer un despliegue completo en un solo registro.
-   - **Optimización**: Se ha eliminado la necesidad de clonar los repositorios privados en la raíz, reduciendo el tiempo de ejecución de minutos a segundos y garantizando el uso de binarios ya validados.
+   - **Estrategia de Agregación**: Rediseñado `main-ci.yml` para actuar como un "hub" de imágenes.
+   - **Solución de Permisos (Doble Login)**: Implementada una técnica de cambio de credenciales dinámico. El workflow usa `GH_PAT` para el "pull" de repositorios externos y cambia automáticamente a `GITHUB_TOKEN` para el "push" local, evitando errores de alcances (scopes) insuficientes.
+   - **Pull & Re-tag**: El workflow descarga las imágenes ya compiladas, las re-etiqueta bajo el namespace del proyecto raíz y las publica.
+   - **Bundle de Infraestructura**: Incluye Postgres, Redis, MongoDB y MinIO en el mismo namespace para un despliegue unificado.
 
 ### 🗂️ Archivos Creados/Modificados:
 

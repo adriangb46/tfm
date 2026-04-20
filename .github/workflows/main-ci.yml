@@ -22,12 +22,12 @@ jobs:
       - name: Checkout root repository
         uses: actions/checkout@v6
 
-      - name: Log into registry ${{ env.REGISTRY }}
+      - name: Log into registry ${{ env.REGISTRY }} (for pulling)
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          # Use GH_PAT to have access to other private repositories' images
+          # Use GH_PAT for cross-repository pulling permissions
           username: ${{ github.actor }}
           password: ${{ secrets.GH_PAT }}
 
@@ -50,14 +50,25 @@ jobs:
             "agb4455/proyectointermodulardamfrontend-front|frontend"
           )
 
+          # --- PULLEO (Usando el login previo con GH_PAT) ---
           for ENTRY in "${SERVICES[@]}"; do
             IFS='|' read -r SRC_REPO SUFFIX <<< "$ENTRY"
-            
+            SRC="${{ env.REGISTRY }}/$SRC_REPO:latest"
+            echo "Pulling $SRC..."
+            docker pull $SRC
+          done
+
+          # --- RE-LOGIN (Cambiamos el token al GITHUB_TOKEN local para el PUSH) ---
+          echo "Switching credentials to GITHUB_TOKEN for push to local repo..."
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+
+          # --- RE-TAG & PUSH ---
+          for ENTRY in "${SERVICES[@]}"; do
+            IFS='|' read -r SRC_REPO SUFFIX <<< "$ENTRY"
             SRC="${{ env.REGISTRY }}/$SRC_REPO:latest"
             DEST="${{ env.REGISTRY }}/${{ env.IMAGE_BASE_LOWER }}-$SUFFIX:latest"
             
             echo "Aggregating $SRC into $DEST"
-            docker pull $SRC
             docker tag $SRC $DEST
             docker push $DEST
           done
