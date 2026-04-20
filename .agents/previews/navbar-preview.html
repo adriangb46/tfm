@@ -1,308 +1,269 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Preview: NavBar Dinámica (Viking Style)</title>
-<style>
-  :root {
-    --color-bg-primary: #0d0c18;
-    --color-bg-secondary: #1a1830;
-    --color-bg-tertiary: #141220;
-    --color-bg-card: #211f38;
-    --color-bg-modal: #252342;
-    --color-text-primary: #e8e0d0;
-    --color-text-secondary: #b8a898;
-    --color-gold: #c9a84c;
-    --color-gold-light: #e8c96a;
-    --color-gold-muted: rgba(201, 168, 76, 0.15);
-    --color-border-faint: #252342;
-    --color-border-default: #3a3555;
-    --color-error: #c0392b;
-    --color-error-bg: rgba(192, 57, 43, 0.15);
-  }
-  
-  body {
-    background-color: var(--color-bg-primary);
-    color: var(--color-text-primary);
-    font-family: 'Inter', system-ui, sans-serif;
-    margin: 0;
-    padding: 2rem;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar Preview — Viking Clan Wars</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg-primary: #0d0c18;
+            --color-bg-secondary: #1a1830;
+            --color-bg-card: #211f38;
+            --color-bg-modal: #252342;
+            --color-text-primary: #e8e0d0;
+            --color-text-secondary: #b8a898;
+            --color-gold: #c9a84c;
+            --color-gold-light: #e8c96a;
+            --color-gold-muted: rgba(201, 168, 76, 0.15);
+            --color-border-faint: #252342;
+            --color-border-default: #3a3555;
+            --color-error: #c0392b;
+        }
 
-  /* Toolbar para simular estados en el preview */
-  .preview-controls {
-    background: var(--color-bg-secondary);
-    padding: 1rem;
-    border: 1px dashed var(--color-gold);
-    margin-bottom: 2rem;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  .btn-toggle {
-    background: var(--color-gold);
-    color: var(--color-bg-primary);
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    font-family: 'Inter', sans-serif;
-  }
+        body {
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
 
-  .status-badge {
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
+        /* <!-- PREVIEW ONLY — not production code --> */
 
-  .status-logged-in { background: #27ae60; color: white; }
-  .status-logged-out { background: #7f8c8d; color: white; }
-  
-  /* Navbar */
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 1.5rem;
-    height: 64px;
-    background-color: var(--color-bg-card);
-    border-bottom: 1px solid var(--color-border-faint);
-    box-shadow: 0 4px 12px rgba(0,0,0, 0.5);
-    border-radius: 8px;
-  }
+        .navbar {
+            display: grid;
+            grid-template-columns: 200px 1fr 200px;
+            align-items: center;
+            padding: 0 1.5rem;
+            height: 72px; /* Un poco más alta para que el logo luzca */
+            background-color: var(--color-bg-card);
+            border-bottom: 1px solid var(--color-border-faint);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1000;
+        }
 
-  .nav-group {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    gap: 0.5rem;
-  }
+        /* Logo al inicio (izquierda) */
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            height: 100%;
+        }
 
-  .nav-link {
-    display: flex;
-    align-items: center;
-    padding: 0 1.2rem;
-    height: 100%;
-    color: var(--color-text-secondary);
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 1rem;
-    letter-spacing: 0.05rem;
-    transition: all 0.2s ease;
-    border-bottom: 2px solid transparent;
-  }
+        .mythic-logo {
+            width: 56px;
+            height: 56px;
+            filter: drop-shadow(0 0 8px rgba(201, 168, 76, 0.3));
+        }
 
-  .nav-link:hover, .nav-link.active {
-    color: var(--color-gold-light);
-    border-bottom: 2px solid var(--color-gold);
-  }
+        .wolf-head {
+            animation: runePulse 4s infinite ease-in-out;
+        }
 
-  .spacer { flex-grow: 1; }
+        @keyframes runePulse {
+            0%, 100% { opacity: 0.7; stroke-width: 3; }
+            50% { opacity: 1; stroke-width: 3.5; filter: drop-shadow(0 0 15px #e8c96a); }
+        }
 
-  .user-menu {
-    position: relative;
-    display: flex;
-    align-items: center;
-    height: 100%;
-  }
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
 
-  .user-avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: var(--color-bg-tertiary);
-    color: var(--color-gold);
-    border: 2px solid var(--color-border-default);
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
+        .viking-small {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: var(--color-gold);
+            text-shadow: 0 0 10px var(--color-gold-muted);
+        }
 
-  .user-avatar:hover {
-    border-color: var(--color-gold);
-    box-shadow: 0 0 10px var(--color-gold-muted);
-  }
+        .strategy-small {
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
 
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    right: -1rem;
-    top: 60px;
-    background-color: var(--color-bg-modal);
-    min-width: 200px;
-    box-shadow: 0px 10px 25px rgba(0,0,0,0.8);
-    border: 1px solid var(--color-border-default);
-    border-top: 3px solid var(--color-gold);
-    border-radius: 4px;
-    padding: 0.5rem 0;
-    z-index: 100;
-  }
+        /* Nav links centrados */
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            height: 100%;
+        }
 
-  .dropdown-content.show {
-    display: block;
-  }
+        .nav-link {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.05rem;
+            padding: 0 1.2rem;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+            position: relative;
+            text-transform: uppercase;
+        }
 
-  /* Pico de la flecha */
-  .dropdown-content::before {
-    content: '';
-    position: absolute;
-    top: -8px;
-    right: 22px; 
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-bottom: 8px solid var(--color-gold);
-  }
+        .nav-link:hover, .nav-link.active {
+            color: var(--color-gold-light);
+        }
 
-  .dropdown-item {
-    color: var(--color-text-primary);
-    padding: 10px 20px;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    border-left: 3px solid transparent;
-  }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background-color: var(--color-gold);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px var(--color-gold);
+        }
 
-  .dropdown-item:hover {
-    background-color: var(--color-gold-muted);
-    color: var(--color-gold-light);
-    border-left: 3px solid var(--color-gold);
-    padding-left: 24px;
-  }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 70%;
+        }
 
-  .dropdown-item.danger { color: var(--color-error); }
-  .dropdown-item.danger:hover {
-    background-color: var(--color-error-bg);
-    border-left-color: var(--color-error);
-  }
+        .nav-link.active {
+            color: var(--color-gold);
+            font-weight: 600;
+        }
 
-  .dropdown-divider {
-    height: 1px;
-    background-color: var(--color-border-default);
-    margin: 8px 16px;
-    opacity: 0.5;
-  }
+        /* Acciones (derecha) */
+        .nav-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
 
-  /* Lógica de visibilidad simulada */
-  body.logged-out .is-auth { display: none !important; }
-  body.not-admin .is-admin-only { display: none !important; }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--color-bg-tertiary);
+            border: 2px solid var(--color-border-default);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-gold);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-</style>
+        .user-avatar:hover {
+            border-color: var(--color-gold);
+            box-shadow: 0 0 15px rgba(201, 168, 76, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Simulación de página */
+        .content {
+            padding: 4rem 2rem;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to bottom, var(--color-gold-light), var(--color-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: var(--color-text-secondary);
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+    </style>
 </head>
-<body class="logged-out not-admin">
+<body>
 
-  <!-- CONTROLES DEL PREVIEW -->
-  <div class="preview-controls">
-    <strong>Controles de Testeo:</strong>
-    <button class="btn-toggle" onclick="toggleAuth()">Alternar Login</button>
-    <button class="btn-toggle" id="btn-admin" onclick="toggleAdmin()" style="display:none; background: #9b59b6; color: white;">Hacer ADMIN</button>
-    <span id="status-badge" class="status-badge status-logged-out">Sin Sesión</span>
-    <span id="admin-badge" class="status-badge" style="display:none; background: #8e44ad; color: white;">ADMIN</span>
-  </div>
-
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <div class="nav-group">
-      <a href="#" class="nav-link active">Home</a>
-      <a href="#" class="nav-link is-auth">Lobby</a>
-      <a href="#" class="nav-link">Personajes</a>
-      <a href="#" class="nav-link">Reglas</a>
-    </div>
-    
-    <div class="spacer"></div>
-    
-    <div class="user-menu">
-      <div class="user-avatar" onclick="toggleDropdown()">
-        <svg fill="currentColor" viewBox="0 0 24 24" width="20" height="20">
-          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
-        </svg>
-      </div>
-
-      <div id="dropdown" class="dropdown-content">
-        <!-- Contenido que solo aparece si hay sesión -->
-        <div class="is-auth">
-          <a href="#" class="dropdown-item">Configuración</a>
-          <a href="/stats/user" class="dropdown-item">Estadísticas</a>
-          <a href="#" class="dropdown-item is-admin-only">Administración</a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item danger">Salir de la cuenta</a>
-        </div>
+    <nav class="navbar">
+        <div class="logo-section">
+            <svg viewBox="0 0 100 100" class="mythic-logo" title="Viking Clan Wars Logo">
+                <defs>
+                    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#9a7a30;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#e8c96a;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#c9a84c;stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="glow-svg">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
         
-        <!-- Estado vacío si no hay sesión (como pidió el usuario: "no hagas nada") -->
-        <div id="empty-msg" style="padding: 15px; text-align: center; color: var(--color-text-secondary); font-size: 0.85rem; display: none;">
-          Sesión no iniciada
+                <!-- Crossed Axes (Silhouette) -->
+                <g class="axes" stroke="url(#gold-grad)" stroke-width="2" fill="none">
+                    <path d="M20 80 L80 20" /> 
+                    <path d="M80 80 L20 20" /> 
+                    <path d="M15 75 Q10 85 25 85 L25 75 Z" fill="url(#gold-grad)" /> 
+                    <path d="M85 75 Q90 85 75 85 L75 75 Z" fill="url(#gold-grad)" /> 
+                    <path d="M15 25 Q10 15 25 15 L25 25 Z" fill="url(#gold-grad)" /> 
+                    <path d="M85 25 Q90 15 75 15 L75 25 Z" fill="url(#gold-grad)" /> 
+                </g>
+        
+                <!-- Central Wolf Head (Runic) -->
+                <path class="wolf-head" 
+                      d="M50 25 L65 45 L50 85 L35 45 Z M50 25 L40 35 M50 25 L60 35 M50 85 L42 65 M50 85 L58 65" 
+                      fill="none" stroke="url(#gold-grad)" stroke-width="3" filter="url(#glow-svg)"/>
+                
+                <!-- Runic Circles -->
+                <circle cx="50" cy="50" r="45" stroke="url(#gold-grad)" stroke-width="0.5" stroke-dasharray="2 4" fill="none" opacity="0.5" />
+                <circle cx="50" cy="50" r="38" stroke="url(#gold-grad)" stroke-width="1" fill="none" opacity="0.3" />
+            </svg>
+            <div class="logo-text">
+                <span class="viking-small">VIKING</span>
+                <span class="strategy-small">CLAN WARS</span>
+            </div>
         </div>
-      </div>
+
+        <div class="nav-links">
+            <a href="#" class="nav-link active">Home</a>
+            <a href="#" class="nav-link">Lobby</a>
+            <a href="#" class="nav-link">Personajes</a>
+            <a href="#" class="nav-link">Reglas</a>
+        </div>
+
+        <div class="nav-actions">
+            <div class="user-avatar" title="Perfil">
+                <svg fill="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 1.79 0 4 1.79 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                </svg>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content">
+        <h1>Vista Previa de la Nueva Navbar</h1>
+        <p>He ajustado el layout a un formato de 3 columnas (grid) para que el logo quede a la izquierda y el menú de navegación esté matemáticamente centrado en la pantalla.</p>
+        <p>También he añadido una animación de trazo inferior personalizada que brilla al pasar el cursor o estar activo.</p>
     </div>
-  </nav>
-
-  <script>
-    let isLoggedIn = false;
-    let isAdmin = false;
-
-    function toggleAuth() {
-      isLoggedIn = !isLoggedIn;
-      const body = document.body;
-      const badge = document.getElementById('status-badge');
-      const btnAdmin = document.getElementById('btn-admin');
-      
-      if (isLoggedIn) {
-        body.classList.remove('logged-out');
-        badge.innerText = 'Logueado';
-        badge.className = 'status-badge status-logged-in';
-        btnAdmin.style.display = 'inline-block';
-      } else {
-        isAdmin = false;
-        body.classList.add('logged-out');
-        body.classList.add('not-admin');
-        badge.innerText = 'Sin Sesión';
-        badge.className = 'status-badge status-logged-out';
-        btnAdmin.style.display = 'none';
-        btnAdmin.innerText = 'Hacer ADMIN';
-        document.getElementById('admin-badge').style.display = 'none';
-      }
-      document.getElementById('dropdown').classList.remove('show');
-    }
-
-    function toggleAdmin() {
-      if (!isLoggedIn) return;
-      isAdmin = !isAdmin;
-      const body = document.body;
-      const btn = document.getElementById('btn-admin');
-      const badge = document.getElementById('admin-badge');
-
-      if (isAdmin) {
-        body.classList.remove('not-admin');
-        btn.innerText = 'Quitar ADMIN';
-        badge.style.display = 'inline-block';
-      } else {
-        body.classList.add('not-admin');
-        btn.innerText = 'Hacer ADMIN';
-        badge.style.display = 'none';
-      }
-    }
-
-    function toggleDropdown() {
-      if (!isLoggedIn) return; // Si no hay sesión, no hace nada
-      const dropdown = document.getElementById('dropdown');
-      dropdown.classList.toggle('show');
-    }
-
-    // Cerrar al clickar fuera
-    window.onclick = function(event) {
-      if (!event.target.closest('.user-menu')) {
-        document.getElementById('dropdown').classList.remove('show');
-      }
-    }
-  </script>
 
 </body>
 </html>

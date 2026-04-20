@@ -2,6 +2,106 @@
 
 ---
 
+## [2026-04-20] Refinamiento de Navbar: Layout Centrado y Logo Mythic
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Transformar la navegación global a un diseño de 3 columnas con el logo a la izquierda y el menú centrado para una estética más simétrica y premium.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Reestructuración de Layout**:
+   - Implementación de `display: grid` con `grid-template-columns: 1fr auto 1fr`.
+   - **Corrección de Overflow**: Se ha forzado `grid-template-rows: 72px` y se ha restringido el `logo-section` para evitar que las dimensiones del logo desplacen los enlaces. Se ha mantenido el `overflow` visible en la Navbar para permitir ver el desplegable de usuario.
+   - Centrado matemático de los enlaces de navegación (`Home`, `Lobby`, etc.) independientemente del contenido lateral.
+   - Incremento de la altura de la navbar a `72px` para mejorar la jerarquía visual.
+
+2. **Integración de Marca**:
+   - Inserción del componente oficial `app-logo` (Cabeza de lobo y hachas) en el extremo izquierdo.
+   - **Mejora de Layout**: Se ha actualizado `LogoComponent` para soportar una disposición horizontal (`direction="horizontal"`), permitiendo que el texto aparezca a la derecha del icono en la Navbar, optimizando el espacio vertical.
+   - Sincronización de estilos rúnicos y tipografía `Outfit`.
+
+3. **Mejoras Estéticas y UX**:
+   - **Animaciones Glow**: Nuevo efecto de subrayado expansivo con brillo dorado al hacer hover/active.
+   - **Dropdown Refinado**: Ajuste de posicionamiento y animación de entrada para el menú de usuario.
+   - **Responsividad**: Ocultamiento del texto del logo y ajuste de gaps en pantallas menores a 900px.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/shared/components/navbar/navbar.component.ts` | Import de `LogoComponent` |
+| `front/src/app/shared/components/navbar/navbar.component.html` | Nueva estructura de grid |
+| `front/src/app/shared/components/navbar/navbar.component.scss` | Rediseño completo de estilos |
+
+---
+
+## [2026-04-20] Resolución de Desbordamientos y Responsividad Global
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir errores de overflow vertical y horizontal reportados por el usuario, eliminando el scroll fantasma en el juego y el desborde en Configuración.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Refactorización de Layout Global (`styles.scss`)**:
+   - Sincronización de `height` entre `html`, `body` y `app-root` usando `min-height: 100%` y `height: 100dvh`.
+   - Implementación de `overflow-x: hidden` en el body para prevenir scrolls horizontales accidentales.
+
+2. **Corrección de Configuración (`ConfigComponent`)**:
+   - **Eliminación de Altura Fija**: Cambiado `height: 100%` por `flex: 1` para que respete el espacio de la Navbar.
+   - **Layout Adaptativo**: Las secciones de la tarjeta ahora se envuelven (`flex-wrap`) y el grid pasa de `320px 1fr` a `1fr` en pantallas móviles.
+   - **Gaps y Paddings**: Sustitución de valores fistas (`5rem`, `160px`) por `clamp()` y unidades responsivas.
+
+3. **Eliminación de Scroll en Juego (`GamePageComponent`)**:
+   - Cambio de `:host` de `100vh/100vw` a `100%` para integrarse perfectamente en el contenedor `main`.
+
+4. **Ajustes de Responsividad en Home y Estadísticas**:
+   - **Home**: Corregido el grid de clanes que desbordaba por un `min-width` excesivo.
+   - **Estadísticas**: Títulos y contenedores ahora usan `clamp()` para escalas tipográficas fluidas.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Cambio |
+|---------|--------|
+| `front/src/styles.scss` | Refactor de layout base |
+| `front/src/app/pages/config/config.component.scss` | Rediseño responsivo |
+| `front/src/app/pages/game/game.component.scss` | Corrección de scroll (100%) |
+| `front/src/app/pages/home/home.component.scss` | Fix de grid de clanes |
+| `front/src/app/pages/statistics-view/statistics.component.scss` | Tipografía fluida |
+
+---
+
+
+## [2026-04-20] Restauración de Layout y Corrección Técnica (ConfigComponent)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir errores de compilación y restaurar el diseño original de dos columnas (barra lateral + formulario) por petición del usuario.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Corrección de Errores Técnicos (Manteniendo Estabilidad)**:
+   - **TypeScript**: Asegurada la definición de `onChangeLanguage` y métodos de guardado/cancelación.
+   - **SASS Imports**: Corregida la ruta a `variables.scss` (`../../../styles/variables`).
+   - **SASS Deprecations**: Cambiado `lighten()` por `color.adjust()` para compatibilidad con Sass 3.0.
+   - **Ajuste de Layout**: Corregido el desborde (overflow) causado por la navbar cambiando `100vh` por `100%` y configurando el host flex.
+
+2. **Restauración de Diseño Original**:
+   - **Estructura de Grid**: Se ha recuperado el layout de dos columnas (`280px 1fr`).
+   - **Sidebar de Perfil**: Re-introducida la barra lateral izquierda para el Avatar y el Nombre de Usuario, siguiendo el diseño aprobado en `config-preview.html`.
+   - **Formulario Centrado**: Las preferencias y ajustes se han re-ubicado en la columna principal derecha.
+
+3. **Optimización Estética**:
+   - Se ha mantenido el look "premium" con hero banner atmosférico y tarjetas con glassmorphism.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/config/config.component.ts` | Corrección técnica |
+| `front/src/app/pages/config/config.component.html` | Restauración de layout |
+| `front/src/app/pages/config/config.component.scss` | Restauración de estilos |
+
+---
+
 ## [2026-04-20] Configuración de CI/CD: Workflow de Docker para db_back
 
 **Agente**: Antigravity (Google DeepMind)
