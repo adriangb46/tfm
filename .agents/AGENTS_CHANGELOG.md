@@ -25,6 +25,7 @@
 
 4. **Workflow de Raíz (`tfm`) - Orquestación Full Stack**:
    - Rediseñado `main-ci.yml` para actuar como orquestador central.
+   - **Clonación de Repositorios Privados**: Implementada la descarga automática de `db_back`, `middle_server` y `front` mediante el uso de `GH_PAT` (Personal Access Token), permitiendo que el orquestador acceda al código de los sub-proyectos privados.
    - **Build & Push Multi-recurso**: Ahora el repositorio raíz compila y sube las 3 imágenes personalizadas (`db_server`, `middle_server`, `frontend`) al repositorio principal.
    - **Empaquetado de Infraestructura**: El workflow descarga, re-etiqueta y sube las imágenes de Postgres, MongoDB, Redis y MinIO al registro del proyecto, creando un "bundle" completo de imágenes bajo el mismo namespace.
    - **Sincronización de Compose**: Actualizado `docker-compose.yml` para usar el estándar `Dockerfile` (D mayúscula), garantizando la compatibilidad con el nuevo sistema de nombres.
