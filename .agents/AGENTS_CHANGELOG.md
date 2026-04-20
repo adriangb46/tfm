@@ -2,6 +2,68 @@
 
 ---
 
+## [2026-04-20] Rediseño Estético Premium de Personajes y Reglas (Códice MYTHIC)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Transformar las pantallas informativas de "feísimas" a una experiencia visual "WOW" de alta gama, utilizando tipografía épica, efectos atmosféricos y diseño inmersivo.
+
+### 📝 Resumen de Mejoras Estéticas:
+
+1. **Infraestructura Visual**:
+   - **Tipografía**: Integración de **Cinzel** (para títulos y runas) y **Montserrat** (para lectura fluida) vía Google Fonts en `index.html`.
+   - **Atmósfera**: Implementación de fondos radiales profundos, auroras boreales animadas y partículas de brasas (`embers`) flotantes.
+
+2. **Rediseño de Personajes (Códice de Linajes)**:
+   - **Tarjetas 3D**: Implementación de transformaciones en perspectiva al hacer hover.
+   - **Detalles Forjados**: Bordes con acentos metálicos, runas que brillan intermitentemente y degradados específicos por clan.
+   - **Iconografía**: Enormes iconos de fondo con baja opacidad y glow dinámico según el arquetipo del clan.
+
+3. **Rediseño de Reglas (Leyes de la Guerra)**:
+   - **Visualización Técnica**: La matriz de ventajas ahora utiliza un grid estilizado con degradados semánticos de "Victoria/Derrota".
+   - **Timeline de Eras**: Línea de tiempo vertical con nodos brillantes y efectos de profundidad.
+   - **Bloques de Leyes**: Uso de bordes laterales dorados y cajas de advertencia pulsantes para las reglas críticas.
+
+4. **Experiencia de Usuario (UX)**:
+   - Botones de navegación con efectos de cristal (glassmorphism) y feedback visual mejorado.
+   - Animaciones de entrada escalonadas (`staggered entry`) para todos los elementos de la lista.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/index.html` | Inyección de Google Fonts |
+| `front/src/app/pages/personajes-page/*` | Rediseño completo (HTML/SCSS) |
+| `front/src/app/pages/reglas-page/*` | Rediseño completo (HTML/SCSS) |
+
+---
+
+## [2026-04-20] Corrección de errores de navegación y limpieza de código (Front)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver errores de navegación a rutas inexistentes, eliminar advertencias del compilador de Angular y cumplir con la regla de "No any" en el proyecto.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Corrección de Navegación**:
+   - **`HomeComponent`**: Se ha cambiado la navegación de `/lobby` (ruta inexistente) a `/game` para permitir el acceso a la pantalla principal de juego desde el "Hero Section".
+
+2. **Limpieza de Advertencias y Tipado**:
+   - **`HomeComponent`**: Eliminado el import y la inclusión de `RouterLink` en el array de `imports` ya que no se estaba utilizando en el template.
+   - **`GamePageComponent`**: Eliminados 6 usos de `any` en la definición de la señal `availableTroops`, sustituyéndolos por el enum `TroopType` correspondiente.
+
+3. **Optimización SVG**:
+   - **`GamePageComponent.html`**: Actualizada la sintaxis de `xlink:href` a `href` estándar en los elementos del camino de ataque animado.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Cambio |
+|---------|--------|
+| `front/src/app/pages/home/home.component.ts` | Corregida navegación y eliminada advertencia |
+| `front/src/app/pages/game/game.component.ts` | Eliminación de `any` (tipado estricto) |
+| `front/src/app/pages/game/game.component.html` | Corrección de sintaxis SVG |
+
+---
+
 ## [2026-04-20] Rediseño a Pantalla Completa de Configuración
 
 **Agente**: Antigravity (Google DeepMind)
