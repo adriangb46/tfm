@@ -48,8 +48,8 @@
 - Game title / thematic header
 - Section title: "Register" / "Sign Up"
 - Input: username (`placeholder: 'Tu nombre de usuario'`)
-- Input: password (`placeholder: 'Tu secreto guardado'`, type password)
-- Input: repeat password (`placeholder: 'Tu secreto guardado y confirmado'`, type password)
+- Input: password (`placeholder: 'Contraseña'`, type password)
+- Input: repeat password (`placeholder: 'Repite tu contraseña'`, type password)
 - Primary CTA button: "REGISTRARSE"
 - Secondary link: "INICIAR SESIÓN" → navigates to `/signin`
 
@@ -76,6 +76,7 @@
 - Section title: "Sign In" / "Iniciar sesión"
 - Input: username
 - Input: password (type password)
+- Link: "¿Has olvidado la contraseña?" (below password)
 - Primary CTA button: "INICIAR SESIÓN"
 - Secondary link: "CREAR UNA CUENTA" → navigates to `/signup`
 

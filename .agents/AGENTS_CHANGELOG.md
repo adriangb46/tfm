@@ -2,52 +2,6 @@
 
 ---
 
-## [2026-04-20] Refinamiento Visual de la Vista de Configuración
-
-**Agente**: Antigravity (Google DeepMind)
-**Objetivo**: Aplicar el flujo `/refine-ui` para mejorar la vista de Configuración.
-
-### 📝 Resumen de Tareas Realizadas:
-
-1. **Iteraciones en el Preview**:
-   - Reemplazados los textos de nombre y correo por campos estáticos (texto normal, no inputs).
-   - Ajustada la tipografía: el nombre de usuario ahora es más grande y en negrita (`.user-name-text`), y el correo es más pequeño (`.user-email-text`).
-   - Añadido un botón "Cambiar correo" junto a "Cambiar contraseña" y centrados visualmente ambos botones.
-   - Intercambiado el orden de los botones de "Guardar" y "Cancelar".
-   - Añadido un botón de edición (lápiz) sobre el avatar del usuario.
-
-2. **Implementación en Angular**:
-   - Actualizado `config.component.html` con las nuevas estructuras de inputs y botones.
-   - Actualizado `config.component.scss` con las nuevas clases (`.input-group`, `.edit-avatar-btn`, etc.).
-   - Añadidos handlers en `config.component.ts` (`onChangeEmail`, `onEditAvatar`).
-
----
-## [2026-04-20] Creación de la Vista de Configuración
-
-**Agente**: Antigravity (Google DeepMind)
-**Objetivo**: Implementar la vista de configuración del usuario según el diseño de wireframe proporcionado, utilizando componentes standalone de Angular 20, signals y variables CSS del proyecto.
-
-### 📝 Resumen de Tareas Realizadas:
-
-1. **Nuevo Componente `ConfigComponent`**:
-   - **Interfaz**: Avatar del usuario, nombre, correo, selector de idioma (ES/EN), switch de modo oscuro y botones de acciones (Cambiar contraseña, Guardar, Cancelar).
-   - **Estructura**: `standalone: true`, `ChangeDetectionStrategy.OnPush`, uso de variables SCSS como `var(--color-bg-card)` y `var(--color-gold)`.
-   - **Estado**: Signals locales (`userName`, `userEmail`, `language`, `isDarkMode`) listos para ser conectados al backend / `AuthService`.
-
-2. **Ruteo (`app.routes.ts`)**:
-   - Añadida la ruta `config` con lazy loading hacia el nuevo `ConfigComponent`.
-
-### 🗂️ Archivos Modificados/Creados:
-
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/config/config.component.ts` | **CREADO** |
-| `front/src/app/pages/config/config.component.html` | **CREADO** |
-| `front/src/app/pages/config/config.component.scss` | **CREADO** |
-| `front/src/app/app.routes.ts` | Modificado |
-
----
-
 ## [2026-04-20] Finalización del CI para db_back
 
 **Agente**: Antigravity (Google DeepMind)
