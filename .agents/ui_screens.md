@@ -10,6 +10,7 @@
 
 ```
 (no session)
+  ├── home (landing page)
   ├── signUp
   └── signIn
         │
@@ -35,6 +36,34 @@
         └── [modal] atacar
               └── [modal] añadirTropaAtaque
 ```
+
+---
+
+## 0. home (landing page)
+
+**Route:** `/`
+**Angular component:** `HomeComponent`
+**Prerequisites:** None.
+
+### Layout elements
+- **Hero Section**:
+  - Parallax background image (viking scene).
+  - Main Title: "VIKING CLAN WARS".
+  - Subtitle: "Forge your legacy. Conquer the North."
+  - CTA Button: "ENTER VALHALLA" (opens auth modal if no session).
+- **Features Section**:
+  - Grid of 3 cards (Tactical War, Evolution, Clans).
+- **Clans Preview**:
+  - Row of clan badges with hover effects.
+- **Atmospheric Effects**:
+  - Fog and embers animations.
+
+### Actions & results
+| Action | Result |
+|--------|--------|
+| Click "ENTER VALHALLA" (not logged in) | Open authentication modal |
+| Click "ENTER VALHALLA" (logged in) | Navigate to `/lobby` |
+| Scroll down | Reveal features and clan previews |
 
 ---
 

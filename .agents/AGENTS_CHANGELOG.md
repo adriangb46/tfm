@@ -979,3 +979,75 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 ### 🛠️ Correcciones y Refactorización:
 
 - **SASS Deprecations**: Solucionado el error de compilación reordenando el mixin `@light-theme-vars` antes de su invocación según la arquitectura pre-compiladora de estilos en SCSS, y reemplazando `@import` por `@use` en `styles.scss` para prevenir _warnings_ de Dart Sass 3.0.0.
+
+## [2026-04-20] Implementación de Home Page Premium (Viking Clan Wars)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Crear una página de aterrizaje inmersiva y de alta calidad técnica para atraer a los usuarios y presentar las mecánicas del juego.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Diseño Visual de Alto Impacto**:
+   - Generada imagen hero cinemática ("viking-home-hero.png") con estética de arte conceptual de videojuegos.
+   - Implementado sistema de capas atmosféricas: Niebla animada por CSS y partículas (ascuas) flotantes.
+   - Uso de tipografía moderna ('Outfit') combinada con pesos pesados para el título del juego.
+
+2. **Componente `HomeComponent` (Angular 20)**:
+   - **Hero Section**: Pantalla completa con parallax sutil (vía `background-attachment: fixed`) y un CTA "ENTRAR EN EL VALHALLA" con efectos de brillo y hover dinámico.
+   - **Features Section**: Grid de 3 tarjetas con glassmorphism (blur de fondo) y bordes de oro reactivos.
+   - **Clans Preview**: Vista previa interactiva de los 6 clanes (Furia, Divino, Hierro, Canción, Runa, Muerte) con filtros de escala de grises que se activan al hover.
+
+3. **Arquitectura y Routing**:
+   - Mapeada la ruta raíz (`path: ''`) al nuevo componente.
+   - Integración con `AuthService` para redirigir al Lobby si el usuario ya está autenticado.
+
+4. **Calidad Técnica**:
+   - Uso estricto de variables SCSS y tokens del proyecto.
+   - Diseño totalmente responsivo (móvil/desktop).
+   - Componentes Standalone (Angular 20).
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/home/home.component.ts` | **CREADO** |
+| `front/src/app/pages/home/home.component.html` | **CREADO** |
+| `front/src/app/pages/home/home.component.scss` | **CREADO** |
+| `front/src/app/app.routes.ts` | Modificado |
+| `front/public/viking-home-hero.png` | **CREADO** (Asset generado) |
+
+
+## [2026-04-20] Refinamiento de Home Page (Inspiración Mythic VIKING)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Elevar la calidad visual y de contenido de la página de inicio basándose en la referencia de `prueba_ia`.
+
+### 📝 Resumen de Cambios:
+
+1. **Nuevo Componente `LogoComponent`**:
+   - Implementado un logo SVG vectorial con una cabeza de lobo rúnica y hachas cruzadas.
+   - Efectos de brillo (`filter: glow`) y pulsación rúnica (`animation`).
+   - Soporte para escalado y visibilidad de texto mediante Signals (`input`).
+
+2. **Rediseño Completo de `HomeComponent`**:
+   - **Hero Section**: Integrado el nuevo logo y fondo cinemático corregido (`/viking_hero.png`). Añadidos botones con estilo "Mithic" (bordes forjados y clip-path nórdico).
+   - **Sección de Eras**: Añadida una cronología detallada de la partida (Preparación, Guerra Total, Veredicto) con tarjetas de diseño premium.
+   - **Códice Militar**: Nueva sección técnica explicando los puntos de acción (AP) y de investigación (RP), junto con un visual de radar de mapa táctico.
+   - **Preview de Clanes**: Grid actualizado con los 6 clanes y sus arquetipos sagrados.
+   - **Footer Premium**: Footer completo con créditos, logos y enlaces sociales temáticos.
+
+3. **Mejoras Técnicas**:
+   - Migración completa a Angular 20 (Signals, `inject()`, Control Flow `@for`/`@if`).
+   - Uso estricto de variables SCSS del proyecto para coherencia de marca (Oro/Navy/Parchment).
+   - Optimizaciones de accesibilidad y estructura semántica.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/shared/components/logo/logo.component.ts` | **CREADO** |
+| `front/src/app/pages/home/home.component.ts` | Modificado |
+| `front/src/app/pages/home/home.component.html` | Modificado |
+| `front/src/app/pages/home/home.component.scss` | Modificado |
+| `front/public/viking_hero.png` | Vinculado (Copiado manualmente por usuario) |
+

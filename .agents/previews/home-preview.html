@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview: Home Page — Viking Clan Wars</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* PREVIEW ONLY — not production code */
+        :root {
+            --color-bg-primary: #0d0c18;
+            --color-bg-secondary: #1a1830;
+            --color-bg-tertiary: #141220;
+            --color-bg-card: #211f38;
+            --color-bg-glass: rgba(33, 31, 56, 0.7);
+            --color-text-primary: #e8e0d0;
+            --color-text-secondary: #b8a898;
+            --color-gold: #c9a84c;
+            --color-gold-light: #e8c96a;
+            --color-border-default: #3a3555;
+            --color-text-inverse: #0d0c18;
+            /* Clan colors */
+            --color-clan-fury: #c0392b;
+            --color-clan-divine: #4a90d9;
+            --color-clan-iron: #8a9ba8;
+            --color-clan-song: #8b5cf6;
+            --color-clan-rune: #10b981;
+            --color-clan-death: #7c6b9e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .home-container {
+            position: relative;
+            width: 100%;
+        }
+
+        /* --- Atmosfera --- */
+        .atmospheric-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .fog {
+            position: absolute;
+            width: 200%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 0%, transparent 70%);
+            opacity: 0.3;
+            animation: fog-move 60s linear infinite;
+        }
+        @keyframes fog-move {
+            from { transform: translateX(-25%); }
+            to { transform: translateX(0%); }
+        }
+
+        /* --- Hero --- */
+        .hero-section {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 2rem;
+            z-index: 2;
+            background: 
+                linear-gradient(to bottom, rgba(13, 12, 24, 0.4), rgba(13, 12, 24, 0.9)),
+                url('https://images.unsplash.com/photo-1548391350-968f58dedaed?q=80&w=2670&auto=format&fit=crop'); /* Placeholder image for preview */
+            background-size: cover;
+            background-position: center;
+        }
+
+        .game-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            letter-spacing: 0.2em;
+            margin-bottom: 1rem;
+        }
+        .game-title span {
+            color: var(--color-gold);
+            position: relative;
+        }
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 3rem;
+            max-width: 600px;
+        }
+
+        .btn-primary {
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--color-text-inverse);
+            background-color: var(--color-gold);
+            border: none;
+            cursor: pointer;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            background-color: var(--color-gold-light);
+        }
+
+        /* --- Features --- */
+        .features-section {
+            padding: 8rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+        .feature-card {
+            padding: 3rem 2rem;
+            background-color: var(--color-bg-glass);
+            border: 1px solid var(--color-border-default);
+            backdrop-filter: blur(10px);
+            transition: 0.4s;
+        }
+        .feature-card:hover {
+            border-color: var(--color-gold);
+            transform: translateY(-10px);
+        }
+        .feature-icon {
+            width: 50px; height: 50px;
+            background-color: var(--color-gold);
+            margin: 0 auto 1.5rem;
+            transform: rotate(45deg);
+        }
+
+        /* --- Clans --- */
+        .clans-preview {
+            padding: 4rem 2rem;
+            background: rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .clans-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .clan-badge {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--color-border-default);
+            transition: 0.3s;
+            background-color: rgba(255,255,255,0.05);
+        }
+        .clan-badge:hover {
+            transform: scale(1.2);
+            border-color: var(--color-gold);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="atmospheric-layer">
+        <div class="fog"></div>
+    </div>
+
+    <div class="home-container">
+        <section class="hero-section">
+            <h1 class="game-title">VIKING <span>CLAN WARS</span></h1>
+            <p class="hero-subtitle">Forja tu legado. Conquista el Norte. Alcanza la gloria eterna.</p>
+            <button class="btn-primary">ENTRAR EN EL VALHALLA</button>
+        </section>
+
+        <section class="features-section">
+            <h2 style="color: var(--color-gold); letter-spacing: 0.1em;">DOMINA LOS NUEVE REINOS</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Guerra Táctica</h3>
+                    <p style="color: var(--color-text-secondary); margin-top: 1rem;">Batallas en tiempo real de 2 a 6 jugadores.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Evolución Sagrada</h3>
+                    <p style="color: var(--color-text-secondary); margin-top: 1rem;">Árbol tecnológico con 8 niveles.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Clanes Míticos</h3>
+                    <p style="color: var(--color-text-secondary); margin-top: 1rem;">6 clanes únicos con ventajas estratégicas.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="clans-preview">
+            <div class="clans-container">
+                <div class="clan-badge" style="background-color: var(--color-clan-fury);"></div>
+                <div class="clan-badge" style="background-color: var(--color-clan-divine);"></div>
+                <div class="clan-badge" style="background-color: var(--color-clan-iron);"></div>
+                <div class="clan-badge" style="background-color: var(--color-clan-song);"></div>
+                <div class="clan-badge" style="background-color: var(--color-clan-rune);"></div>
+                <div class="clan-badge" style="background-color: var(--color-clan-death);"></div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
