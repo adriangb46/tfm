@@ -45,9 +45,9 @@ jobs:
           # Define source and destination mappings
           # Format: "source_image|destination_suffix"
           declare -a SERVICES=(
-            "agb4455/proyectointermodulardambackend-db-back|db-server"
+            "agb4455/proyectointermodulardambackend-db-server|db-server"
             "adriangb46/proyectointermodulardamservidorintermedio-middle-server|middle-server"
-            "agb4455/proyectointermodulardamfrontend-front|frontend"
+            "agb4455/proyectointermodulardamfrontend-frontend|frontend"
           )
 
           # --- PULLEO (Usando el login previo con GH_PAT) ---
