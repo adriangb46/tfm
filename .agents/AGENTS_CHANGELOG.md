@@ -11,6 +11,8 @@
 
 1. **Reparación de DB Server (`db_back`)**:
    - **Fix de Case Sensitivity**: Se ha implementado un paso de shell en `build-docker.yml` para transformar el nombre de la imagen a minúsculas. Esto soluciona el error de "invalid reference format" que impedía el push a GHCR.
+   - **Estandarización de Dockerfile**: Renombrado `dockerfile` a `Dockerfile` y actualizado el workflow.
+   - **Fix de .dockerignore**: Eliminada la exclusión de `Dockerfile` que impedía que Docker leyera el archivo de configuración durante la construcción.
    - **Estabilización de CI**: Verificada la compatibilidad con Java 25 y las versiones de acciones `v6/v5`.
 
 2. **Implementación de Middle Server**:
