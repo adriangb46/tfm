@@ -2,6 +2,28 @@
 
 ---
 
+## [2026-04-20] Configuración de CI/CD: Workflow de Docker para db_back
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Automatizar la construcción y publicación de la imagen Docker del servidor de base de datos (`db_back`).
+
+### 📝 Resumen de Tareas:
+
+1. **Creación de Workflow**:
+   - Definición de `build-docker.yml` para GitHub Actions.
+   - Configuración de disparadores en `push` a `main` y etiquetas de versión.
+   - Integración con **GitHub Container Registry (GHCR)** para el almacenamiento de imágenes.
+   - Implementación de caché nativa de GitHub Actions (`gha`) para optimizar tiempos de construcción.
+   - Uso de metadatos automáticos para el etiquetado de imágenes (`latest`, rama, SHA corto).
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/.github/workflows/build-docker.yml` | **CREADO** |
+
+---
+
 ## [2026-04-20] Integración y Refinamiento Premium de Configuración (UserConfig)
 
 **Agente**: Antigravity (Google DeepMind)
