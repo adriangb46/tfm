@@ -2,6 +2,37 @@
 
 ---
 
+## [2026-04-20] Refinamiento de Autenticación: Etiquetas Estándar y Responsividad Fluida
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Mejorar la experiencia de usuario y la robustez del modal de inicio de sesión y registro.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Estandarización de Interfaz**:
+   - Reemplazados todos los términos temáticos ("Guerrero", "Secreto de Guerra") por términos estándar de industria ("Usuario", "Contraseña").
+   - Añadido enlace "¿Has olvidado la contraseña?" en el flujo de Login.
+
+2. **Validación y Funcionalidad**:
+   - Implementado campo "Confirmar Contraseña" en el Registro.
+   - Añadido un custom validator (`passwordMatchValidator`) para asegurar la coincidencia de claves antes de permitir el envío.
+   - Implementada limpieza automática de formularios al alternar entre Login y Registro.
+
+3. **Arquitectura de Estilos "Fluid & Resizable"**:
+   - Rediseño completo de `auth.component.scss` utilizando la función `clamp()` de CSS.
+   - El modal ahora ajusta dinámicamente sus márgenes, paddings y tamaños de fuente según el tamaño de la ventana (especialmente la altura).
+   - **Resultado**: El modal evita el scroll vertical en la gran mayoría de resoluciones, compactándose armónicamente en pantallas pequeñas.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Cambio |
+|---------|--------|
+| `front/src/app/shared/components/auth/auth.component.ts` | Refactored validation logic |
+| `front/src/app/shared/components/auth/auth.component.html` | Updated fields and labels |
+| `front/src/app/shared/components/auth/auth.component.scss` | Fluid responsive styles |
+
+---
+
 ## [2026-04-20] Integración de Modal de Login y Registro (desde prueba_ia)
 
 **Agente**: Antigravity (Google DeepMind)
