@@ -23,19 +23,23 @@
    - **Pipeline de CI**: Creado `front_ci.yml` para validar la compilación de Angular en cada push.
    - **Pipeline de Docker**: Creado `front_docker.yml` para empaquetar la app en una imagen Nginx.
 
-4. **Workflow de Raíz (`tfm`)**:
-   - Creado `main-ci.yml` para validación de estructura de carpetas, asegurando la integridad del repositorio contenedor.
+4. **Workflow de Raíz (`tfm`) - Orquestación Full Stack**:
+   - Rediseñado `main-ci.yml` para actuar como orquestador central.
+   - **Build & Push Multi-recurso**: Ahora el repositorio raíz compila y sube las 3 imágenes personalizadas (`db_server`, `middle_server`, `frontend`) al repositorio principal.
+   - **Empaquetado de Infraestructura**: El workflow descarga, re-etiqueta y sube las imágenes de Postgres, MongoDB, Redis y MinIO al registro del proyecto, creando un "bundle" completo de imágenes bajo el mismo namespace.
+   - **Sincronización de Compose**: Actualizado `docker-compose.yml` para usar el estándar `Dockerfile` (D mayúscula), garantizando la compatibilidad con el nuevo sistema de nombres.
 
 ### 🗂️ Archivos Creados/Modificados:
 
 | Archivo | Acción |
 |---------|--------|
+| `docker-compose.yml` | Modificado (Nombres Dockerfile) |
+| `.github/workflows/main-ci.yml` | **REDISEÑADO** (Orquestador Full Stack) |
 | `db_back/.github/workflows/build-docker.yml` | Modificado (Fix lowercase) |
 | `middle_server/.github/workflows/middle_server_compile.yml` | Poblado (Node CI) |
 | `middle_server/.github/workflows/middle-server-docker.yml` | **CREADO** |
 | `front/.github/workflows/front_ci.yml` | Poblado (Angular CI) |
 | `front/.github/workflows/front_docker.yml` | **CREADO** |
-| `.github/workflows/main-ci.yml` | **CREADO** |
 
 ---
 

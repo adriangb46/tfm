@@ -1,4 +1,4 @@
-name: Main Project Cleanup & Check
+name: Full Stack Build & Push (TFM Orchestrator)
 
 on:
   push:
@@ -6,17 +6,90 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  REGISTRY: ghcr.io
+  # Use the root repository name for the namespace
+  IMAGE_BASE: ${{ github.repository }}
+
 jobs:
-  check:
+  build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Basic structure check
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lowercase IMAGE_BASE
         run: |
-          echo "Verifying project structure..."
-          [ -d "db_back" ] && echo "db_back folder found" || exit 1
-          [ -d "middle_server" ] && echo "middle_server folder found" || exit 1
-          [ -d "front" ] && echo "front folder found" || exit 1
-          echo "All sub-repositories are present."
+          echo "IMAGE_BASE_LOWER=$(echo ${{ env.IMAGE_BASE }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      # ---------------------------------------------------------
+      # 1. Build and Push Custom Services
+      # ---------------------------------------------------------
+
+      - name: Build and Push DB Server
+        uses: docker/build-push-action@v6
+        with:
+          context: ./db_back
+          file: ./db_back/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_BASE_LOWER }}-db-server:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and Push Middle Server
+        uses: docker/build-push-action@v6
+        with:
+          context: ./middle_server
+          file: ./middle_server/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_BASE_LOWER }}-middle-server:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and Push Frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./front
+          file: ./front/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_BASE_LOWER }}-frontend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # ---------------------------------------------------------
+      # 2. Re-tag and Push Infrastructure Images (Full Package)
+      # ---------------------------------------------------------
+
+      - name: Package Infrastructure Images
+        if: github.event_name != 'pull_request'
+        run: |
+          # Define images to package
+          declare -A IMAGES=(
+            ["postgres:15"]="database-sql"
+            ["mongo:7.0"]="database-nosql"
+            ["redis:7-alpine"]="cache-redis"
+            ["minio/minio"]="storage-minio"
+          )
+
+          for SRC in "${!IMAGES[@]}"; do
+            DEST="${{ env.REGISTRY }}/${{ env.IMAGE_BASE_LOWER }}-${IMAGES[$SRC]}:latest"
+            echo "Packaging $SRC as $DEST"
+            docker pull $SRC
+            docker tag $SRC $DEST
+            docker push $DEST
+          done

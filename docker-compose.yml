@@ -35,7 +35,7 @@ services:
   db_server:
     build:
       context: ./db_back
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
     container_name: db_server
     ports:
       - "8080:8080"
@@ -49,7 +49,7 @@ services:
   middle_server:
     build:
       context: ./middle_server
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
     container_name: middle_server
     ports:
       - "3000:3000"
@@ -108,7 +108,7 @@ services:
   front:
     build:
       context: ./front
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
       args: 
         - BACKEND_URL=http://localhost:3000
     container_name: front
