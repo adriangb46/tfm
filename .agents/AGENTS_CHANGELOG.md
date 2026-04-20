@@ -2,6 +2,40 @@
 
 ---
 
+## [2026-04-20] Integración y Refinamiento Premium de Configuración (UserConfig)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Transformar la pantalla de configuración en una experiencia integrada, responsive y de alto impacto visual, eliminando la sensación de "modal" y optimizando el flujo de preferencias.
+
+### 📝 Resumen de Mejoras:
+
+1. **Diseño Integrado (Full Screen)**:
+   - Eliminación de márgenes laterales para una integración total en la pantalla (`integrated look`).
+   - Implementación de un layout de altura fija (`100vh`) con `overflow: hidden` para evitar scroll innecesario, optimizando para una estética de aplicación premium.
+   - Banner heroico con tipografía **Cinzel** y fondo atmosférico vikingo.
+
+2. **Refuerzo de UX y Layout**:
+   - **Estructura de Dos Columnas**: Sidebar dedicado al avatar (con nuevo badge de edición tipo lápiz) y formulario principal de preferencias.
+   - **Secciones de Acción**: Unificación de "Seguridad" y "Preferencias" en tarjetas visuales con botones de acción directa en lugar de inputs redundantes.
+   - **Preferencias Agrupadas**: El selector de idioma y el toggle de modo oscuro ahora conviven en una misma tarjeta de preferencias para mayor claridad.
+
+3. **Mejoras Técnicas y Estéticas**:
+   - Uso estricto de variables SCSS del proyecto (`$color-gold`, `$color-bg-primary`, etc.).
+   - Implementación de un `toggle-switch` personalizado con estética oro/navy.
+   - Refactorización de la lógica del componente para soportar el nuevo flujo de cambio de idioma y tema.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/config/config.component.html` | Rediseño completo de la estructura |
+| `front/src/app/pages/config/config.component.scss` | Implementación de estilos integrados y responsive |
+| `front/src/app/pages/config/config.component.ts` | Actualización de lógica y señales |
+
+---
+
+---
+
 ## [2026-04-20] Rediseño Estético Premium de Personajes y Reglas (Códice MYTHIC)
 
 **Agente**: Antigravity (Google DeepMind)
