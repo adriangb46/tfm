@@ -2,6 +2,51 @@
 
 ---
 
+## [2026-04-21] Automatización de Tests Frontend en GitHub Actions
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Integrar la ejecución de pruebas unitarias en el pipeline oficial de CI el frontend para garantizar la estabilidad del código en cada push/pull request.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **GitHub Actions**:
+   - Actualizado `front/.github/workflows/front_ci.yml` para incluir un paso de ejecución de tests utilizando `ChromeHeadless`.
+   - El pipeline ahora fallará si algún test unitario falla, protegiendo la rama principal.
+
+2. **Limpieza**:
+   - Eliminado `.agents/workflows/run-front-tests.md` por ser redundante tras la implementación del workflow oficial de GitHub.
+
+### 🗂️ Archivos Modificados/Eliminados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/.github/workflows/front_ci.yml` | **MODIFICADO** |
+| `.agents/workflows/run-front-tests.md` | **ELIMINADO** |
+
+---
+
+
+## [2026-04-21] Nuevo Workflow: Ejecución de Tests del Frontend
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Documentar y estandarizar el proceso de ejecución de pruebas unitarias en el frontend para asegurar la calidad en local y CI.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Documentación de Procesos**:
+   - Creado `.agents/workflows/run-front-tests.md`.
+   - Incluidos comandos para ejecución local (interactiva), CI (headless) y generación de reportes de cobertura.
+   - Añadidas pautas de troubleshooting y buenas prácticas específicas para Angular 20.
+
+### 🗂️ Archivos Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.agents/workflows/run-front-tests.md` | **CREADO** |
+
+---
+
+
 ## [2026-04-21] Implementación de Tests Unitarios en el Frontend
 
 **Agente**: Antigravity (Google DeepMind)
