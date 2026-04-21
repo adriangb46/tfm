@@ -2,6 +2,61 @@
 
 ---
 
+## [2026-04-22] Actualización de Workflows de GitHub — DB Server
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que los flujos de CI/CD del sub-repositorio `db_back` sean robustos y capaces de ejecutar tests de integración con secretos.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Integración Continua (CI)**:
+   - `db-back-ci.yml`: Inyectado el secreto `DB_HANDSHAKE_SECRET` para permitir que los tests de integración pasen satisfactoriamente en GitHub Actions.
+
+2. **Documentación de Soporte**:
+   - Creado `setup_github_secrets.md`: Guía visual y paso a paso para que el desarrollador configure los secretos en la UI de GitHub.
+
+3. **Arquitectura Multi-Repo**:
+   - Mantenimiento de los workflows en la raíz del sub-proyecto `db_back` tras confirmar la estructura de 4 repositorios independientes.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/.github/workflows/db-back-ci.yml` | **MODIFICADO** |
+| `.agents/reports/setup_github_secrets.md` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+
+## [2026-04-22] Mejora de Cobertura de Tests Unitarios — DB Server
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Incrementar la cobertura de tests unitarios en el módulo `db_server`, eliminando gaps en controladores y lógica de seguridad.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **API Layer**:
+   - `CharacterControllerTest.java`: Implementados tests unitarios para creación y consulta de personajes usando `standaloneSetup`.
+
+2. **Security Layer**:
+   - `HandshakeJwtFilterTest.java`: Añadida cobertura completa para el filtro de handshake, verificando validación de tokens y exclusión de rutas.
+
+3. **Correcciones Técnicas**:
+   - Ajustada la aserción de error de `ENTITY_NOT_FOUND` a `NOT_FOUND` para alinearla con el `GlobalExceptionHandler`.
+   - Optimización de mocks para evitar `UnnecessaryStubbingException`.
+
+4. **Resultados**:
+   - Suite incrementada de 75 a **84 tests**.
+   - Verificación exitosa del build completa (+9 tests en verde).
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/test/java/com/tfm/db_back/api/CharacterControllerTest.java` | **CREADO** |
+| `db_back/src/test/java/com/tfm/db_back/security/HandshakeJwtFilterTest.java` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+
 ## [2026-04-22] Finalización del Sprint 6 — DB Server (Hardening & IT)
 
 **Agente**: Antigravity (Google DeepMind)
