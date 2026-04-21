@@ -2,6 +2,30 @@
 
 ---
 
+## [2026-04-21] Preparación del Sprint 5 — DB Server (MongoDB & Analytics)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Preparar la especificación técnica del Sprint 5 para el `db_server`, cubriendo la integración con MongoDB para analíticas asíncronas del juego.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Creación de `db_server_sprint5_detail.md`**:
+   - Objetivo: conectar MongoDB, persistir `game_snapshots` y `battle_events` con los campos exactos de la arquitectura §6.
+   - Punto de integración: acuerdo previo en la firma de `AnalyticsService.saveSnapshot()` antes de codificar.
+   - **dev_a**: `MongoConfig` + `@EnableAsync`, documentos `GameSnapshotDocument` y `BattleEventDocument` con campos exactos de §6, repositorios MongoDB.
+   - **dev_b**: `AnalyticsSnapshotRequestDto`, `AnalyticsService` + `AnalyticsServiceImpl` con `@Async` y manejo de errores sin propagación, `AnalyticsController` devolviendo 202 inmediato.
+   - Detalle de tests: `AnalyticsServiceTest` (fire-and-forget, error silencioso) + `AnalyticsControllerTest` (202 Accepted, validación 400).
+   - Checklist de seguridad alineado con `security.md`.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.agents/db_server_sprint5_detail.md` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-21] Implementación Completa Sprint 4 — DB Server (Game Domain)
 
 **Agente**: Antigravity (Google DeepMind)
