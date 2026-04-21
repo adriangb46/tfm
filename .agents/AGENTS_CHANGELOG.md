@@ -2,6 +2,26 @@
 
 ---
 
+## [2026-04-22] Docker Compose con Imágenes de GitHub (GHCR)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Facilitar el despliegue de la aplicación completa usando imágenes pre-construidas alojadas en GitHub Container Registry.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Despliegue Multi-Repo**:
+   - Creado `docker-compose.gh.yml`: Configurado para usar imágenes bajo el namespace `ghcr.io/adriangb46/tfm-`.
+   - Incluye mapeo de imágenes de infraestructura agregadas (SQL, NoSQL, Redis, Minio).
+   - Mantiene coherencia en redes (`tfm_net`) y variables de entorno para comunicación entre servicios.
+
+### 🗂️ Archivos Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose.gh.yml` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+
 ## [2026-04-22] Actualización de Workflows de GitHub — DB Server
 
 **Agente**: Antigravity (Google DeepMind)
