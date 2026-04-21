@@ -2,6 +2,68 @@
 
 ---
 
+## [2026-04-22] Finalización del Sprint 6 — DB Server (Hardening & IT)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Completar la fase de endurecimiento (Hardening) del `db_server`, implementando tests de integración reales con Testcontainers, Docker secure user y superando auditorías.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Infraestructura de Tests (Integración Real)**:
+   - `AbstractIntegrationTest.java`: Configuración estática de `PostgreSQLContainer` y `MongoDBContainer` compartida.
+   - Refactorización de toda la suite a `RestTemplate` nativo para eludir incompatibilidades de carga de contextos de Spring Boot 4 en Java 25.
+
+2. **Suite de Tests completada (End-to-End)**:
+   - `AuthControllerIntegrationTest`: Handshake real.
+   - `UserControllerIntegrationTest`: CRUD de usuario con colisiones reales en DB.
+   - `CharacterControllerIntegrationTest`: Persistencia de linajes.
+   - `GameControllerIntegrationTest`: Ciclo de vida completo (Create -> Dump -> End).
+   - `AnalyticsControllerIntegrationTest`: Snapshots asíncronos en MongoDB.
+
+3. **Hardening y Docker**:
+   - `Dockerfile`: Configurado `appuser` (non-root) sobre `eclipse-temurin:25-jre`.
+   - **Corrección Arquitectónica**: Refactorizado `CharacterController` para usar `ApiResponse<T>` uniformemente.
+
+4. **Auditorías superadas (95/100)**:
+   - Reporte generado en `db_server_audit_report_s6.md`.
+   - Verificado cumplimiento de `security.md` y `java_good_practices.md`.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/test/java/com/tfm/db_back/AbstractIntegrationTest.java` | **CREADO/REFACTOR** |
+| `db_back/src/test/java/com/tfm/db_back/api/*IntegrationTest.java` | **CREADOS** (5 archivos) |
+| `db_back/Dockerfile` | **CREADO** |
+| `db_back/src/main/java/com/tfm/db_back/api/CharacterController.java` | **MODIFICADO** |
+| `db_back/pom.xml` | **MODIFICADO** (Testcontainers deps) |
+| `.agents/reports/db_server_audit_report_s6.md` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Especificación del Sprint 6 — DB Server
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Crear la especificación en detalle para el Sprint 6 de `db_server`, centrado en Integración con Testcontainers, Hardening visual y Dockerfile seguro.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Creación de `db_server_sprint6_detail.md`**:
+   - Objetivo: Proveer la documentación del último sprint de `db_server`.
+   - Se crearon las delegaciones de pruebas de integración con `PostgreSQLContainer` y `MongoDBContainer`.
+   - Se detalló el uso y requerimientos del Dockerfile (usuario `appuser` no root).
+   - Se requirió pasar satisfactoriamente `/arch-audit` y `/security-audit`.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.agents/db_server_sprint6_detail.md` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-21] Auditoría de db-server
 
 **Agente**: Antigravity
