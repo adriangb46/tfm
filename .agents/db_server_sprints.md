@@ -319,7 +319,7 @@ goal: >
   A user can have multiple characters, each tied to a clan.
   All 3 character endpoints functional and tested.
 duration_estimate: 4 days
-status: PENDING
+status: DONE  # 2026-04-21 — implementado por agente, verificado estáticamente (CharacterServiceImplTest + CharacterControllerTest)
 depends_on: [sprint_2]
 
 architecture_refs:
@@ -367,7 +367,7 @@ goal: >
   This is the most critical sprint — the Middle depends on these endpoints
   for restart recovery and periodic state persistence.
 duration_estimate: 1 week
-status: PENDING
+status: DONE  # 2026-04-21 — implementado por agente, 65 tests en verde (GameControllerTest 13 + GameServiceTest 10 + GameDumpServiceTest 5)
 depends_on: [sprint_3]
 
 architecture_refs:

@@ -2,6 +2,79 @@
 
 ---
 
+## [2026-04-21] Implementación Completa Sprint 4 — DB Server (Game Domain)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Ejecutar la implementación del Sprint 4 del `db_server`, estableciendo el ciclo de vida completo de partidas: creación, consulta activa, volcado periódico de estado y finalización. Sprint crítico para la integración con el Middle Server.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Entidades JPA (sin Lombok — Java 25 compatible)**:
+   - `Game.java`: Entidad para la tabla `games` con ciclo de vida completo (`status`, `maxPlayers`, `createdAt`, `startedAt`, `endedAt`, `winnerCharacterId`). Constructor nativo + `@PrePersist`.
+   - `GameParticipant.java`: Entidad para `game_participants` con `gameId`, `characterId`, `joinOrder`, `eliminated`. Constructor nativo.
+   - `GameStateDump.java`: Entidad para `game_state_dumps` con columna `state_json` declarada como `columnDefinition = "jsonb"`. `stateJson` tratado como String opaco — nunca deserializado.
+
+2. **Repositorios JPA**:
+   - `GameRepository`: `findByStatusNot(String status)` para GET /active.
+   - `GameParticipantRepository`: `findByGameId(UUID gameId)`.
+   - `GameStateDumpRepository`: `findFirstByGameIdOrderByDumpedAtDesc(UUID gameId)` — siempre devuelve el dump más reciente.
+
+3. **Servicios**:
+   - `GameService` (interfaz) + `GameServiceImpl`: `createGame`, `getGame`, `getActiveGames`, `endGame`. Usa `@Transactional` en escrituras y `@Transactional(readOnly=true)` en lecturas.
+   - `GameDumpService` (interfaz) + `GameDumpServiceImpl`: `dumpState` (INSERT puro, nunca UPDATE) + `getLatestDump`. Verifica existencia del juego antes de persistir.
+
+4. **API — Controller y DTOs (Records)**:
+   - `CreateGameRequestDto`: `maxPlayers` (@Min=2, @Max=6) + `characterIds` (@NotEmpty, @Size 2-6).
+   - `GameResponseDto`: incluye sub-record `ParticipantDto` y `latestStateJson` (puede ser null si no hay dump aún).
+   - `StateDumpRequestDto`: `stateJson` (@NotBlank).
+   - `EndGameRequestDto`: `winnerCharacterId` (nullable — admite empate).
+   - `GameController`: 5 endpoints. Ruta `/active` declarada ANTES de `/{id}` para evitar ambigüedad. Devuelve `ResponseEntity<ApiResponse<T>>` siguiendo el patrón de sprints anteriores.
+
+5. **Tests — 28 nuevos tests, todos en verde**:
+   - `GameServiceTest`: 10 tests (createGame, getGame con/sin dump, getActiveGames, endGame con/sin ganador, 404s).
+   - `GameDumpServiceTest`: 5 tests (dumpState, múltiples inserts, getLatestDump, 404 en game inexistente).
+   - `GameControllerTest`: 13 tests (todos los endpoints, validaciones y errores).
+
+6. **Total acumulado del proyecto**: **65 tests — BUILD SUCCESS** (sin Failures ni Errors).
+
+### 🔒 Checklist de Seguridad (security.md):
+
+- ✅ `state_json` tratado como String opaco — nunca parseado ni deserializado por el DB Server
+- ✅ `game_state_dumps` solo recibe INSERTs — historial preservado, sin UPDATE/DELETE
+- ✅ Sin Lombok — constructores nativos compatibles con Java 25
+- ✅ Entidades JPA nunca expuestas directamente — siempre mapeadas a Records DTO
+- ✅ `@Transactional(readOnly=true)` en consultas, `@Transactional` en escrituras
+- ✅ Sin secrets ni lógica de negocio en el controlador (capa fina)
+- ✅ `EntityNotFoundException` lanzado correctamente → 404 sin stack trace al exterior
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/main/java/.../domain/model/Game.java` | **CREADO** |
+| `db_back/src/main/java/.../domain/model/GameParticipant.java` | **CREADO** |
+| `db_back/src/main/java/.../domain/model/GameStateDump.java` | **CREADO** |
+| `db_back/src/main/java/.../domain/repository/GameRepository.java` | **CREADO** |
+| `db_back/src/main/java/.../domain/repository/GameParticipantRepository.java` | **CREADO** |
+| `db_back/src/main/java/.../domain/repository/GameStateDumpRepository.java` | **CREADO** |
+| `db_back/src/main/java/.../domain/service/GameService.java` | **CREADO** |
+| `db_back/src/main/java/.../domain/service/GameServiceImpl.java` | **CREADO** |
+| `db_back/src/main/java/.../domain/service/GameDumpService.java` | **CREADO** |
+| `db_back/src/main/java/.../domain/service/GameDumpServiceImpl.java` | **CREADO** |
+| `db_back/src/main/java/.../api/dto/CreateGameRequestDto.java` | **CREADO** |
+| `db_back/src/main/java/.../api/dto/GameResponseDto.java` | **CREADO** |
+| `db_back/src/main/java/.../api/dto/StateDumpRequestDto.java` | **CREADO** |
+| `db_back/src/main/java/.../api/dto/EndGameRequestDto.java` | **CREADO** |
+| `db_back/src/main/java/.../api/GameController.java` | **CREADO** |
+| `db_back/src/test/java/.../domain/service/GameServiceTest.java` | **CREADO** |
+| `db_back/src/test/java/.../domain/service/GameDumpServiceTest.java` | **CREADO** |
+| `db_back/src/test/java/.../api/GameControllerTest.java` | **CREADO** |
+| `.agents/db_server_sprint4_detail.md` | **CREADO** (sprint anterior) |
+| `.agents/db_server_sprints.md` | **MODIFICADO** — Sprint 3 y 4 → `status: DONE` |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-21] Auditoría y Cierre Formal del Sprint 1 — DB Server
 
 **Agente**: Antigravity (Google DeepMind)
