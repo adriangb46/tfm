@@ -1,0 +1,155 @@
+╔══════════════════════════════════════════════════════╗
+║         DB SERVER AUDIT — Viking Clan Wars           ║
+║               [2026-04-21 / DB SERVER]               ║
+╚══════════════════════════════════════════════════════╝
+
+SCORE: 45 / 100
+
+  ❌ FAIL      [4]   ·   🔶 PARTIAL  [1]
+  ⚪ NOT FOUND [4]   ·   ✅ PASS     [57]
+
+BLOCKS:
+  A - Structure & Config     [ 5/ 6]
+  B - DB Schema              [ 7/ 7]
+  C - Security Layer         [ 5/ 7]
+  D - Auth Endpoint          [ 5/ 5]
+  E - User Endpoints         [ 7/ 7]
+  F - Character Endpoints    [ 5/ 5]
+  G - Game Endpoints         [ 7/ 7]
+  H - Analytics Endpoint     [ 6/ 6]
+  I - Code Conventions       [ 9/10]
+  J - Error Handling         [ 6/ 6]
+  K - Testing                [ 3/ 6]
+  L - Docker                 [ 2/ 3]
+
+──────────────────────────────────────────────────────
+❌ FAILURES
+[A-05] .env en .gitignore
+  Check:    A-05
+  File:     db_back/.gitignore
+  Found:    No existe referencia a archivos .env en .gitignore
+  Expected: .env debe estar en .gitignore para no commitear secretos
+  Fix:      Añadir `.env` al archivo `db_back/.gitignore`
+
+[C-06] Cabecera Referrer-Policy ausente
+  Check:    C-06
+  File:     db_back/src/main/java/com/tfm/db_back/config/SecurityConfig.java (líneas 47-50)
+  Found:    Configuración de frameOptions y contentTypeOptions, pero sin Referrer-Policy
+  Expected: Referrer-Policy: strict-origin-when-cross-origin
+  Fix:      Añadir `.referrerPolicy(rp -> rp.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))` a la configuración.
+
+[I-09] Uso de enums/sealed classes para dominios cerrados
+  Check:    I-09
+  File:     db_back/src/main/java/com/tfm/db_back/domain/model/Game.java y apis DTOs
+  Found:    El campo `status` es un `String` genérico, y `clanId` en DTOs se usa vía RegEx sobre `String`.
+  Expected: sealed classes o enums para los dominios cerrados (GameStatus, ClanId)
+  Fix:      Crear enums `GameStatus` y `ClanId` y refactorizar para enforcer tipado fuerte.
+
+[L-03] Puerto de db-server expuesto al mundo
+  Check:    L-03
+  File:     docker-compose.yml
+  Found:    El servicio `db_server` tiene expuesto `ports: - "8080:8080"`
+  Expected: db-server port not exposed publicly (solo por internal network).
+  Fix:      Quitar el mapeo `ports: - "8080:8080"` del yaml para `db_server`.
+
+🔶 PARTIAL
+[A-04] Archivo .env.example faltante
+  Check:    A-04
+  File:     db_back/.env.example
+  Found:    Están las keys en `application.properties`, pero falta la plantilla `.env.example`.
+  Expected: Configuración con plantilla para instanciar las variables necesarias.
+  Fix:      Crear archivo `.env.example` en la raíz de `db_back`.
+
+⚪ NOT FOUND
+[C-07] Esconder X-Powered-By / info del Server de Tomcat
+  Check:    C-07
+  Expected at: application.properties o SecurityConfig
+  Defined in:  security.md #section-6
+  Found:       No hay configuración explícita para server header oculto en Tomcat (`server.server-header=`).
+
+[K-04] Tests de Integración usando Testcontainers
+  Check:    K-04
+  Expected at: test/
+  Defined in:  java_good_practices.md #testing
+  Found:       No implementado (Sprint 6 pendiente).
+
+[K-05] Flyway migrations automáticas en Test Context
+  Check:    K-05
+  Expected at: test/
+  Defined in:  java_good_practices.md #testing
+  Found:       No implementado (Sprint 6 pendiente).
+
+[K-06] Independencia del orden de Tests
+  Check:    K-06
+  Expected at: test/
+  Defined in:  java_good_practices.md #testing
+  Found:       No implementado a nivel de test de integración (Sprint 6 pendiente).
+
+✅ PASSING  (57 checks)
+[A-01] Estructura de carpetas correcta
+[A-02] ddl-auto está en 'validate'
+[A-03] Secrets en variables de entorno (application.properties referenciándolos)
+[A-06] Flyway es usado
+[B-01] Migración V1_initial_schema.sql inicial correcta
+[B-02] Tabla users correcta
+[B-03] Tabla characters correcta
+[B-04] Tabla games correcta
+[B-05] Tabla game_participants correcta y con UNIQUE keys
+[B-06] Tabla game_state_dumps correcta y con índice
+[B-07] Todo es Flyway (sin DDL manual)
+[C-01] HandshakeJwtFilter hereda de OncePerRequestFilter
+[C-02] Filtro de Request compara JWT contra secret en env
+[C-03] Se devuelve un error 401 puro, sin redirecciones
+[C-04] /auth/handshake exento correctamente
+[C-05] CSRF disabled y peticiones denegadas si no auth
+[D-01] POST /auth/handshake implementado
+[D-02] Validación a tiempo constante contra enviroment keys
+[D-03] Retorna token u error correctamente
+[D-04] Códigos 401 consistentes (wrong secret)
+[D-05] Logging correcto sin exponer secrets
+[E-01] Cost BCrypt == 12 y guardado de pw correcto
+[E-02] PasswordHash no se devuelve el endpoint (DTOs OK)
+[E-03] Get con UUID, no int index
+[E-04] Get usernames OK
+[E-05] Update avatar via PUT OK
+[E-06] ConflictException OK en users clonados
+[E-07] @Valid annotations aplicados en registros
+[F-01] Create character check ok
+[F-02] Valid clan id en los request con Regex
+[F-03] UUID en queries
+[F-04] Retrieve chars por userId de forma segura
+[F-05] DTOs validaciones en Character endpoints
+[G-01] Create record games y deps
+[G-02] Retrieve dumps mas recientes, desc limit 1
+[G-03] Retrieve de 'waiting' o no 'finished'
+[G-04] Dumps no sustituyen sino INSERTAN rows nuevas
+[G-05] state_json es tipo String (opaco DB)
+[G-06] Marcador de partida 'finished' correcto
+[G-07] Record DTOs funcionales en games api
+[H-01] Analytics en MONGODB snapshots activados
+[H-02] SnapshotAccepted (202) se usa
+[H-03] @Async configurado
+[H-04] MongoDB fallos loggueados sin afectar partida principal
+[H-05] Schema de snapshots y Players correctos
+[H-06] Battle events document ok
+[I-01] Injectaciones con constructor (no Autowired)
+[I-02] Transactional en mutations OK
+[I-03] ReadOnly en gets OK
+[I-04] No Fetch Eager
+[I-05] No concat strings queries en JPA
+[I-06] Records de request y response estandardizados
+[I-07] Thin Controllers usados (capas bien aisladas)
+[I-08] Controllers mapean Entities -> Dtos
+[I-10] Nomenclaturas y comentarios Eng/Esp respectivamente
+[J-01] GlobalExceptionHandle existe
+[J-02] Model Errors es consistente
+[J-03] Generic messages, not stack trace leaks
+[J-04] 400s fields validators mappings
+[J-05] 404 EntityNot mapping
+[J-06] 500 Generic internal mapping
+[K-01] Tests unitarios en todos scopes definidos
+[K-02] Given_When_Should format standard aplicado
+[K-03] ExtendWith y MockBeans, no SprintBoot context en tests
+[L-01] Dockerfile sin root
+[L-02] Use adduser inside definition for Non-roots
+──────────────────────────────────────────────────────
