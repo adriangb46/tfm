@@ -2,6 +2,36 @@
 
 ---
 
+## [2026-04-21] Implementación de Tests Unitarios en el Frontend
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Establecer una base sólida de pruebas unitarias para los servicios y componentes críticos del frontend, mejorando la calidad y mantenibilidad del código según Block L del audit.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Tests de Servicios Críticos**:
+   - **`AuthService`**: Creados tests para validar el parsing de JWT (happy path y errores de formato/base64), la gestión de señales de sesión (`isLoggedIn`, `isAdmin`) y los métodos de simulación (mock login).
+   - **`ThemeService`**: Creados tests para verificar la inicialización desde `localStorage` y preferencias del sistema (`matchMedia`), la alternancia de temas y los efectos secundarios en el DOM (`data-theme`).
+
+2. **Tests de Componentes Compartidos**:
+   - **`LogoComponent`**: Creados tests para verificar los `signal inputs` (`scale`, `showText`, `direction`) y su correcta repercusión en el template (clases CSS y transformaciones).
+
+3. **Arquitectura de Pruebas**:
+   - Uso de `TestBed` para inyección de dependencias.
+   - Mocking de APIs globales del navegador (`localStorage`, `matchMedia`, `document`).
+   - Seguimiento del patrón de nombrado `methodName_givenContext_shouldExpectedBehavior`.
+
+### 🗂️ Archivos Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/core/auth/auth.service.spec.ts` | **CREADO** |
+| `front/src/app/core/theme/theme.service.spec.ts` | **CREADO** |
+| `front/src/app/shared/components/logo/logo.component.spec.ts` | **CREADO** |
+
+---
+
+
 ## [2026-04-21] Implementación Completa Sprint 1 — DB Server (Foundation & Security)
 
 **Agente**: Antigravity (Google DeepMind)
