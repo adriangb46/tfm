@@ -2,6 +2,78 @@
 
 ---
 
+## [2026-04-21] Refinamiento de Documentación: Justificación Arquitectónica de Modelos
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Enriquecer el documento `presentation.html` con explicaciones detalladas sobre las decisiones de diseño arquitectónico y el uso práctico de cada base de datos y estructura en memoria.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Adición de Explicaciones Arquitectónicas**:
+   - **PostgreSQL**: Se detalló su rol como fuente de la verdad (cumplimiento ACID) y su importancia en la recuperación de fallos mediante la tabla `game_state_dumps`.
+   - **MongoDB**: Se justificó el uso de NoSQL para el almacenamiento masivo de analíticas complejas (objetos JSON anidados) con el fin de proteger el rendimiento de la base de datos relacional principal.
+   - **Memoria RAM (Middle Server)**: Se explicó la necesidad crítica de mantener el estado en memoria para un juego RTS sin latencia, y se detalló el patrón de "Rueda del Tiempo" (`Time Wheel` con `MinHeap`) para garantizar la ejecución cronológica de eventos futuros en lugar de saturar Node.js con temporizadores `setTimeout`.
+
+2. **Mejora Visual**:
+   - Inclusión de bloques `.explanation` con bordes dorados para separar claramente la justificación teórica de los diagramas técnicos.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `presentation.html` | **MODIFICADO** (Inclusión de fundamentos de arquitectura) |
+
+---
+
+## [2026-04-21] Refactorización de Documentación: Diagramas ER y UML (Mermaid)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Transformar la presentación ejecutiva en una página estática detallada y técnica con diagramas de Entidad-Relación y diagramas de clases UML para todos los niveles de arquitectura (PostgreSQL, MongoDB, In-Memory).
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Reescritura de `presentation.html`**:
+   - Eliminación del formato de diapositivas (`reveal.js`) en favor de un scroll vertical tradicional en una sola página.
+   - Integración de la librería `Mermaid.js` para la renderización de diagramas en tiempo real.
+
+2. **Modelado de Datos Preciso**:
+   - **PostgreSQL**: Diagrama Entidad-Relación (ER) mostrando las tablas `users`, `characters`, `games`, `game_participants` y `game_state_dumps`, junto con sus relaciones y claves (PK/FK).
+   - **MongoDB (Analítica)**: Diagrama de clases UML detallando la estructura de documentos anidados (`game_snapshots`, `battle_events`) usados para las métricas del juego.
+   - **Middle Server (Memoria)**: Diagrama de clases UML del estado en vivo (`GameState`, `PlayerState`, `Troop`, `GameEvent`, `TimeWheel`), exponiendo el tipado exacto y la lógica de colas.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `presentation.html` | **SOBREESCRITO** (Página única con Mermaid.js) |
+
+---
+
+## [2026-04-21] Presentación Ejecutiva: Modelos de Datos y Arquitectura
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Generar una presentación HTML interactiva (usando Reveal.js) para explicar de forma no técnica los modelos de datos y la arquitectura del proyecto (Mundo en Vivo vs Mundo Permanente).
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Revisión de Arquitectura**:
+   - Lectura de `README.md` y `.agents/proyect_arquitecture.md`.
+   - Identificación de los dominios de datos: Memoria (Node.js), PostgreSQL (Permanente) y MongoDB (Analítica).
+
+2. **Creación de la Presentación HTML**:
+   - Se ha creado el archivo `presentation.html` en la raíz del proyecto.
+   - **Diseño Aesthetic**: Aplicación de la estética "Mythic Viking" usando fuentes Cinzel y Montserrat, paleta dorada y efectos de glassmorphism.
+   - **Metáforas Explicativas**: Uso de conceptos como "Mundo en Vivo" y "Caja Fuerte" para hacer la arquitectura comprensible a público no técnico.
+   - **Estructura Interactiva**: Implementación de diapositivas que detallan la inyección de dependencias temporales, guardados periódicos, y registro de análisis de combate.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `presentation.html` | **CREADO** |
+
+---
+
 ## [2026-04-21] TypeScript Best Practices: Extracción de Modelos (Frontend)
 
 **Agente**: Antigravity (Google DeepMind)

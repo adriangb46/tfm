@@ -1,0 +1,1 @@
+preprarme un plan basado en sprints para elaborar el db_server, siguiedo MUY MUY MUY de cerca la arquitectura que tenemos y usando lo definido en .agents, exponme el primero y deja el resto reflejado en algun tipo de archivo pensado para que lo lea una ia, a demas como somos dos personas prepara los spets para separar ñas cargas de trabajo

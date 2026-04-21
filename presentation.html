@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelos de Datos - Viking Clan Wars</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Mermaid.js -->
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 40px;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: auto;
+        }
+        h1, h2, h3 {
+            font-family: 'Cinzel', serif;
+            color: #d4af37;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 1.1em;
+            color: #aaaaaa;
+            margin-bottom: 50px;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #d4af37;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        .explanation {
+            background: rgba(212, 175, 55, 0.05);
+            border-left: 4px solid #d4af37;
+            padding: 15px 20px;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+        .explanation h4 {
+            margin-top: 0;
+            color: #e74c3c;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: none;
+            font-size: 1.1em;
+        }
+        .mermaid {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        ul {
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: #e74c3c;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Viking Clan Wars</h1>
+    <div class="subtitle">Documentación Detallada de Modelos de Datos y Entidad-Relación</div>
+
+    <!-- 1. PostgreSQL -->
+    <div class="section">
+        <h2>1. Base de Datos Principal Persistente (PostgreSQL)</h2>
+        <div class="explanation">
+            <h4>¿Por qué usamos PostgreSQL y qué lugar ocupa?</h4>
+            <p><strong>Justificación Arquitectónica:</strong> PostgreSQL es una base de datos relacional que garantiza el cumplimiento ACID (Atomicidad, Consistencia, Aislamiento y Durabilidad). Se utiliza como la <strong>fuente de la verdad a largo plazo</strong>. Los datos como credenciales de usuarios, perfiles de personajes y el registro histórico de quién ganó qué partida no pueden permitirse inconsistencias.</p>
+            <p><strong>Uso en el Sistema:</strong> El <code>DB Server</code> (Java 25 + Spring Boot) es el único microservicio que se comunica con esta base de datos. Ninguna lógica del juego corre aquí.</p>
+            <p><strong>La tabla clave para la resiliencia:</strong> <code>game_state_dumps</code>. Para evitar que una caída del motor de juego destruya partidas de horas de duración, el Middle Server envía una copia exacta de su memoria cada ~15 minutos. Si el servidor se apaga, al reiniciar lee el <code>state_json</code> de Postgres y retoma la partida exactamente donde se quedó.</p>
+        </div>
+
+        <div class="mermaid">
+erDiagram
+    users {
+        UUID id PK
+        VARCHAR(50) username UK
+        VARCHAR(255) email UK
+        VARCHAR(255) password_hash
+        VARCHAR(512) avatar_url
+        TIMESTAMPTZ created_at
+    }
+    characters {
+        UUID id PK
+        UUID user_id FK
+        VARCHAR(50) clan_id
+        VARCHAR(100) name
+        TIMESTAMPTZ created_at
+    }
+    games {
+        UUID id PK
+        VARCHAR(20) status "waiting | preparation | war | end | finished"
+        SMALLINT max_players "2-6"
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ started_at
+        TIMESTAMPTZ ended_at
+        UUID winner_character_id FK "nullable"
+    }
+    game_participants {
+        UUID id PK
+        UUID game_id FK
+        UUID character_id FK
+        SMALLINT join_order
+        BOOLEAN eliminated
+        TIMESTAMPTZ eliminated_at
+    }
+    game_state_dumps {
+        UUID id PK
+        UUID game_id FK
+        JSONB state_json
+        TIMESTAMPTZ dumped_at
+    }
+
+    users ||--o{ characters : "posee"
+    characters ||--o{ game_participants : "juega como"
+    characters ||--o{ games : "es el ganador de"
+    games ||--|{ game_participants : "tiene"
+    games ||--o{ game_state_dumps : "respalda estado en"
+        </div>
+    </div>
+
+    <!-- 2. MongoDB -->
+    <div class="section">
+        <h2>2. Base de Datos Analítica e Histórica (MongoDB)</h2>
+        
+        <div class="explanation">
+            <h4>¿Por qué usamos MongoDB y qué lugar ocupa?</h4>
+            <p><strong>Justificación Arquitectónica:</strong> MongoDB es una base de datos NoSQL orientada a documentos. Se ha elegido porque los datos estadísticos e históricos crecen exponencialmente y no requieren integridad referencial estricta. Guardar objetos JSON masivos y altamente anidados (como un "snapshot" entero de una partida con todos sus ejércitos) es extremadamente ineficiente en SQL, pero natural y muy rápido en MongoDB.</p>
+            <p><strong>Uso en el Sistema:</strong> Extraer estadísticas masivas ("¿Qué clan tiene mejor Win-Rate?") sobre millones de combates paralizaría a PostgreSQL. Al separar estas analíticas en MongoDB, protegemos el rendimiento del sistema de login y gestión de usuarios. El Middle Server envía estos informes al DB Server en segundo plano (las batallas al ocurrir, y los snapshots cada 2 horas).</p>
+        </div>
+
+        <div class="mermaid">
+classDiagram
+    class game_snapshots {
+        +ObjectId _id
+        +UUID gameId
+        +ISODate snapshotAt
+        +String phase "preparation | war | end"
+        +Array~PlayerSnapshot~ players
+    }
+    class PlayerSnapshot {
+        +UUID characterId
+        +String clanId
+        +Integer economicCredits
+        +Integer researchCredits
+        +Integer capitalHealth
+        +Array~TroopSnapshot~ troops
+        +Array~String~ unlockedResearches
+        +Boolean eliminated
+    }
+    class TroopSnapshot {
+        +UUID troopId
+        +String typeId
+        +Integer currentPoints
+        +Boolean deployed
+    }
+    
+    class battle_events {
+        +ObjectId _id
+        +UUID gameId
+        +ISODate timestamp
+        +UUID attackerCharacterId
+        +String attackerClanId
+        +UUID defenderCharacterId
+        +String defenderClanId
+        +Integer attackerTotalPoints
+        +Integer defenderTotalPoints
+        +String outcome "ATTACKER_WIN | DEFENDER_WIN"
+        +Boolean advantageApplied
+        +Float advantageMultiplier
+        +Array~UUID~ attackerTroopsLost
+        +Array~UUID~ defenderTroopsLost
+    }
+
+    game_snapshots *-- PlayerSnapshot : contiene (array embedido)
+    PlayerSnapshot *-- TroopSnapshot : contiene (array embedido)
+        </div>
+    </div>
+
+    <!-- 3. Memoria RAM (En Vivo) -->
+    <div class="section">
+        <h2>3. Modelo de Estado En Vivo (Memoria - Middle Server)</h2>
+
+        <div class="explanation">
+            <h4>¿Por qué vive en la Memoria y cómo funciona el Motor?</h4>
+            <p><strong>Justificación Arquitectónica:</strong> Viking Clan Wars es un juego de estrategia en tiempo real. Si cada movimiento de tropas, cálculo de daño, o recolección de oro requiriera hacer una consulta de escritura (INSERT/UPDATE) en una base de datos en disco, el juego sufriría de un "lag" injugable y el servidor colapsaría por saturación de I/O.</p>
+            <p><strong>Uso en el Sistema:</strong> Por ello, el <code>Middle Server</code> (Node.js) carga y mantiene <strong>toda</strong> la partida viva exclusivamente en la Memoria RAM. Las peticiones a través de WebSockets (Socket.IO) modifican las propiedades de estos objetos en milisegundos, retransmitiendo el nuevo estado a los clientes conectados.</p>
+            <p><strong>La Rueda del Tiempo (Time Wheel / eventQueue):</strong> Para evitar tener miles de temporizadores <code>setTimeout</code> corriendo a la vez (lo que desestabiliza Node.js), la arquitectura usa un patrón de Rueda del Tiempo. Todos los eventos futuros (como el impacto de un ataque) se guardan como un <code>GameEvent</code> en una cola <code>MinHeap</code> ordenada por timestamp. Un único bucle global lee la cima de la cola un par de veces por segundo y ejecuta el evento solo cuando llega su hora cronológica exacta. Esto garantiza que ningún evento ocurra fuera de orden.</p>
+        </div>
+
+        <div class="mermaid">
+classDiagram
+    class GameStore {
+        +Map~UUID, GameState~ activeGames
+    }
+    class GameState {
+        +UUID id
+        +String phase "preparation | war | end"
+        +Number startedAt "timestamp ms"
+        +Map~UUID, PlayerState~ players
+        +MinHeap~GameEvent~ eventQueue
+    }
+    class PlayerState {
+        +UUID characterId
+        +UUID userId
+        +String clanId
+        +Integer economicCredits
+        +Integer researchCredits
+        +Integer capitalHealth
+        +String connectedSocketId
+        +Boolean eliminated
+        +Array~String~ unlockedResearches
+        +ResearchInProgress researchInProgress
+        +Array~Troop~ troops
+    }
+    class Troop {
+        +UUID id
+        +String typeId "ref to clans.yml"
+        +String clanId
+        +Integer maxPoints
+        +Integer currentPoints
+        +Boolean deployed
+        +UUID travelTargetGameId "nullable"
+        +Number arrivalAt "timestamp ms (nullable)"
+    }
+    class ResearchInProgress {
+        +String researchId
+        +Number completesAt "timestamp ms"
+    }
+    class GameEvent {
+        +UUID id
+        +UUID gameId
+        +String type "TROOP_ARRIVAL | RESOURCE_TICK | DB_DUMP_POSTGRES..."
+        +Number executeAt "timestamp ms"
+        +Object payload
+    }
+
+    GameStore *-- GameState : gestiona múltiples
+    GameState *-- PlayerState : contiene (mapa)
+    GameState *-- GameEvent : TimeWheel Queue (MinHeap)
+    PlayerState *-- Troop : instancias de tropas
+    PlayerState *-- ResearchInProgress : 1 o nulo
+        </div>
+    </div>
+
+</body>
+</html>
