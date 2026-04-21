@@ -2,7 +2,50 @@
 
 ---
 
-## [2026-04-21] Automatización de Tests Frontend en GitHub Actions
+## [2026-04-21] Auditoría y Cierre Formal del Sprint 1 — DB Server
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Verificar estáticamente que todos los artefactos del Sprint 1 están implementados y cerrar formalmente el sprint antes de comenzar el Sprint 2.
+
+### 📝 Resumen de Verificación:
+
+Revisión archivo por archivo de todos los entregables definidos en `db_server_sprint1_detail.md`:
+
+| Artefacto | Status |
+|-----------|--------|
+| `V1__initial_schema.sql` (5 tablas + índice) | ✅ Correcto |
+| `application.properties` (todas las vars de entorno, ddl-auto=validate) | ✅ Correcto |
+| `test/resources/application.properties` (excluye DataSource/JPA/MongoDB) | ✅ Correcto |
+| `SecurityConfig.java` (CSRF off, stateless, filtro registrado, headers) | ✅ Correcto |
+| `HandshakeJwtFilter.java` (OncePerRequestFilter, shouldNotFilter, 401 con body) | ✅ Correcto |
+| `HandshakeService.java` (generateToken + validateToken con JJWT) | ✅ Correcto |
+| `AuthController.java` (tiempo constante MessageDigest.isEqual, log seguro) | ✅ Correcto |
+| `GlobalExceptionHandler.java` (404/409/400/500 sin stack trace) | ✅ Correcto |
+| `ApiResponse.java` / `ErrorResponse.java` / todos los DTOs | ✅ Correctos |
+| `EntityNotFoundException.java` / `ConflictException.java` | ✅ Correctos |
+| `HandshakeServiceTest.java` (5 tests, sin contexto Spring) | ✅ Correcto |
+| `AuthControllerTest.java` (4 tests, standaloneSetup) | ✅ Correcto |
+| `GlobalExceptionHandlerTest.java` (4 tests, cubre todos los handlers) | ✅ Correcto |
+
+### 🔒 Checklist de Seguridad (security.md §12):
+
+- ✅ Sin secrets hardcodeados — `grep DB_HANDSHAKE_SECRET src/` → solo `${DB_HANDSHAKE_SECRET}`
+- ✅ `ddl-auto=validate` (nunca `create`)
+- ✅ Sin stack traces en respuestas de error
+- ✅ Comparación de secret en tiempo constante (`MessageDigest.isEqual`)
+- ✅ Token JWT nunca logueado completo
+- ✅ `HandshakeJwtFilter` exento solo para `POST /internal/auth/handshake`
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.agents/db_server_sprints.md` | **MODIFICADO** — Sprint 1 `status: PENDING` → `status: DONE` |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+
 
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Integrar la ejecución de pruebas unitarias en el pipeline oficial de CI el frontend para garantizar la estabilidad del código en cada push/pull request.
@@ -1616,4 +1659,33 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 | `front/src/app/pages/home/home.component.html` | Modificado |
 | `front/src/app/pages/home/home.component.scss` | Modificado |
 | `front/public/viking_hero.png` | Vinculado (Copiado manualmente por usuario) |
+
+---
+
+## [2026-04-21] Implementación y corrección de Sprint 2 — DB Server (User Domain)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Compilar, testear y asegurar el pase integral de las pruebas correspondientes al Sprint 2 para la capa `db_back`, absteniéndose de utilizar Lombok para prevenir errores de compilación con el annotation processor en Java 25.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Fix de Compilación con Lombok & Java 25**:
+   - Detectado error en la compilación donde `javac` (v25) no procesaba las anotaciones de Lombok (`@RequiredArgsConstructor`, `@Builder`, `@Getter`, `@Setter`) en los archivos del dominio `User`.
+   - **Refactorización manual**: Se han eliminado completamente las dependencias sintácticas de Lombok en pro de constructores nativos explícitos, garantizando la compilación sin annotation processors adicionales.
+   - Reescritura de `User.java` (getters, setters, constructores estándar).
+   - Reescritura de dependencias en `UserController.java` y `UserServiceImpl.java` mediante inyección de dependencias por constructor.
+   - Adaptación de los tests en `UserServiceImplTest.java` para instanciar objetos con el nuevo constructor nativo en lugar del `Builder`.
+
+2. **Verificación de Tests (DoD)**:
+   - Ejecutado `./mvnw clean test` exitosamente con la nueva refactorización.
+   - **32 tests ejecutados y pasados** con éxito (10 específicos de `UserServiceImplTest`), cumpliendo con la DoD del Sprint 2 para el servidor de base de datos.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/main/java/com/tfm/db_back/domain/model/User.java` | Refactorizado sin Lombok |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java` | Refactorizado sin Lombok |
+| `db_back/src/main/java/com/tfm/db_back/api/UserController.java` | Refactorizado sin Lombok |
+| `db_back/src/test/java/com/tfm/db_back/domain/service/UserServiceImplTest.java` | Ajustado para new User() |
 

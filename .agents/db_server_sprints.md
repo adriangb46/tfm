@@ -52,7 +52,7 @@ goal: >
   - POST /internal/auth/handshake endpoint functional
   - Unit tests for HandshakeService passing
 duration_estimate: 1 week
-status: PENDING
+status: DONE  # 2026-04-21 — implementado por agente, verificado estáticamente
 
 architecture_refs:
   - proyect_arquitecture.md#section-2.3  # DB Server role
@@ -260,7 +260,7 @@ goal: >
   Passwords hashed with bcrypt. Avatar URL persisted.
   All 4 user endpoints functional and tested.
 duration_estimate: 1 week
-status: PENDING
+status: DONE  # 2026-04-21 — implementado y testeado exitosamente (Lombok removido)
 depends_on: [sprint_1]
 
 architecture_refs:
