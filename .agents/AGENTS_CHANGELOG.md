@@ -2,6 +2,72 @@
 
 ---
 
+## [2026-04-21] TypeScript Best Practices: Extracción de Modelos (Frontend)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Separar las definiciones de interfaces y tipos en archivos propios (`.model.ts`) para limpiar los archivos de componentes y servicios, previniendo referencias circulares y mejorando la reusabilidad del código.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Creación de Archivos de Modelo**:
+   - `admin-page.model.ts` (para `BanRecord`)
+   - `characters.model.ts` (para `ClanDetail`)
+   - `statistics.model.ts` (para `StatMetric`)
+   - `home.model.ts` (para `ClanPreview`)
+   - `game.model.ts` (para `GamePhase`, `PlayerNode`, `ActiveAttack`)
+   - `theme.model.ts` (para `Theme`)
+   - `auth.model.ts` (para `JwtPayload`, `UserRole`, `SessionState`)
+
+2. **Limpieza de Componentes y Servicios**:
+   - Extraídos todos estos tipos de sus respectivos archivos `.ts`.
+   - Modificados los `import` en cada archivo para consumir los modelos externos.
+
+3. **Verificación de Integridad**:
+   - La compilación `npm run build` se completó de forma totalmente exitosa, confirmando que no se ha roto ninguna relación de importación ni se han introducido errores de tipado.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/**/*.model.ts` | **CREADOS** (7 nuevos archivos) |
+| `front/src/app/pages/*.component.ts` | Eliminación de modelos e inclusión de imports |
+| `front/src/app/core/**/*.service.ts` | Eliminación de modelos e inclusión de imports |
+
+---
+
+## [2026-04-21] Arquitectura: Renombrado de Componentes y Guía de Colores Frontend
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Alinear la presentación de datos y la nomenclatura de componentes en el frontend con la arquitectura definida y las reglas de buenas prácticas.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Renombrado y Nomenclatura Estricta ("Code in English")**:
+   - Renombrados los componentes y rutas para cumplir con la regla de código en inglés y la correspondencia estructural (solucionando las discrepancias en `ui_screens.md`):
+     - `statistics-view` -> `statistics` (`StatisticsComponent`)
+     - `personajes-page` -> `characters-page` (`CharactersPageComponent`)
+     - `reglas-page` -> `rules-page` (`RulesPageComponent`)
+     - `admin` -> `admin-page` (`AdminPageComponent`)
+     - `config` -> `user-config` (`UserConfigComponent`)
+   - Actualizado `app.routes.ts` para reflejar las nuevas rutas y nombres de clase.
+
+2. **Refactorización de la Guía de Colores (SCSS)**:
+   - Eliminados múltiples colores estáticos (`rgba` y `#hex`) de los estilos en `statistics`, `admin-page`, `user-config`, `game` y `home`.
+   - Se aplicaron tokens de diseño globales como `var(--color-bg-overlay)`, `var(--color-gold-muted)`, y técnicas con `color-mix` para reemplazar transparencias fijas.
+
+3. **Verificación de Compilación**:
+   - Compilación exitosa (`npm run build`) validando que los renombrados no han quebrado dependencias circulares ni enlaces SCSS/HTML.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/*` | Renombrado de directorios y archivos (.ts, .html, .scss) |
+| `front/src/app/app.routes.ts` | Actualización de rutas |
+| `front/src/app/pages/**/*.scss` | Reemplazo de variables de color hardcodeadas |
+
+---
+
 ## [2026-04-21] Corrección y Centralización de Workflows de GitHub Actions
 
 **Agente**: Antigravity (Google DeepMind)
