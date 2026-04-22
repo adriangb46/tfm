@@ -1,3 +1,128 @@
+## [2026-04-22] Conexión Funcional: Lobby -> Juego
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Habilitar la transición real entre la creación/unión a partida y la pantalla de juego, preservando el contexto del jugador (clan, código, rol).
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **GameService (Core)**:
+   - Implementado `GameService` para gestionar el contexto de la partida (`GameContext`) de forma global en el cliente usando Signals.
+   - Permite persistir el código de partida y el clan seleccionado durante la navegación.
+
+2. **Crear Partida**:
+   - El modal ahora genera un **Códice de Guerra** aleatorio.
+   - Establece al usuario como **Host** y redirige correctamente a `/game`.
+
+3. **Unirse a Partida**:
+   - El modal captura el código introducido por el usuario.
+   - Establece al usuario como **Invitado** (no host) y redirige a `/game`.
+
+4. **GamePageComponent**:
+   - Sincronizado para leer el `GameContext` al inicializarse.
+   - El clan del avatar local y el código en la barra superior ahora reflejan las selecciones hechas en el Lobby.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/core/game/game.service.ts` | **CREADO** |
+| `front/src/app/pages/lobby-page/modals/crear-partida-modal/...` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/...` | **MODIFICADO** |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Implementación del Modal de Inicio de Partida (Lobby de Juego)
+
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Crear e integrar el modal de inicio de partida que se muestra sobre el juego en estado de espera (WAITING), permitiendo al anfitrión iniciar la partida tras validar el número de jugadores.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Diseño y Validación Visual**:
+   - Generada previsualización estática en `.agents/previews/lobby-modal-preview.html` siguiendo el sketch del usuario.
+   - Implementado diseño **Premium Glassmorphism** con temática vikinga y tipografía `Cinzel`.
+
+2. **Componente LobbyModalComponent**:
+   - Creado componente standalone `LobbyModalComponent` en `pages/game/modals/`.
+   - Implementada lógica de validación (mínimo 2 jugadores para iniciar).
+   - Diferenciación de UI entre **Anfitrión** (ve botón de inicio y errores) e **Invitado** (ve mensaje de espera).
+
+3. **Integración en GamePageComponent**:
+   - Actualizado el tipo `GamePhase` para incluir el estado `WAITING`.
+   - El juego ahora inicia por defecto en fase `WAITING`.
+   - Implementada la señal computada `isHost` basada en el primer jugador de la lista.
+   - Añadidas herramientas de **Debug** para añadir/quitar jugadores y probar dinámicamente las validaciones del modal.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.agents/previews/lobby-modal-preview.html` | **CREADO** |
+| `front/src/app/pages/game/game.model.ts` | **MODIFICADO** (Añadido WAITING) |
+| `front/src/app/pages/game/modals/lobby.modal.*` | **CREADOS** (.ts, .html, .scss) |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** (Integración y Debug) |
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO** (Template y Debug) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Persistencia de Tema y Detección de Preferencias del Sistema
+
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la persistencia del tema elegido por el usuario (oscuro/claro) en `localStorage` y asegurar que, por defecto, se respete la preferencia configurada en el sistema operativo del usuario.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **ThemeService (Core)**:
+   - Verificada la lógica de `ThemeService` para que utilice `window.matchMedia('(prefers-color-scheme: dark)')` como fallback cuando no hay una selección previa en `localStorage`.
+   - Se mantiene el uso de `effect` para sincronizar automáticamente el estado del tema con el atributo `data-theme` del `<html>` y persistirlo en `localStorage`.
+
+2. **AppComponent (Inicialización Global)**:
+   - Inyectado `ThemeService` en `App` (`src/app/app.ts`) para garantizar que el tema se aplique en cuanto carga la aplicación, antes incluso de que el usuario navegue a la página de configuración.
+
+3. **UserConfigComponent (Integración UI)**:
+   - Corregido el enlace de eventos en `user-config.component.html`: se ha sustituido el intento de modificar directamente una señal computada por la llamada al método `toggleTheme()`.
+   - La UI ahora refleja correctamente el estado global del tema y permite alternarlo.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/app.ts` | **MODIFICADO** (Inyección global de ThemeService) |
+| `front/src/app/pages/user-config/user-config.component.html` | **MODIFICADO** (Fix de toggle event) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Refinamiento de UI: Página de Configuración (userConfig)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Simplificar la interfaz de configuración del usuario eliminando el campo de edición del nombre de usuario de la sección de Identidad, ya que el nombre ya se muestra de forma destacada en la barra lateral del perfil.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Refinamiento visual (/refine-ui)**:
+   - Se ha generado un preview estático `.agents/previews/userConfig-preview.html` para validar el cambio con el usuario.
+   - El usuario ha confirmado que prefiere no tener el campo de entrada para el nombre de guerrero encima del correo electrónico.
+
+2. **Aplicación en Producción**:
+   - Modificado `front/src/app/pages/user-config/user-config.component.html` para eliminar la fila (`card-row`) correspondiente al "Nombre de Guerrero".
+   - El nombre sigue siendo visible en el componente `aside.profile-sidebar` para mantener la identidad del usuario a la vista.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.agents/previews/userConfig-preview.html` | **CREADO** |
+| `front/src/app/pages/user-config/user-config.component.html` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-22] Redirección Automática al Salir de Sesión
 
 **Agente**: Antigravity (Google DeepMind)
