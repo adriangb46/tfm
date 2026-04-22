@@ -1,3 +1,193 @@
+## [2026-04-22] Navbar: Estabilidad Total con Posicionamiento Fixed
+
+**Agent**: Antigravity (Google DeepMind)
+**Objective**: Garantizar que la Navbar sea 100% estable en la parte superior en todos los dispositivos móviles, evitando cualquier desplazamiento accidental.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Migración a Position Fixed**:
+   - Cambiada la Navbar de `sticky` a `fixed`. Esto ancla la barra de forma absoluta al viewport, eliminando dependencias del flujo de scroll del padre.
+
+2. **Reestructuración del Layout Global**:
+   - **Body Lock**: Bloqueado el scroll del `body` (`overflow: hidden`) para evitar comportamientos erráticos en navegadores móviles (como la ocultación de la barra de direcciones).
+   - **Scroll Independiente**: Ahora solo el contenedor principal (`.main-layout`) es el que tiene scroll.
+   - **Compensación de Altura**: Añadido un `padding-top: 72px` global al contenido para asegurar que nada quede oculto tras la Navbar fija.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
+| `front/src/styles.scss` | **MODIFICADO** |
+| `front/src/app/app.html` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Navbar: Implementación de Navbar Sticky
+
+**Agent**: Antigravity (Google DeepMind)
+**Objective**: Asegurar que la barra de navegación permanezca visible en la parte superior durante el scroll, mejorando la accesibilidad en dispositivos móviles.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Posicionamiento Sticky**:
+   - Cambiada la propiedad `position` de `.navbar` de `relative` a `sticky`.
+   - Añadido `top: 0` para anclar la barra al inicio del viewport.
+   - Esto permite que el contenido principal se desplace por debajo de la Navbar sin que esta desaparezca.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Navbar: Simplified Mobile Login Entry
+
+**Agent**: Antigravity (Google DeepMind)
+**Objective**: Provide a clean and direct entry point for login in the mobile side menu when the user is not authenticated.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Estado Anónimo en Menú Lateral**:
+   - Implementada una vista simplificada para usuarios no logueados en la parte inferior del desplegable móvil.
+   - Sustituida la información de usuario por el **avatar genérico** y el texto destacado **"INICIAR SESIÓN"**.
+   - Toda la cabecera de usuario es ahora un área interactiva con efectos de hover dorados.
+
+2. **Lógica de Navegación**:
+   - Actualizado `handleUserClick()` para que, al abrir el modal de autenticación desde el móvil, se cierre automáticamente el menú lateral, mejorando la visibilidad del formulario de login.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** |
+| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
+| `front/src/app/shared/components/navbar/navbar.component.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Navbar: Final Mobile Cleanup & Side-Menu Revert
+
+**Agent**: Antigravity (Google DeepMind)
+**Objective**: Revert side-menu position to the left, remove top-bar avatar on mobile, and ensure mobile-only sections are hidden on desktop.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Corrección de Interfaz Desktop**:
+   - Asegurada la ocultación total de la sección `mobile-user-section` en el modo escritorio para mantener la barra horizontal limpia y sin duplicidades.
+   - Restaurada la visibilidad del avatar y su dropdown en la parte derecha (exclusivo para desktop).
+
+2. **Limpieza de Interfaz Móvil**:
+   - **Posición**: El menú lateral vuelve a abrirse desde la **izquierda** (`left: 0`).
+   - **Simplificación**: Eliminado el avatar de la barra superior en móviles. Ahora el acceso al perfil es 100% a través del menú lateral.
+   - **Perfil en Lateral**: Integrado el avatar, el nombre del guerrero y los enlaces de gestión en la parte inferior del desplegable con un diseño premium.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** |
+| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Navbar: Mobile Menu Refinement (Right-side & User Info)
+
+**Agent**: Antigravity (Google DeepMind)
+**Objective**: Improve mobile navigation by moving user links to the side menu and repositioning the menu to the right side of the screen.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Reposicionamiento del Menú Lateral**:
+   - Cambiada la posición del menú móvil (`.nav-group`) de la izquierda a la **derecha** (`right: 0`).
+   - Esto asegura que el menú se despliegue sobre el área del avatar del personaje ("encima de la cara").
+   - Ajustada la sombra paralela (`box-shadow`) para que sea coherente con la nueva orientación.
+
+2. **Integración de Información de Usuario**:
+   - Añadida una sección de usuario al final del menú lateral móvil.
+   - Incluye el nombre del guerrero (`GUERRERO: [USERNAME]`) y enlaces directos a Configuración, Estadísticas y Administración.
+   - Implementado un divisor con degradado dorado para separar la navegación general de la personal.
+
+3. **Lógica de Interacción Mejorada**:
+   - Actualizado `handleUserClick()` para que, en resoluciones móviles (<= 950px), al pulsar el avatar se abra el menú lateral en lugar del dropdown tradicional.
+   - El dropdown de escritorio se oculta automáticamente en móviles para evitar solapamientos.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** |
+| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
+| `front/src/app/shared/components/navbar/navbar.component.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Home Page: Mobile Responsiveness
+
+**Agent**: Antigravity (Google DeepMind)
+**Objective**: Adapt the Home page for mobile devices, ensuring a premium "Mythic Viking" experience on all screens.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Responsividad del Hero Section**:
+   - Ajustada la altura a `min-height: 100vh` para evitar recortes de contenido.
+   - Escalado el logo (`app-logo`) al 70% en móviles para un mejor equilibrio visual.
+   - Refinada la tipografía (letter-spacing y tamaños) para legibilidad en pantallas estrechas.
+   - Ajustado el `scroll-hint` para que sea menos intrusivo.
+
+2. **Optimización de Grids y Contenido**:
+   - **Las Eras**: Implementado layout de una sola columna con paddings optimizados.
+   - **Los Clanes**: Asegurado que las tarjetas se apilen correctamente y los símbolos de fondo no interfieran con el texto.
+   - **Arte de la Guerra**: Alineación central de textos y divisores al apilarse, y reducción de la altura del mapa táctico visual.
+
+3. **Refinamiento de UI y Spacing**:
+   - Reducción general de paddings de sección (`80px/100px` -> `40px/60px`) para maximizar el espacio útil en móviles.
+   - Ajuste de botones "Mithic" (padding y font-size) para asegurar que no se rompan en resoluciones bajas.
+   - Mejora del apilamiento vertical del footer.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/home/home.component.scss` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Lobby: Botones de Gestión de Partidas
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Añadir los botones de "Abandonar" en las partidas activas y "Borrar" en las partidas terminadas en el lobby, mejorando la gestión de sesiones del usuario.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Interfaz de Usuario (Lobby)**:
+   - Añadido botón **ABANDONAR** a las tarjetas de partidas activas, conectado al método `onLeaveGame(id)`.
+   - Añadido botón **BORRAR** a las tarjetas de partidas terminadas, conectado al método `onDeleteFinished(id)`.
+   - Vinculado el botón **ESTADÍSTICAS** al método `onViewStats(id)`.
+   - Implementado dinamismo en el color del resultado (Victoria/Derrota) en las partidas terminadas.
+
+2. **Estilos (SCSS)**:
+   - Añadida la clase `.btn-danger` al componente del lobby para acciones destructivas (rojo con bordes, coherente con el sistema de diseño).
+   - Ajustado el layout de botones en las tarjetas para usar `flex` con `gap`, colocando los botones de acción destructiva (Borrar/Abandonar) en la parte exterior (derecha) por convención.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-22] Estandarización de Colores (Frontend)
 
 **Agente**: Antigravity (Google DeepMind)
