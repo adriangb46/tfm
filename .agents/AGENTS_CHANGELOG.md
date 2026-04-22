@@ -1,3 +1,88 @@
+## [2026-04-22] Deshabilitación de Herramientas de Debug en Producción
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que las herramientas de desarrollo y paneles de debug no sean visibles cuando la aplicación se ejecute en modo producción.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **AppComponent (Debug Global)**:
+   - Se ha inyectado `isDevMode()` para determinar el entorno.
+   - El componente `<app-global-debug />` ahora está envuelto en una condición `@if (isDevelopment())`, eliminándolo por completo del DOM en producción.
+
+2. **GamePageComponent (Debug de Partida)**:
+   - Se ha añadido la comprobación `isDevMode()` al componente de la página del juego.
+   - El panel de debug del juego (`.debug-container`) ahora solo se renderiza en modo desarrollo.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/app.ts` | **MODIFICADO** |
+| `front/src/app/app.html` | **MODIFICADO** |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** |
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Implementación de Guards de Rutas y Control de Acceso (Frontend)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que las rutas privadas del frontend no sean accesibles sin autenticación y redirigir adecuadamente a los usuarios según su rol.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Creación de Guards**:
+   - Creado `front/src/app/core/auth/auth.guard.ts` con dos guards funcionales:
+     - `authGuard`: Protege rutas que requieren estar logueado. Redirige a `/` con `queryParams: { login: 'true' }` si no hay sesión.
+     - `adminGuard`: Protege rutas de administración. Redirige a `/` con modal si no hay sesión, o a `/` sin modal si hay sesión pero el usuario no es ADMIN.
+
+2. **Integración en Navbar**:
+   - Actualizado `front/src/app/shared/components/navbar/navbar.component.ts` para suscribirse a los parámetros de consulta de la ruta.
+   - Si se detecta `login=true` y el usuario no está autenticado, se abre automáticamente el modal de login.
+
+3. **Configuración de Rutas**:
+   - Modificado `front/src/app/app.routes.ts` para aplicar los guards a las rutas: `lobby`, `admin`, `stats/user`, `game` y `config`.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/core/auth/auth.guard.ts` | **CREADO** |
+| `front/src/app/shared/components/navbar/navbar.component.ts` | **MODIFICADO** |
+| `front/src/app/app.routes.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Implementación de Sanitización en el Middle Server
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Añadir una capa de seguridad para sanitizar todos los inputs provenientes del frontend en el Middle Server, previniendo ataques XSS e inyección.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Documentación de Seguridad**:
+   - Actualizado `.agents/rules/security.md` para incluir la regla obligatoria de sanitización de strings en el Middle Server.
+
+2. **Utilidad de Sanitización**:
+   - Creado `middle_server/src/utils/sanitizer.js`: Provee una función recursiva que limpia y escapa caracteres HTML en objetos y arrays de forma profunda.
+   - **Nota**: Se ha optado por una implementación manual robusta debido a restricciones de red para instalar librerías externas en este entorno.
+
+3. **Middleware de Express**:
+   - Creado `middle_server/src/middleware/sanitizer-middleware.js`: Middleware listo para ser usado en Express que sanitiza automáticamente `body`, `query` y `params`.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.agents/rules/security.md` | **MODIFICADO** |
+| `middle_server/src/utils/sanitizer.js` | **CREADO** |
+| `middle_server/src/middleware/sanitizer-middleware.js` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-22] Documentación de Proyectos: READMEs y Licencias
 
 **Agente**: Antigravity (Google DeepMind)
