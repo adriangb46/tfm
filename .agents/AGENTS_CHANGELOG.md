@@ -1,4 +1,23 @@
-## [2026-04-22] - Optimización de Combate y UX
+## [2026-04-22] Ajuste de Responsividad: Navbar
+2: 
+3: **Agente**: Antigravity (Google DeepMind)
+4: **Objetivo**: Modificar el punto de ruptura (breakpoint) de la barra de navegación para que cambie al modo móvil a los 950px, mejorando la usabilidad en pantallas medianas.
+5: 
+6: ### 📝 Resumen de Tareas Realizadas:
+7: 
+8: 1. **Ajuste de Breakpoint**:
+9:    - Se ha sustituido el uso del mixin global `@include mobile` (600px) por un media query específico `@media (max-width: 950px)` en el componente de la navbar.
+10:    - Esto asegura que el menú de hamburguesa aparezca antes, evitando colisiones de elementos en el modo escritorio en resoluciones intermedias.
+11: 
+12: ### 🗂️ Archivos Modificados:
+13: 
+14: | Archivo | Acción |
+15: |---------|--------|
+16: | `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
+17: 
+18: ---
+19: 
+20: ## [2026-04-22] - Optimización de Combate y UX
 
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar el sistema de ventajas tácticas, confirmaciones de seguridad (abandono/password) y preparar la infraestructura para la integración con el backend.
@@ -2525,3 +2544,25 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 |---------|--------|
 | `front/src/app/pages/game/game.component.ts` | Modificado (Limpieza) |
 
+
+## [2026-04-22] Frontend — Corrección de Desbordamiento en Lobby Móvil
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir un desbordamiento horizontal en la versión móvil del lobby causado por paddings excesivos y títulos que no bajaban de línea.
+
+### 📝 Resumen de Cambios:
+
+1. **Optimización de Responsividad en Lobby**:
+   - Reducción de paddings horizontales y gaps en dispositivos móviles (mixins `tablet` y `mobile`).
+   - Implementación de `white-space: normal` y reducción de fuente para títulos largos en los encabezados de columna.
+   - Ajuste de `hero-section` para mejorar el espaciado en pantallas pequeñas.
+2. **Correcciones Técnicas**:
+   - Cambio de `100vh` a `100dvh` para evitar problemas con las barras de interfaz en navegadores móviles.
+   - Corrección del cálculo de altura (`calc(100dvh - 74px)`) para coincidir exactamente con el alto del navbar más su borde.
+   - Añadido `overflow-x: hidden` preventivo al contenedor principal.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/lobby-page/lobby-page.component.scss` | Modificado |
