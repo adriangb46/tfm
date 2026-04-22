@@ -1,11 +1,13 @@
 services:
-  db_sql:
-    image: postgres:15
+  database-sql:
+    image: ghcr.io/adriangb46/tfm-database-sql:latest
     container_name: db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgress
       POSTGRES_DB: tfm
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -16,9 +18,11 @@ services:
       timeout: 5s
       retries: 5
   
-  mongodb:
-    image: mongo:7.0
+  database-nosql:
+    image: ghcr.io/adriangb46/tfm-database-nosql:latest
     container_name: mongodb
+    ports:
+      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
@@ -28,49 +32,55 @@ services:
       - mongodb_data:/data/db
     restart: unless-stopped
   
-  db_server:
-    build:
-      context: ./db_back
-      dockerfile: Dockerfile
+  db-server:
+    image: ghcr.io/adriangb46/tfm-db-server:latest
     container_name: db_server
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HANDSHAKE_SECRET=${DB_HANDSHAKE_SECRET}
+      - POSTGRES_URL=jdbc:postgresql://database-sql:5432/tfm
+      - MONGODB_URL=mongodb://admin:password@database-nosql:27017/vikingclanwars?authSource=admin
     networks:      
       - tfm_net
     depends_on:
-      - db_sql
-      - mongodb
+      database-sql:
+        condition: service_healthy
+      database-nosql:
+        condition: service_started
     restart: unless-stopped
 
-  middle_server:
-    build:
-      context: ./middle_server
-      dockerfile: Dockerfile
+  middle-server:
+    image: ghcr.io/adriangb46/tfm-middle-server:latest
     container_name: middle_server
     ports:
       - "3000:3000"
     environment:
-      - MINIO_ENDPOINT=http://minio:9000
+      - DB_SERVER_URL=http://db-server:8080
+      - DB_HANDSHAKE_SECRET=${DB_HANDSHAKE_SECRET}
+      - MINIO_ENDPOINT=http://storage-minio:9000
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
       - MINIO_BUCKET_AVATARS=avatars
       - MINIO_PUBLIC_BASE_URL=http://localhost:9000/avatars
-      - REDIS_URL=redis://redis:6379
+      - REDIS_URL=redis://cache-redis:6379
     networks:      
       - tfm_net
     depends_on:
-      - db_server
-      - minio
-      - redis
+      - db-server
+      - storage-minio
+      - cache-redis
     restart: unless-stopped
   
-  redis:
-    image: redis:7-alpine
+  cache-redis:
+    image: ghcr.io/adriangb46/tfm-cache-redis:latest
     container_name: redis
     networks:
       - tfm_net
     restart: unless-stopped
   
-  minio:
-    image: minio/minio
+  storage-minio:
+    image: ghcr.io/adriangb46/tfm-storage-minio:latest
     container_name: minio
     ports:
       - "9000:9000"
@@ -85,13 +95,13 @@ services:
       - tfm_net
     restart: unless-stopped
 
-  minio_init:
-    image: minio/mc
+  minio-init:
+    image: minio/mc:latest
     depends_on:
-      - minio
+      - storage-minio
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc alias set myminio http://storage-minio:9000 minioadmin minioadmin;
       /usr/bin/mc mb myminio/avatars;
       /usr/bin/mc anonymous set public myminio/avatars;
       exit 0;
@@ -99,22 +109,16 @@ services:
     networks:
       - tfm_net
 
-  front:
-    build:
-      context: ./front
-      dockerfile: Dockerfile
-      args: 
-        - BACKEND_URL=http://localhost:3000
+  frontend:
+    image: ghcr.io/adriangb46/tfm-frontend:latest
     container_name: front
     ports:
       - "${FRONTEND_PUBLISH_PORT:-4200}:80"
     networks:
       - tfm_net
     depends_on:
-     - middle_server
+      - middle-server
     restart: unless-stopped
-      
-  
 
 volumes:
   postgres_data:

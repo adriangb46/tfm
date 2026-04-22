@@ -1,4 +1,340 @@
-# Agents Activity Changelog
+## [2026-04-22] Redirección Automática al Salir de Sesión
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Garantizar que el usuario sea devuelto a la página de inicio (Home) inmediatamente después de cerrar sesión o que su sesión sea invalidada.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **AuthService**:
+   - Se ha inyectado el `Router` en el servicio de autenticación.
+   - Se ha modificado el método `clearSession()` para que, además de limpiar el estado de la sesión, ejecute una navegación automática a `/`.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/core/auth/auth.service.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Deshabilitación de Herramientas de Debug en Producción
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que las herramientas de desarrollo y paneles de debug no sean visibles cuando la aplicación se ejecute en modo producción.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **AppComponent (Debug Global)**:
+   - Se ha inyectado `isDevMode()` para determinar el entorno.
+   - El componente `<app-global-debug />` ahora está envuelto en una condición `@if (isDevelopment())`, eliminándolo por completo del DOM en producción.
+
+2. **GamePageComponent (Debug de Partida)**:
+   - Se ha añadido la comprobación `isDevMode()` al componente de la página del juego.
+   - El panel de debug del juego (`.debug-container`) ahora solo se renderiza en modo desarrollo.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/app.ts` | **MODIFICADO** |
+| `front/src/app/app.html` | **MODIFICADO** |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** |
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Implementación de Guards de Rutas y Control de Acceso (Frontend)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que las rutas privadas del frontend no sean accesibles sin autenticación y redirigir adecuadamente a los usuarios según su rol.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Creación de Guards**:
+   - Creado `front/src/app/core/auth/auth.guard.ts` con dos guards funcionales:
+     - `authGuard`: Protege rutas que requieren estar logueado. Redirige a `/` con `queryParams: { login: 'true' }` si no hay sesión.
+     - `adminGuard`: Protege rutas de administración. Redirige a `/` con modal si no hay sesión, o a `/` sin modal si hay sesión pero el usuario no es ADMIN.
+
+2. **Integración en Navbar**:
+   - Actualizado `front/src/app/shared/components/navbar/navbar.component.ts` para suscribirse a los parámetros de consulta de la ruta.
+   - Si se detecta `login=true` y el usuario no está autenticado, se abre automáticamente el modal de login.
+
+3. **Configuración de Rutas**:
+   - Modificado `front/src/app/app.routes.ts` para aplicar los guards a las rutas: `lobby`, `admin`, `stats/user`, `game` y `config`.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/core/auth/auth.guard.ts` | **CREADO** |
+| `front/src/app/shared/components/navbar/navbar.component.ts` | **MODIFICADO** |
+| `front/src/app/app.routes.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Implementación de Sanitización en el Middle Server
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Añadir una capa de seguridad para sanitizar todos los inputs provenientes del frontend en el Middle Server, previniendo ataques XSS e inyección.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Documentación de Seguridad**:
+   - Actualizado `.agents/rules/security.md` para incluir la regla obligatoria de sanitización de strings en el Middle Server.
+
+2. **Utilidad de Sanitización**:
+   - Creado `middle_server/src/utils/sanitizer.js`: Provee una función recursiva que limpia y escapa caracteres HTML en objetos y arrays de forma profunda.
+   - **Nota**: Se ha optado por una implementación manual robusta debido a restricciones de red para instalar librerías externas en este entorno.
+
+3. **Middleware de Express**:
+   - Creado `middle_server/src/middleware/sanitizer-middleware.js`: Middleware listo para ser usado en Express que sanitiza automáticamente `body`, `query` y `params`.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.agents/rules/security.md` | **MODIFICADO** |
+| `middle_server/src/utils/sanitizer.js` | **CREADO** |
+| `middle_server/src/middleware/sanitizer-middleware.js` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Documentación de Proyectos: READMEs y Licencias
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Estandarizar la documentación de los sub-proyectos y asegurar la disponibilidad de la licencia en cada uno de ellos.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Documentación de Motor de Juego**:
+   - Creado `middle_server/README.md` detallando la arquitectura de Node.js + Socket.IO y responsabilidades del motor en tiempo real.
+
+2. **Documentación de Persistencia**:
+   - Creado `db_back/README.md` detallando el stack de Java 25 + Spring Boot, y la integración dual con PostgreSQL y MongoDB.
+
+3. **Estandarización de Licencias**:
+   - Creados archivos `LICENSE` en `front/`, `middle_server/` y `db_back/` replicando la Licencia MIT (Modificada para uso educativo) del root.
+   - Actualizado `front/README.md` para incluir la sección de licencia, manteniendo la coherencia con el resto de repositorios.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/README.md` | **CREADO** |
+| `middle_server/LICENSE` | **CREADO** |
+| `db_back/README.md` | **CREADO** |
+| `db_back/LICENSE` | **CREADO** |
+| `front/LICENSE` | **CREADO** |
+| `front/README.md` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Unificación de Secretos de Handshaking y Fix de Tests IT
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver errores 401 Unauthorized en tests de integración causados por inconsistencias en el secret `DB_HANDSHAKE_SECRET`.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Unificación de Secretos**:
+   - Se estandarizó el uso de `test-secret-minimo-32-chars-ok-fixed!!` (ASCII) para evitar problemas de codificación con el acento anterior.
+   - Eliminados literales hardcodeados en `db_back/src/test/resources/application.properties` para permitir que el `DynamicPropertySource` de los tests de integración inyecte el valor correcto.
+
+2. **Estabilización de Infraestructura de Tests (Singleton Pattern)**:
+   - Implementado el **Singleton Container Pattern** en `AbstractIntegrationTest.java`.
+   - Los contenedores de PostgreSQL y MongoDB ahora se inician manualmente en un bloque `static` y se reutilizan para toda la suite de tests.
+   - Esto evita errores de `JDBC Connection Refused` causados por el reinicio de contenedores mientras Spring reutiliza un Application Context con puertos obsoletos.
+
+3. **Actualización de Tests Unitarios**:
+   - Alineados `AuthControllerTest.java` y `HandshakeServiceTest.java` con el nuevo secreto unificado.
+
+3. **Mantenimiento de Configuración**:
+   - Actualizado `.env.example` con el valor de ejemplo unificado.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/test/resources/application.properties` | **MODIFICADO** (Limpieza de literales) |
+| `db_back/src/test/java/com/tfm/db_back/api/AuthControllerTest.java` | **MODIFICADO** (Secreto unificado) |
+| `db_back/src/test/java/com/tfm/db_back/domain/service/HandshakeServiceTest.java` | **MODIFICADO** (Secreto unificado) |
+| `db_back/.env.example` | **MODIFICADO** (Ejemplo actualizado) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+
+
+## [2026-04-22] Estabilización de Tests y Restauración de Flyway (DB Server)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver errores de carga de contexto (`ApplicationContext`) en los tests de integración causados por una configuración errónea y un conflicto de beans de Flyway.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Configuración de Spring Boot 3.x/4.x Hardening**:
+   - Corregida la estructura de `application.yml`: Se anidaron `mongodb` y `flyway` correctamente bajo el bloque `spring:`.
+   - Migración de propiedades: Cambiado `spring.data.mongodb` por el moderno `spring.mongodb.uri` y `spring.mongodb.database` para evitar avisos de deprecación.
+   - Alineado `@Value("${async.pool-size}")` en `MongoConfig.java` con el YAML.
+
+2. **Resolución de Conflictos de Flyway**:
+   - **Eliminación de Bean Manual**: Se eliminó el bean `Flyway` manual en `DbBackApplication.java` que bloqueaba el orden normal de inicio de Spring, causando que Hibernate intentara validar tablas antes de ser creadas.
+   - **Autoconfiguración Restaurada**: Se habilitó `baseline-on-migrate: true` en el YAML para permitir que Flyway gestione bases de datos existentes o con estados previos en los contenedores.
+
+3. **Corrección de Tests de Integración**:
+   - `AbstractIntegrationTest.java`: Actualizado `DynamicPropertySource` para inyectar correctamente `spring.mongodb.uri`, asegurando que Testcontainers se comunique con la persistencia de analíticas.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/main/resources/application.yml` | **MODIFICADO** (Estructura y Baseline) |
+| `db_back/src/main/java/com/tfm/db_back/DbBackApplication.java` | **MODIFICADO** (Limpieza de Bean manual) |
+| `db_back/src/test/java/com/tfm/db_back/AbstractIntegrationTest.java` | **MODIFICADO** (Propiedades Mongo) |
+| `db_back/src/main/java/com/tfm/db_back/config/MongoConfig.java` | **MODIFICADO** (Alineación @Value) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Docker Compose con Imágenes de GitHub (GHCR)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Facilitar el despliegue de la aplicación completa usando imágenes pre-construidas alojadas en GitHub Container Registry.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Despliegue Multi-Repo**:
+   - Creado `docker-compose.gh.yml`: Configurado para usar imágenes bajo el namespace `ghcr.io/adriangb46/tfm-`.
+   - Incluye mapeo de imágenes de infraestructura agregadas (SQL, NoSQL, Redis, Minio).
+   - Mantiene coherencia en redes (`tfm_net`) y variables de entorno para comunicación entre servicios.
+
+### 🗂️ Archivos Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose.gh.yml` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+
+## [2026-04-22] Actualización de Workflows de GitHub — DB Server
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que los flujos de CI/CD del sub-repositorio `db_back` sean robustos y capaces de ejecutar tests de integración con secretos.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Integración Continua (CI)**:
+   - `db-back-ci.yml`: Inyectado el secreto `DB_HANDSHAKE_SECRET` para permitir que los tests de integración pasen satisfactoriamente en GitHub Actions.
+
+2. **Documentación de Soporte**:
+   - Creado `setup_github_secrets.md`: Guía visual y paso a paso para que el desarrollador configure los secretos en la UI de GitHub.
+
+3. **Arquitectura Multi-Repo**:
+   - Mantenimiento de los workflows en la raíz del sub-proyecto `db_back` tras confirmar la estructura de 4 repositorios independientes.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/.github/workflows/db-back-ci.yml` | **MODIFICADO** |
+| `.agents/reports/setup_github_secrets.md` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+
+## [2026-04-22] Mejora de Cobertura de Tests Unitarios — DB Server
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Incrementar la cobertura de tests unitarios en el módulo `db_server`, eliminando gaps en controladores y lógica de seguridad.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **API Layer**:
+   - `CharacterControllerTest.java`: Implementados tests unitarios para creación y consulta de personajes usando `standaloneSetup`.
+
+2. **Security Layer**:
+   - `HandshakeJwtFilterTest.java`: Añadida cobertura completa para el filtro de handshake, verificando validación de tokens y exclusión de rutas.
+
+3. **Correcciones Técnicas**:
+   - Ajustada la aserción de error de `ENTITY_NOT_FOUND` a `NOT_FOUND` para alinearla con el `GlobalExceptionHandler`.
+   - Optimización de mocks para evitar `UnnecessaryStubbingException`.
+
+4. **Resultados**:
+   - Suite incrementada de 75 a **84 tests**.
+   - Verificación exitosa del build completa (+9 tests en verde).
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/test/java/com/tfm/db_back/api/CharacterControllerTest.java` | **CREADO** |
+| `db_back/src/test/java/com/tfm/db_back/security/HandshakeJwtFilterTest.java` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+
+## [2026-04-22] Finalización del Sprint 6 — DB Server (Hardening & IT)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Completar la fase de endurecimiento (Hardening) del `db_server`, implementando tests de integración reales con Testcontainers, Docker secure user y superando auditorías.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Infraestructura de Tests (Integración Real)**:
+   - `AbstractIntegrationTest.java`: Configuración estática de `PostgreSQLContainer` y `MongoDBContainer` compartida.
+   - Refactorización de toda la suite a `RestTemplate` nativo para eludir incompatibilidades de carga de contextos de Spring Boot 4 en Java 25.
+
+2. **Suite de Tests completada (End-to-End)**:
+   - `AuthControllerIntegrationTest`: Handshake real.
+   - `UserControllerIntegrationTest`: CRUD de usuario con colisiones reales en DB.
+   - `CharacterControllerIntegrationTest`: Persistencia de linajes.
+   - `GameControllerIntegrationTest`: Ciclo de vida completo (Create -> Dump -> End).
+   - `AnalyticsControllerIntegrationTest`: Snapshots asíncronos en MongoDB.
+
+3. **Hardening y Docker**:
+   - `Dockerfile`: Configurado `appuser` (non-root) sobre `eclipse-temurin:25-jre`.
+   - **Corrección Arquitectónica**: Refactorizado `CharacterController` para usar `ApiResponse<T>` uniformemente.
+
+4. **Auditorías superadas (95/100)**:
+   - Reporte generado en `db_server_audit_report_s6.md`.
+   - Verificado cumplimiento de `security.md` y `java_good_practices.md`.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/test/java/com/tfm/db_back/AbstractIntegrationTest.java` | **CREADO/REFACTOR** |
+| `db_back/src/test/java/com/tfm/db_back/api/*IntegrationTest.java` | **CREADOS** (5 archivos) |
+| `db_back/Dockerfile` | **CREADO** |
+| `db_back/src/main/java/com/tfm/db_back/api/CharacterController.java` | **MODIFICADO** |
+| `db_back/pom.xml` | **MODIFICADO** (Testcontainers deps) |
+| `.agents/reports/db_server_audit_report_s6.md` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Especificación del Sprint 6 — DB Server
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Crear la especificación en detalle para el Sprint 6 de `db_server`, centrado en Integración con Testcontainers, Hardening visual y Dockerfile seguro.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Creación de `db_server_sprint6_detail.md`**:
+   - Objetivo: Proveer la documentación del último sprint de `db_server`.
+   - Se crearon las delegaciones de pruebas de integración con `PostgreSQLContainer` y `MongoDBContainer`.
+   - Se detalló el uso y requerimientos del Dockerfile (usuario `appuser` no root).
+   - Se requirió pasar satisfactoriamente `/arch-audit` y `/security-audit`.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.agents/db_server_sprint6_detail.md` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 

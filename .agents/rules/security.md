@@ -51,6 +51,7 @@
 - **Validate all input server-side.** Client-side validation is UX only — never a security boundary.
 - In Java (DB Server): use Bean Validation (`@NotNull`, `@Size`, `@Pattern`) on every DTO. Never trust raw request bodies.
 - In Node.js (Middle): validate all Socket.IO payloads and HTTP request bodies before processing. Reject unknown fields.
+- **Sanitize all string inputs.** Use the `validator` library in the Middle Server to trim whitespace and escape HTML/special characters from all user-provided strings to prevent XSS and injection attacks.
 - **Never build SQL queries by string concatenation.** Use JPA/JPQL named parameters or Spring Data derived queries only.
 - **Never use `eval()`** or `new Function()` in Node.js or Angular.
 - Sanitize all user-provided strings that will be displayed in the UI to prevent stored XSS. Angular's template engine escapes by default — never bypass it with `innerHTML` or `[innerHTML]` bindings on user-provided content.
