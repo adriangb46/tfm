@@ -1,3 +1,56 @@
+## [2026-04-22] Navbar: Logo Centrado en Móvil
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Centrar el logo en la barra de navegación en dispositivos móviles para una estética más equilibrada y profesional.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Ajuste de Layout (SCSS)**:
+   - Cambiada la Navbar a `display: flex` en resoluciones móviles (<= 950px).
+   - El logo (`.logo-section`) ahora se posiciona en el centro absoluto mediante `margin: 0 auto`.
+   - El icono de hamburguesa se ha posicionado de forma absoluta (`position: absolute`) a la izquierda para no desplazar el logo del centro.
+   - Ocultado el texto del logo en móviles mediante `::ng-deep .logo-text { display: none; }` para que el símbolo luzca más limpio y centrado.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Lobby: Reestructuración de Layout (Stack Vertical)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Cambiar el layout del lobby para que la sección de "Partidas Finalizadas" se muestre siempre debajo de las "Partidas Activas", eliminando el comportamiento lateral colapsable tanto en móvil como en escritorio.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Reestructuración de Template (HTML)**:
+   - Las secciones ahora se apilan verticalmente, pero se ha mantenido la funcionalidad de **colapso vertical** para la sección de partidas finalizadas.
+   - Añadido evento `(click)` en el encabezado y un icono dinámico (`▲/▼`) para controlar el estado.
+
+2. **Refactorización de Estilos (SCSS)**:
+   - Cambiado `.lists-grid` para usar `flex-direction: column` de forma permanente.
+   - Implementado colapso vertical: cuando está contraída, la sección reduce su altura a un estado mínimo que solo muestra el encabezado.
+   - Restaurados los efectos de hover e interactividad en los encabezados.
+   - Las secciones activas se expanden para ocupar el espacio sobrante cuando la de finalizadas está contraída.
+
+3. **Lógica (TS)**:
+   - Restaurada la señal `finishedGamesCollapsed` y el método `toggleFinishedGames()` para soportar el nuevo estado de colapso vertical.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-22] Navbar: Estabilidad Total con Posicionamiento Fixed
 
 **Agent**: Antigravity (Google DeepMind)
