@@ -1,32 +1,36 @@
-## [2026-04-22] Corrección: Interacción del Modal de Ataque y Sincronización de Usuario
+## [2026-04-22] - Optimización de Combate y UX
 
 **Agente**: Antigravity (Google DeepMind)
-**Objetivo**: Resolver el bug que impedía abrir el modal de ataque tras manipular la lista de jugadores, y mejorar la sincronización de la identidad del usuario en el juego.
+**Objetivo**: Implementar el sistema de ventajas tácticas, confirmaciones de seguridad (abandono/password) y preparar la infraestructura para la integración con el backend.
 
 ### 📝 Resumen de Tareas Realizadas:
 
-1. **Sincronización de Identidad**:
-   - Integrado `AuthService` en `GamePageComponent` para usar el nombre de usuario real en lugar del mock hardcodeado.
-   - Esto evita bloqueos de interacción causados por la detección errónea del "jugador local".
+1. **Sistema de Ventajas Tácticas**:
+   - Implementado el ciclo de ventajas entre clanes (`FURY → SONG → DEATH → DIVINE → RUNE → IRON`).
+   - El modal de ataque ahora muestra banners informativos sobre ventajas (+50% daño) o desventajas.
+   - Centralizadas las constantes en `attack.types.ts`.
 
-2. **Habilitación de Interacciones**:
-   - Eliminado el bloqueo que impedía abrir el modal de ataque durante la fase de `PREPARACIÓN`, permitiendo la consulta de información.
-   - Añadido soporte para abrir el modal de información/ataque directamente al pulsar sobre los jugadores en la lista del Lobby.
+2. **Confirmación de Seguridad (UX)**:
+   - Añadido `ConfirmAbandonModalComponent` con temática vikinga para evitar salidas accidentales de la partida.
+   - Implementado `CambiarContrasenaModalComponent` con validación de formularios en la sección de configuración.
 
-3. **Correcciones Técnicas**:
-   - Cambiado el `track` del bucle `@for` de jugadores en el mapa de `clan` a `username` para garantizar la unicidad en el DOM.
-   - Mejorada la generación de jugadores de debug con IDs aleatorios para evitar colisiones durante las pruebas.
+3. **Infraestructura Preparada**: 
+   - **Sockets**: Estructura de suscripciones `setupGameSubscriptions()` lista en `GamePageComponent`.
+   - **MinIO**: Lógica de subida preparada en `UserConfigComponent` con validaciones detalladas de TODO.
+   - **Persistencia**: Preparada la capa de servicios REST y el manejo de persistencia en `UserConfig`.
 
-### 🗂️ Archivos Modificados:
+### 🗂️ Archivos Modificados/Creados:
 
 | Archivo | Acción |
 |---------|--------|
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** |
-| `front/src/app/pages/game/game.component.html` | **MODIFICADO** |
-| `front/src/app/pages/game/modals/lobby.modal.ts" | **MODIFICADO** |
-| `front/src/app/pages/game/modals/lobby.modal.html" | **MODIFICADO** |
-| `front/src/app/pages/game/modals/lobby.modal.scss" | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** (Navegación + Sockets prep) |
+| `front/src/app/pages/game/modals/atacar.modal.*` | **MODIFICADO** (Ventajas Tácticas) |
+| `front/src/app/pages/game/modals/confirm-abandon.modal.ts` | **CREADO** |
+| `front/src/app/pages/user-config/modals/cambiar-contrasena.modal.ts` | **CREADO** |
+| `front/src/app/pages/user-config/user-config.component.ts` | **MODIFICADO** (Avatar prep + Pass) |
+| `front/src/app/pages/game/modals/attack.types.ts` | **MODIFICADO** (Constantes de Ventaja) |
+
+---
 
 ---
 
