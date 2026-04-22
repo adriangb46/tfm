@@ -1,3 +1,38 @@
+## [2026-04-22] Estandarización de Colores (Frontend)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Reemplazar todos los colores hardcodeados (hex, rgb, nombres) por variables de tema (CSS/SCSS) en todo el proyecto frontend para soportar Light/Dark mode dinámico.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Auditoría Global**: Identificación de colores hardcodeados en componentes, modales y estilos compartidos.
+2. **Refactorización de Modales**: 
+   - Actualizados todos los modales del lobby (`sala-llena`, `crear-partida`, `unirse-partida`).
+   - Actualizados los modales del juego (`atacar`, `aviso`, `lobby`, `confirm-abandon`, `cambiar-contrasena`).
+3. **Refactorización de Componentes Core**:
+   - `GameComponent`: Reemplazados colores en SVGs dinámicos y estilos de fase.
+   - `NavbarComponent`: Estandarizadas sombras y overlays.
+   - `AuthComponent`: Actualizados fondos de cristal y validaciones.
+   - `UserConfigComponent`: Reemplazados blancos/negros absolutos por tokens semánticos.
+   - `LogoComponent`: Sincronizadas sombras de brillo con el tema dorado.
+4. **Herramientas de Debug**: Actualizada la UI del panel de debug para coherencia visual.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/modals/*` | **MODIFICADOS** (3 modales) |
+| `front/src/app/pages/game/game.component.scss/html` | **MODIFICADOS** |
+| `front/src/app/pages/game/modals/*` | **MODIFICADOS** (4 modales) |
+| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
+| `front/src/app/shared/components/auth/auth.component.scss` | **MODIFICADO** |
+| `front/src/app/pages/user-config/user-config.component.scss` | **MODIFICADO** |
+| `front/src/app/shared/components/logo/logo.component.ts` | **MODIFICADO** |
+| `front/src/app/shared/components/debug/global-debug.component.scss` | **MODIFICADO** |
+
+---
+
 ## [2026-04-22] Ajuste de Responsividad: Navbar
 2: 
 3: **Agente**: Antigravity (Google DeepMind)
