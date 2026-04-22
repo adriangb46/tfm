@@ -2450,3 +2450,26 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 | `docker-compose.yml` | Modificado |
 | `ACCESS_DDBB.md` | **CREADO** |
 
+
+---
+
+## [2026-04-22] CI/CD — Integración de Bastión y Hardening de DBs
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que el contenedor de bastión se incluya en el flujo de CI/CD y securizar el despliegue de producción eliminando la exposición directa de puertos de base de datos.
+
+### 📝 Resumen de Cambios:
+
+1. **GitHub Actions (`main-ci.yml`)**:
+   - Añadida la imagen `linuxserver/openssh-server` al paso de empaquetado de infraestructura para que esté disponible en GHCR como `tfm-bastion`.
+2. **Docker Compose Producción (`docker-compose.gh.yml`)**:
+   - Eliminados los mapeos de puertos públicos (`5432`, `27017`) para PostgreSQL y MongoDB.
+   - Añadido el servicio `bastion` apuntando a la imagen del registro de GitHub.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.github/workflows/main-ci.yml` | Modificado |
+| `docker-compose.gh.yml` | Modificado |
+

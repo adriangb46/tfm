@@ -78,6 +78,7 @@ jobs:
             ["mongo:7.0"]="database-nosql"
             ["redis:7-alpine"]="cache-redis"
             ["minio/minio"]="storage-minio"
+            ["linuxserver/openssh-server"]="bastion"
           )
 
           for SRC in "${!IMAGES[@]}"; do

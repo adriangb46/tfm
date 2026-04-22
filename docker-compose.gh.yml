@@ -6,8 +6,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgress
       POSTGRES_DB: tfm
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -21,8 +19,6 @@ services:
   database-nosql:
     image: ghcr.io/adriangb46/tfm-database-nosql:latest
     container_name: mongodb
-    ports:
-      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
@@ -118,6 +114,22 @@ services:
       - tfm_net
     depends_on:
       - middle-server
+    restart: unless-stopped
+
+  bastion:
+    image: ghcr.io/adriangb46/tfm-bastion:latest
+    container_name: bastion
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Madrid
+      - USER_NAME=viking
+      - PASSWORD_ACCESS=true
+      - USER_PASSWORD=viking_secret # IMPORTANTE: Cambiar en producción o usar claves SSH
+    ports:
+      - "2222:22"
+    networks:
+      - tfm_net
     restart: unless-stopped
 
 volumes:
