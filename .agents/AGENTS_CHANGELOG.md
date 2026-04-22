@@ -2473,3 +2473,55 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 | `.github/workflows/main-ci.yml` | Modificado |
 | `docker-compose.gh.yml` | Modificado |
 
+
+---
+
+## [2026-04-22] Frontend — Modal de Sala Llena en Lobby
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar un flujo de usuario donde, al intentar unirse a una partida llena, se muestre un modal informativo específico en el Lobby en lugar de navegar a la página de juego.
+
+### 📝 Resumen de Cambios:
+
+1. **Nuevo Componente `SalaLlenaModalComponent`**:
+   - Modal premium con estética vikinga (rojo/oro), desenfoque de fondo y animaciones rúnicas.
+   - Proporciona feedback claro cuando una sala alcanza el límite de 6 jugadores.
+2. **Mejora de `UnirsePartidaModalComponent`**:
+   - Añadido soporte para detectar salas llenas (simulado mediante el código `FULL`).
+   - Emisión del evento `lobbyFull` para coordinar la transición de modales.
+3. **Integración en `LobbyPageComponent`**:
+   - Gestión de estado para mostrar el nuevo modal de sala llena tras cerrar el de unión.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.ts` | **CREADO** |
+| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.html` | **CREADO** |
+| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.scss` | **CREADO** |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.ts` | Modificado |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | Modificado |
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | Modificado |
+
+
+---
+
+## [2026-04-22] Frontend — Refactorización de Flujo "Sala Llena"
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que la validación de sala llena ocurra exclusivamente en el Lobby durante el proceso de unión, eliminando comprobaciones redundantes en la pantalla de juego.
+
+### 📝 Resumen de Cambios:
+
+1. **Limpieza en `GamePageComponent`**:
+   - Eliminada la lógica de redirección automática al lobby si la sala está llena.
+   - Eliminada la variable `shouldRedirectToLobby` y simplificado el método `closeAvisoModal`.
+2. **Consolidación en Lobby**:
+   - Confirmado que el flujo de "Sala Llena" solo se activa desde el modal de unión en la pantalla de Lobby, evitando cambios de pantalla innecesarios.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/game/game.component.ts` | Modificado (Limpieza) |
+
