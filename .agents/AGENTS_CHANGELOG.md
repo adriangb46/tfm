@@ -1,3 +1,23 @@
+## [2026-04-22] Frontend: Fix de Importación en SalaLlenaModal
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir el fallo de compilación causado por una ruta relativa incorrecta en la importación de variables de estilo.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Corrección de Path (SCSS)**:
+   - Identificada ruta incorrecta (`../../../../`) en `sala-llena-modal.component.scss`.
+   - Corregida a `../../../../../` para alcanzar correctamente la carpeta `src/styles/`.
+   - Verificada la consistencia con el resto de modales en el mismo nivel jerárquico.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.scss` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-22] Frontend: Tests Unitarios del Modal de Ataque
 1: 
 2: **Agente**: Antigravity (Google DeepMind)
