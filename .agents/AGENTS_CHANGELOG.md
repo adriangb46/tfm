@@ -1,3 +1,35 @@
+## [2026-04-22] Corrección: Interacción del Modal de Ataque y Sincronización de Usuario
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver el bug que impedía abrir el modal de ataque tras manipular la lista de jugadores, y mejorar la sincronización de la identidad del usuario en el juego.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Sincronización de Identidad**:
+   - Integrado `AuthService` en `GamePageComponent` para usar el nombre de usuario real en lugar del mock hardcodeado.
+   - Esto evita bloqueos de interacción causados por la detección errónea del "jugador local".
+
+2. **Habilitación de Interacciones**:
+   - Eliminado el bloqueo que impedía abrir el modal de ataque durante la fase de `PREPARACIÓN`, permitiendo la consulta de información.
+   - Añadido soporte para abrir el modal de información/ataque directamente al pulsar sobre los jugadores en la lista del Lobby.
+
+3. **Correcciones Técnicas**:
+   - Cambiado el `track` del bucle `@for` de jugadores en el mapa de `clan` a `username` para garantizar la unicidad en el DOM.
+   - Mejorada la generación de jugadores de debug con IDs aleatorios para evitar colisiones durante las pruebas.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** |
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO** |
+| `front/src/app/pages/game/modals/lobby.modal.ts" | **MODIFICADO** |
+| `front/src/app/pages/game/modals/lobby.modal.html" | **MODIFICADO** |
+| `front/src/app/pages/game/modals/lobby.modal.scss" | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-22] Conexión Funcional: Lobby -> Juego
 
 **Agente**: Antigravity (Google DeepMind)
