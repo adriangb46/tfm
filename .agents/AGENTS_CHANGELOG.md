@@ -1,4 +1,26 @@
-## [2026-04-22] Game Page: Eliminación de Espacio Vacío (Sin Navbar)
+## [2026-04-22] Frontend: Tests Unitarios del Modal de Ataque
+1: 
+2: **Agente**: Antigravity (Google DeepMind)
+3: **Objetivo**: Implementar pruebas unitarias exhaustivas para el componente `AtacarModalComponent`, asegurando la correcta lógica de ventajas tácticas y gestión de tropas.
+4: 
+5: ### 📝 Resumen de Tareas Realizadas:
+6: 
+7: 1. **Creación de Test Suite (Jasmine)**:
+8:    - Creado `atacar.modal.spec.ts` con cobertura para todas las funciones públicas y estados reactivos (Signals).
+9:    - **Mocks**: Implementado mock de `I18nService` para aislar las pruebas de traducción.
+10:    - **Pruebas de Lógica Táctica**: Validado el cálculo de ventajas y desventajas entre clanes (ej: Fury vs Song).
+11:    - **Pruebas de Estado**: Verificada la actualización de la grilla de tropas al añadir/eliminar unidades y la emisión de eventos de ataque.
+12: 
+13: ### 🗂️ Archivos Creados:
+14: 
+15: | Archivo | Acción |
+16: |---------|--------|
+17: | `front/src/app/pages/game/modals/atacar.modal.spec.ts` | **CREADO** |
+18: | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+19: 
+20: ---
+21: 
+22: ## [2026-04-22] Game Page: Eliminación de Espacio Vacío (Sin Navbar)
 
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir el layout de la página de juego para eliminar el hueco de 72px en la parte superior cuando la barra de navegación está oculta.
