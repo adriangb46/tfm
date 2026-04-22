@@ -1,3 +1,23 @@
+## [2026-04-22] Redirección Automática al Salir de Sesión
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Garantizar que el usuario sea devuelto a la página de inicio (Home) inmediatamente después de cerrar sesión o que su sesión sea invalidada.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **AuthService**:
+   - Se ha inyectado el `Router` en el servicio de autenticación.
+   - Se ha modificado el método `clearSession()` para que, además de limpiar el estado de la sesión, ejecute una navegación automática a `/`.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/core/auth/auth.service.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-22] Deshabilitación de Herramientas de Debug en Producción
 
 **Agente**: Antigravity (Google DeepMind)
