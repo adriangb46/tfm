@@ -1,3 +1,77 @@
+## [2026-04-22] Internacionalización del Motor de Juego (Game Engine)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Completar la internacionalización del núcleo del juego, traduciendo toda la página de combate, el mapa táctico y los 8 modales de interacción guerrera.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Diccionarios de Combate**:
+   - Ampliados `es.ts` y `en.ts` con la sección `GAME`.
+   - Añadidas traducciones para: Fases (`PREPARATION`, `WAR`), Estadísticas (`Vida`, `Oro`), Tipos de Tropas y sus descripciones lore.
+   - Traducidas las Leyes de Midgard (Reglas del juego) al completo.
+
+2. **Refactorización de Modales**:
+   - **`AtacarModal`**: Soporte para banners de ventaja táctica dinámicos con parámetros.
+   - **`EntrenarModal`**: Localización de costes y unidades.
+   - **`LobbyModal`**: Mensajes de espera y validación de anfitrión.
+   - **`ReglasModal`**: Digitalización de todo el manual de juego en dos idiomas.
+   - **`VisualizarTropasModal`**: Estados de unidades (`LISTO`, `EN COLA`, etc.).
+
+3. **Lógica de Juego Reactiva**:
+   - Traducidos los logs de batalla en tiempo real (`ha iniciado la partida`, `ha lanzado un ataque`, etc.).
+   - Integrado `TranslatePipe` en el overlay de acciones y la barra superior de estado.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/game/game.component.*` | **MODIFICADOS** (Integración core i18n) |
+| `front/src/app/pages/game/modals/*.ts` | **MODIFICADOS** (8 modales localizados) |
+| `front/src/app/pages/game/modals/*.html` | **MODIFICADOS** (Templates traducidos) |
+| `front/src/app/core/i18n/languages/*.ts` | **MODIFICADOS** (Expansión de diccionarios) |
+
+---
+
+## [2026-04-22] Internacionalización Completa del Frontend (Angular Signals)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar un sistema de multi-idioma (ES/EN) nativo basado en Signals y Pipes dinámicos para eliminar todos los textos harcodeados y permitir el cambio de idioma en tiempo real con persistencia.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Infraestructura Core (Zero-Dependency)**:
+   - **`I18nService`**: Servicio basado en `Signal` para gestionar el idioma actual, carga de diccionarios y persistencia en `localStorage`. Incluye soporte para parámetros dinámicos (`{{ key }}`).
+   - **`TranslatePipe`**: Pipe impure standalone para traducciones reactivas en templates.
+   - **Diccionarios**: Creados `es.ts` y `en.ts` con estructura jerárquica para todas las secciones de la app.
+
+2. **Integración en Componentes**:
+   - **Navbar**: Añadido selector de idioma (ES/EN) con diseño premium y soporte para todos los enlaces.
+   - **Home**: Traducidas todas las secciones del Códice (Eras, Clanes, Arte de la Guerra).
+   - **Lobby**: Traducida la gestión de partidas, estados de victoria/derrota y mensajes de confirmación.
+   - **Modales**: Internacionalizados todos los modales de creación, unión y sala llena.
+   - **Configuración**: Sincronizado el selector de banderas con el servicio global de i18n y traducidos todos los campos.
+   - **Auth**: Traducidos formularios de login, registro y mensajes de validación/error.
+
+3. **UX y Persistencia**:
+   - Detección automática del idioma del navegador (`navigator.language`).
+   - Persistencia automática de la preferencia del usuario entre sesiones.
+   - Reactividad instantánea en toda la UI al cambiar el idioma sin recargar la página.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/core/i18n/*` | **CREADOS** (Service, Pipe, Dictionaries) |
+| `front/src/app/shared/components/navbar/*` | **MODIFICADO** (Selector + I18n) |
+| `front/src/app/pages/home/*` | **MODIFICADO** (I18n) |
+| `front/src/app/pages/lobby-page/*` | **MODIFICADO** (I18n + Modales) |
+| `front/src/app/pages/user-config/*` | **MODIFICADO** (I18n sync) |
+| `front/src/app/shared/components/auth/*` | **MODIFICADO** (I18n) |
+| `front/src/app/app.ts` | **MODIFICADO** (Init global) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-22] Home Page: Simplificación Extrema en Móvil
 
 **Agente**: Antigravity (Google DeepMind)
@@ -2303,7 +2377,13 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 ### 📝 Resumen de Tareas Realizadas:
 
 1. **Creación de `README.md`**:
-   - Redactada la presentación del proyecto "Viking Clan Wars".
+   - Redactada la presentación del # Changelog - Viking Clan Wars Agents
+
+## [2026-04-22] - Internacionacionalización del Motor de Juego
+- **I18n**: Implementada la traducción completa de la página de juego (`GamePageComponent`) y todos sus modales.
+- **Diccionarios**: Ampliados `es.ts` y `en.ts` con estructuras complejas para fases, estadísticas, tipos de tropas, descripciones, logs de combate y leyes de Midgard.
+- **Modales**: Localización de `AtacarModal`, `EntrenarModal`, `LobbyModal`, `ReglasModal`, `ConfirmAbandonModal`, `VisualizarTropasModal`, `GameLogModal` y `AvisoModal`.
+- **Dinámico**: Refactorizado el sistema de logs y banners tácticos para soportar inyección de parámetros (`{{ target }}`, `{{ enemyClan }}`, `{{ troop }}`) en tiempo real.
    - Detallada la arquitectura de microservicios y el stack tecnológico.
    - Añadida guía de inicio rápido con comandos Docker Compose.
    - Listado de servicios y puertos correspondientes.
