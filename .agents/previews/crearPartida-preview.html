@@ -1,0 +1,392 @@
+<!-- PREVIEW ONLY — not production code -->
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview - Crear Partida Modal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Backgrounds */
+      --color-bg-primary: #0d0c18;
+      --color-bg-secondary: #1a1830;
+      --color-bg-tertiary: #141220;
+      --color-bg-card: #211f38;
+      --color-bg-modal: #252342;
+      --color-bg-overlay: rgba(0, 0, 0, 0.72);
+
+      /* Text */
+      --color-text-primary: #e8e0d0;
+      --color-text-secondary: #b8a898;
+      --color-text-disabled: #5a5068;
+      --color-text-inverse: #0d0c18;
+
+      /* Gold Accent */
+      --color-gold: #c9a84c;
+      --color-gold-light: #e8c96a;
+      --color-gold-dark: #9a7a30;
+      --color-gold-muted: rgba(201, 168, 76, 0.15);
+
+      /* Borders */
+      --color-border-strong: #c9a84c;
+      --color-border-default: #3a3555;
+      --color-border-faint: #252342;
+
+      /* Clan colors */
+      --color-clan-fury: #c0392b;
+      --color-clan-divine: #4a90d9;
+      --color-clan-iron: #8a9ba8;
+      --color-clan-song: #8b5cf6;
+      --color-clan-rune: #10b981;
+      --color-clan-death: #7c6b9e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* Overlay */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: var(--color-bg-overlay);
+      z-index: 100;
+      cursor: pointer;
+    }
+
+    /* Modal Container */
+    .modal-container {
+      position: relative;
+      z-index: 101;
+      width: min(640px, 92vw);
+      background-color: var(--color-bg-modal);
+      border: 1px solid var(--color-border-default);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    /* Close Button */
+    .btn-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: transparent;
+      border: 1px solid var(--color-border-default);
+      border-radius: 50%;
+      color: var(--color-text-secondary);
+      font-size: 1rem;
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      line-height: 1;
+    }
+    .btn-close:hover {
+      border-color: var(--color-gold);
+      color: var(--color-gold);
+      background-color: var(--color-gold-muted);
+    }
+
+    /* Header */
+    .modal-header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--color-gold);
+      margin: 0;
+      letter-spacing: 3px;
+      text-shadow: 0 0 24px rgba(201, 168, 76, 0.3);
+    }
+    .modal-title::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 2px;
+      background: var(--color-gold);
+      margin: 0.5rem auto 0;
+      border-radius: 2px;
+      opacity: 0.6;
+    }
+    .modal-subtitle {
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+      margin: 0;
+      font-style: italic;
+    }
+
+    /* Grid */
+    .clanes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 480px) {
+      .clanes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* Clan Card */
+    .clan-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 1.25rem 0.75rem;
+      background-color: var(--color-bg-card);
+      border: 2px solid var(--color-border-default);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      overflow: hidden;
+      color: inherit;
+    }
+    .clan-card:hover {
+      border-color: var(--color-border-strong);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .clan-card:active {
+      transform: translateY(-1px);
+    }
+
+    /* Selected state */
+    .clan-card.selected {
+      box-shadow: 0 0 0 2px var(--clan-color, var(--color-gold)),
+                  0 8px 24px rgba(0, 0, 0, 0.3);
+      border-color: var(--clan-color, var(--color-gold));
+    }
+    .clan-card.selected .selected-indicator {
+      opacity: 1;
+    }
+
+    /* Specific clan colors */
+    .clan-card[data-clan="fury"] { --clan-color: var(--color-clan-fury); }
+    .clan-card[data-clan="divine"] { --clan-color: var(--color-clan-divine); }
+    .clan-card[data-clan="iron"] { --clan-color: var(--color-clan-iron); }
+    .clan-card[data-clan="song"] { --clan-color: var(--color-clan-song); }
+    .clan-card[data-clan="rune"] { --clan-color: var(--color-clan-rune); }
+    .clan-card[data-clan="death"] { --clan-color: var(--color-clan-death); }
+
+    .clan-icon {
+      font-size: 2rem;
+      line-height: 1;
+      margin-bottom: 0.2rem;
+    }
+    .clan-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .clan-archetype {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--color-text-disabled);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Selected Indicator */
+    .selected-indicator {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 1.1rem;
+      height: 1.1rem;
+      background-color: var(--color-gold);
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .selected-indicator::after {
+      content: '✓';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: var(--color-text-inverse);
+      font-weight: 900;
+    }
+
+    /* Selection Hint */
+    .selection-hint {
+      text-align: center;
+      font-size: 0.85rem;
+      margin: 0;
+      min-height: 1.2em;
+    }
+    .hint-empty {
+      color: var(--color-text-disabled);
+    }
+    .hint-active {
+      color: var(--color-gold);
+      font-weight: 600;
+    }
+
+    /* Footer / CTA */
+    .modal-footer {
+      display: flex;
+      justify-content: center;
+    }
+    .btn-create {
+      padding: 0.9rem 3rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background-color: var(--color-gold);
+      color: var(--color-text-inverse);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .btn-create:hover:not(:disabled) {
+      background-color: var(--color-gold-light);
+      box-shadow: 0 0 20px rgba(201, 168, 76, 0.4);
+      transform: translateY(-1px);
+    }
+    .btn-create:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+    .btn-create:disabled {
+      background-color: var(--color-bg-card);
+      color: var(--color-text-disabled);
+      border: 1px solid var(--color-border-default);
+      cursor: not-allowed;
+    }
+
+    /* Interaction Script (Preview Only) */
+    .clan-card.hover-demo {
+      border-color: var(--color-border-strong);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="modal-overlay"></div>
+
+  <div class="modal-container">
+    <button class="btn-close">✕</button>
+
+    <header class="modal-header">
+      <h2 class="modal-title">JURAMENTAR CLAN</h2>
+      <p class="modal-subtitle">Elige tu linaje. Tu destino depende de ello.</p>
+    </header>
+
+    <div class="clanes-grid">
+      <!-- Berserkers -->
+      <button class="clan-card" data-clan="fury" onclick="selectClan(this)">
+        <span class="clan-icon">🪓</span>
+        <span class="clan-name">Berserkers</span>
+        <span class="clan-archetype">FURY</span>
+        <div class="selected-indicator"></div>
+      </button>
+
+      <!-- Valkirias -->
+      <button class="clan-card selected" data-clan="divine" onclick="selectClan(this)">
+        <span class="clan-icon">⚡</span>
+        <span class="clan-name">Valkirias</span>
+        <span class="clan-archetype">DIVINE</span>
+        <div class="selected-indicator"></div>
+      </button>
+
+      <!-- Jarls -->
+      <button class="clan-card" data-clan="iron" onclick="selectClan(this)">
+        <span class="clan-icon">🛡️</span>
+        <span class="clan-name">Jarls</span>
+        <span class="clan-archetype">IRON</span>
+        <div class="selected-indicator"></div>
+      </button>
+
+      <!-- Skalds -->
+      <button class="clan-card" data-clan="song" onclick="selectClan(this)">
+        <span class="clan-icon">🎵</span>
+        <span class="clan-name">Skalds</span>
+        <span class="clan-archetype">SONG</span>
+        <div class="selected-indicator"></div>
+      </button>
+
+      <!-- Seidr -->
+      <button class="clan-card" data-clan="rune" onclick="selectClan(this)">
+        <span class="clan-icon">🌿</span>
+        <span class="clan-name">Seidr</span>
+        <span class="clan-archetype">RUNE</span>
+        <div class="selected-indicator"></div>
+      </button>
+
+      <!-- Draugr -->
+      <button class="clan-card" data-clan="death" onclick="selectClan(this)">
+        <span class="clan-icon">💀</span>
+        <span class="clan-name">Draugr</span>
+        <span class="clan-archetype">DEATH</span>
+        <div class="selected-indicator"></div>
+      </button>
+    </div>
+
+    <p class="selection-hint">
+      <span class="hint-active" id="hint-text">Clan seleccionado — listo para la batalla</span>
+    </p>
+
+    <footer class="modal-footer">
+      <button class="btn-create" id="btn-create">
+        CREAR PARTIDA
+      </button>
+    </footer>
+  </div>
+
+  <script>
+    function selectClan(element) {
+      document.querySelectorAll('.clan-card').forEach(card => card.classList.remove('selected'));
+      element.classList.add('selected');
+      
+      const btn = document.getElementById('btn-create');
+      btn.disabled = false;
+      
+      const hint = document.getElementById('hint-text');
+      hint.className = 'hint-active';
+      hint.textContent = 'Clan seleccionado — listo para la batalla';
+    }
+  </script>
+</body>
+</html>

@@ -2,6 +2,94 @@
 
 ---
 
+## [2026-04-22] Implementación del Modal Unirse a Partida
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Crear el componente `UnirsePartidaModalComponent` e integrarlo en la pantalla del Lobby, siguiendo la especificación del `.agents` y la estética vikinga proporcionada.
+
+### 📝 Cambios Realizados:
+
+1. **Creación del Componente**: Implementación del componente `unirse-partida-modal` (`.ts`, `.html`, `.scss`) de forma standalone y empleando ChangeDetection `OnPush` con Signals (`gameCode`, `selectedClan`, etc.), cumpliendo con las buenas prácticas de Angular 20.
+2. **Diseño Visual**:
+   - Layout fiel a la imagen de referencia (sin las líneas decorativas a petición del usuario en revisión).
+   - Input con tipografía monoespaciada para el CÓDICE.
+   - Lista horizontal de 6 clanes representados mediante círculos, con borde interactivo.
+   - Botón de unirse que requiere tanto un código válido como un clan seleccionado.
+3. **Integración en Lobby**: Actualizados `lobby-page.component.ts` y `lobby-page.component.html` para importar y renderizar condicionalmente el nuevo modal conectado al botón "Unirse a Partida".
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/*` | **CREADOS** (.ts, .html, .scss) |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Lobby — Conexión del botón "Nueva Partida" al modal crearPartida
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Enlazar el botón "Nueva Partida" del Lobby para que abra el componente modal `CrearPartidaModalComponent` previamente implementado.
+
+### 📝 Cambios Realizados:
+
+1. **`lobby-page.component.html`**: Se ha incluido la renderización condicional de `<app-crear-partida-modal>` al final del HTML, controlada por la señal `showCrearPartida()` y escuchando el evento `(closed)` para volver a ocultarlo.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Refinamiento de crearPartida modal (UI)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Refinar visualmente el modal de `crearPartida` utilizando el flujo `/refine-ui`, alineándolo con la estética vikinga y las reglas del proyecto.
+
+### 📝 Cambios Realizados:
+
+1. **Fuente Cinzel**: Añadida la fuente `Cinzel` a `index.html` para cumplir con la guía de estilo de fuentes.
+2. **Iconos de Clanes**: Actualizados los iconos en `crear-partida-modal.component.ts` para que coincidan con la guía de estilo (ej. 🪓 para Berserkers, 🌿 para Seidr).
+3. **Preview**: Generado preview estático `.agents/previews/crearPartida-preview.html` y validado su traspaso a producción. El componente ya estaba estructurado de manera casi idéntica a la especificación estricta.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.agents/previews/crearPartida-preview.html` | **CREADO** |
+| `front/src/index.html` | **MODIFICADO** (Añadida fuente Cinzel) |
+| `front/src/app/pages/lobby-page/modals/crear-partida-modal/crear-partida-modal.component.ts` | **MODIFICADO** (Iconos actualizados) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] Lobby — Texto de bienvenida en la Hero Card
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Añadir un saludo personalizado ("Bienvenido + username") a la izquierda de los botones en la hero section del Lobby.
+
+### 📝 Cambios Realizados:
+
+1. **`lobby-page.component.ts`**: Inyectado `AuthService` y expuesto `readonly username` como alias de `authService.username` (señal computada).
+2. **`lobby-page.component.html`**: Añadido `<div class="hero-welcome">` a la izquierda del `.actions-grid` con `<p class="welcome-label">Bienvenido</p>` y `<p class="welcome-username">{{ username() }}</p>`.
+3. **`lobby-page.component.scss`**: `hero-section` cambia de `justify-content: center` a `space-between`. Añadidos estilos para `.hero-welcome`, `.welcome-label` y `.welcome-username` (Cinzel, dorado, text-shadow).
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-21] Auditoría de db-server
 
 **Agente**: Antigravity
