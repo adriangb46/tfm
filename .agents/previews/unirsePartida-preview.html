@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview - Unirse Partida Modal</title>
+  <style>
+    /* Global Tokens based on front_color_guide.md */
+    :root {
+      --color-bg-primary: #0d0c18;
+      --color-bg-secondary: #1a1830;
+      --color-bg-card: #211f38;
+      --color-bg-modal: #252342;
+      --color-bg-overlay: rgba(0, 0, 0, 0.72);
+      
+      --color-text-primary: #e8e0d0;
+      --color-text-secondary: #b8a898;
+      --color-text-disabled: #5a5068;
+      --color-text-inverse: #0d0c18;
+      
+      --color-gold: #c9a84c;
+      --color-gold-light: #e8c96a;
+      --color-gold-dark: #9a7a30;
+      
+      --color-border-strong: #c9a84c;
+      --color-border-default: #3a3555;
+      
+      /* Clan Colors */
+      --color-clan-fury: #c0392b;
+      --color-clan-divine: #4a90d9;
+      --color-clan-iron: #8a9ba8;
+      --color-clan-song: #8b5cf6;
+      --color-clan-rune: #10b981;
+      --color-clan-death: #7c6b9e;
+      
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Modal Overlay (Scrim) */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--color-bg-overlay);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Modal Container */
+    .modal-container {
+      background-color: var(--color-bg-modal);
+      border: 1px solid var(--color-border-default);
+      border-radius: 8px;
+      width: 90%;
+      max-width: 480px;
+      padding: 32px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      position: relative;
+      text-align: center;
+    }
+
+    /* Header */
+    .modal-title {
+      color: var(--color-gold);
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin: 0 0 8px 0;
+      text-transform: uppercase;
+    }
+
+    .modal-subtitle {
+      color: var(--color-text-secondary);
+      font-size: 14px;
+      margin: 0 0 24px 0;
+    }
+
+    /* Close Button */
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: var(--color-text-secondary);
+      font-size: 20px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .close-btn:hover {
+      color: var(--color-text-primary);
+    }
+
+    /* Input Group */
+    .input-group {
+      text-align: left;
+      margin-bottom: 24px;
+    }
+
+    .input-label {
+      display: block;
+      color: var(--color-gold);
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .code-input-wrapper {
+      display: flex;
+      gap: 8px;
+    }
+
+    .styled-input {
+      flex: 1;
+      background-color: var(--color-bg-secondary);
+      border: 1px solid var(--color-border-default);
+      color: var(--color-text-primary);
+      padding: 12px 16px;
+      border-radius: 4px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .styled-input:focus {
+      border-color: var(--color-gold);
+    }
+    .styled-input::placeholder {
+      color: var(--color-text-disabled);
+    }
+
+    .check-btn {
+      background-color: var(--color-bg-card);
+      border: 1px solid var(--color-border-default);
+      color: var(--color-gold);
+      padding: 0 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    .check-btn:hover {
+      background-color: var(--color-bg-secondary);
+      border-color: var(--color-gold);
+    }
+
+    /* Clans Section */
+    .clans-section {
+      margin-bottom: 32px;
+      opacity: 0.5;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    
+    .clans-section.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .clans-section.hidden {
+      display: none;
+    }
+
+    .clans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .clan-card {
+      background-color: var(--color-bg-card);
+      border: 1px solid var(--color-border-default);
+      border-radius: 8px;
+      padding: 16px 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .clan-card:hover:not(.disabled) {
+      border-color: var(--color-gold-light);
+      background-color: var(--color-bg-secondary);
+    }
+
+    .clan-card.selected {
+      border-color: var(--color-gold);
+      box-shadow: 0 0 12px rgba(201, 168, 76, 0.3);
+    }
+
+    .clan-card.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      filter: grayscale(100%);
+    }
+
+    .clan-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--color-bg-primary);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      font-weight: bold;
+      border: 2px solid;
+    }
+
+    .clan-name {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .clan-status {
+      font-size: 10px;
+      color: var(--color-text-secondary);
+    }
+    .clan-card.disabled .clan-status {
+      color: var(--color-error);
+    }
+
+    /* Colors by Clan */
+    .clan-card[data-clan="fury"] .clan-icon { border-color: var(--color-clan-fury); color: var(--color-clan-fury); }
+    .clan-card[data-clan="divine"] .clan-icon { border-color: var(--color-clan-divine); color: var(--color-clan-divine); }
+    .clan-card[data-clan="iron"] .clan-icon { border-color: var(--color-clan-iron); color: var(--color-clan-iron); }
+    .clan-card[data-clan="song"] .clan-icon { border-color: var(--color-clan-song); color: var(--color-clan-song); }
+    .clan-card[data-clan="rune"] .clan-icon { border-color: var(--color-clan-rune); color: var(--color-clan-rune); }
+    .clan-card[data-clan="death"] .clan-icon { border-color: var(--color-clan-death); color: var(--color-clan-death); }
+
+    /* Primary CTA */
+    .cta-btn {
+      width: 100%;
+      background-color: var(--color-gold);
+      color: var(--color-text-inverse);
+      border: none;
+      border-radius: 4px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .cta-btn:hover {
+      background-color: var(--color-gold-light);
+    }
+    .cta-btn:disabled {
+      background-color: var(--color-bg-card);
+      color: var(--color-text-disabled);
+      cursor: not-allowed;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- PREVIEW ONLY — not production code -->
+  
+  <div class="modal-overlay">
+    <div class="modal-container">
+      <button class="close-btn">✕</button>
+      
+      <h2 class="modal-title">UNIRSE AL FRENTE</h2>
+      <p class="modal-subtitle">Presentad el código sagrado de la batalla</p>
+
+      <div class="input-group">
+        <label class="input-label">CÓDICE DE BATALLA</label>
+        <div class="code-input-wrapper">
+          <input type="text" class="styled-input" id="codeInput" placeholder="Introduce el Código (ej: VALHALLA)">
+          <button class="check-btn" onclick="checkCode()">VERIFICAR</button>
+        </div>
+      </div>
+
+      <!-- Clans Section (Hidden by default as requested) -->
+      <div class="clans-section hidden" id="clansSection">
+        <label class="input-label">ELIGE TU DESTINO</label>
+        <div class="clans-grid">
+          <div class="clan-card disabled" data-clan="fury">
+            <div class="clan-icon">F</div>
+            <div class="clan-name">Berserkers</div>
+            <div class="clan-status">Ocupado</div>
+          </div>
+          <div class="clan-card" data-clan="divine" onclick="selectClan(this)">
+            <div class="clan-icon">D</div>
+            <div class="clan-name">Valkirias</div>
+            <div class="clan-status">Disponible</div>
+          </div>
+          <div class="clan-card" data-clan="iron" onclick="selectClan(this)">
+            <div class="clan-icon">I</div>
+            <div class="clan-name">Jarls</div>
+            <div class="clan-status">Disponible</div>
+          </div>
+          <div class="clan-card" data-clan="song" onclick="selectClan(this)">
+            <div class="clan-icon">S</div>
+            <div class="clan-name">Skalds</div>
+            <div class="clan-status">Disponible</div>
+          </div>
+          <div class="clan-card disabled" data-clan="rune">
+            <div class="clan-icon">R</div>
+            <div class="clan-name">Seidr</div>
+            <div class="clan-status">Ocupado</div>
+          </div>
+          <div class="clan-card" data-clan="death" onclick="selectClan(this)">
+            <div class="clan-icon">D</div>
+            <div class="clan-name">Draugr</div>
+            <div class="clan-status">Disponible</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="cta-btn" id="joinBtn" disabled>ENTRAR EN COMBATE</button>
+
+    </div>
+  </div>
+
+  <script>
+    function checkCode() {
+      const code = document.getElementById('codeInput').value;
+      if(code.trim() !== '') {
+        // Show clans and simulate some are taken and some are available
+        const section = document.getElementById('clansSection');
+        section.classList.remove('hidden');
+        section.classList.add('active');
+      }
+    }
+
+    function selectClan(element) {
+      if(element.classList.contains('disabled')) return;
+      
+      // Deselect all
+      document.querySelectorAll('.clan-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      
+      // Select clicked
+      element.classList.add('selected');
+      
+      // Enable CTA
+      document.getElementById('joinBtn').disabled = false;
+    }
+  </script>
+</body>
+</html>

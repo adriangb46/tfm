@@ -1,5 +1,70 @@
-## [2026-04-22] - Optimización de Combate y UX
+## [2026-04-22] - Responsive Design Global
 
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Mejorar y unificar la responsividad de todas las pantallas de la aplicación utilizando breakpoints consolidados en mixins de Sass, y refactorizar el menú de navegación para dispositivos móviles.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Estandarización de Breakpoints**:
+   - Añadidas variables `$bp-mobile` (600px) y `$bp-tablet` (1024px) en `variables.scss`.
+   - Creados mixins `@mixin mobile` y `@mixin tablet`.
+
+2. **Refactorización Navbar**:
+   - Implementado un menú tipo hamburguesa para pantallas móviles.
+   - Añadido un overlay y animación para mostrar el menú lateral en dispositivos pequeños.
+
+3. **Refactorización de Pantallas**:
+   - Reemplazados todos los media queries hardcodeados (como `max-width: 768px`, `max-width: 1024px`, etc.) por los mixins `@include mobile` o `@include tablet`.
+   - Pantallas adaptadas: `home`, `lobby-page`, `user-config`, `characters-page`, `rules-page`, `admin-page`.
+   - Se aplicó Flex-wrap y scroll horizontal a la tabla de baneos en `admin-page`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/styles/variables.scss` | **MODIFICADO** (Mixins y variables) |
+| `front/src/app/shared/components/navbar/navbar.component.*` | **MODIFICADO** (Botón Hamburguesa) |
+| `front/src/app/pages/home/home.component.scss` | **MODIFICADO** (Mixins) |
+| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO** (Mixins) |
+| `front/src/app/pages/user-config/user-config.component.scss` | **MODIFICADO** (Mixins) |
+| `front/src/app/pages/characters-page/characters-page.component.scss` | **MODIFICADO** (Mixins) |
+| `front/src/app/pages/rules-page/rules-page.component.scss` | **MODIFICADO** (Mixins) |
+| `front/src/app/pages/admin-page/admin-page.component.scss` | **MODIFICADO** (Mixins y tabla responsive) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] - Refinamiento Modal Unirse a Partida
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Mejorar la experiencia de usuario en el modal de unirse a partida ocultando los clanes hasta que se verifique el código y deshabilitando clanes ocupados.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Refinamiento UI (Preview Loop)**:
+   - Creado preview estático para validar el comportamiento con el usuario sin tocar código de producción.
+   - Ocultados los clanes inicialmente. Añadido botón "VERIFICAR" junto al campo del código.
+
+2. **Angular Component**:
+   - `UnirsePartidaModalComponent`: Añadidas signals `isCodeVerified` y `isVerifying`.
+   - Simulación de la verificación de código (el servidor indicará qué clanes están disponibles).
+   - Añadida interfaz `available` a los clanes y reflejado el estado `disabled` en los botones.
+   - Añadidos los nombres de los clanes debajo de cada logo, que se muestran únicamente después de verificar el código.
+   - Actualizado el `.scss` para mostrar los clanes inactivos en escala de grises, desactivar interacciones y dar estilo a los nombres (`.clan-name`).
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.agents/previews/unirsePartida-preview.html` | **CREADO** |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.ts` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.html` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.scss` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-22] - Optimización de Combate y UX
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar el sistema de ventajas tácticas, confirmaciones de seguridad (abandono/password) y preparar la infraestructura para la integración con el backend.
 
