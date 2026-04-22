@@ -114,6 +114,23 @@ services:
      - middle_server
     restart: unless-stopped
       
+  bastion:
+    image: linuxserver/openssh-server:latest
+    container_name: bastion
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Madrid
+      - USER_NAME=viking
+      - PASSWORD_ACCESS=true
+      - USER_PASSWORD=viking_secret # IMPORTANTE: Cambiar en producción o usar claves SSH
+    ports:
+      - "2222:22"
+    networks:
+      - tfm_net
+    restart: unless-stopped
+
+      
   
 
 volumes:

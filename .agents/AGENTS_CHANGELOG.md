@@ -2426,3 +2426,27 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 | `db_back/src/main/java/com/tfm/db_back/api/CharacterController.java` | CREADO |
 | `db_back/src/test/java/com/tfm/db_back/domain/service/CharacterServiceImplTest.java` | CREADO |
 
+
+---
+
+## [2026-04-22] Infraestructura — Acceso Seguro a DB (Bastión SSH)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar un acceso seguro "en crudo" a las bases de datos PostgreSQL y MongoDB sin exponer sus puertos públicamente, cumpliendo con las políticas de seguridad del proyecto.
+
+### 📝 Resumen de Cambios:
+
+1. **Nuevo Servicio `bastion`**:
+   - Añadido servicio basado en `linuxserver/openssh-server` al `docker-compose.yml`.
+   - Expone el puerto `2222` para permitir túneles SSH.
+   - Conectado a la red interna `tfm_net` para alcanzar los servicios de DB por nombre de host.
+2. **Documentación de Acceso**:
+   - Creado `ACCESS_DDBB.md` con instrucciones detalladas para establecer túneles y configurar clientes locales (DBeaver, Compass).
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose.yml` | Modificado |
+| `ACCESS_DDBB.md` | **CREADO** |
+
