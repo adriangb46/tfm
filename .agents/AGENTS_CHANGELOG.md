@@ -1,3 +1,36 @@
+## [2026-04-22] Docker: Hardening de Infraestructura y Seguridad
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar la infraestructura de contenedores limitando la exposición de puertos y configurando usuarios no-root.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Hardening de Contenedores**:
+   - Modificado `middle_server/Dockerfile` para ejecutarse como el usuario `node` (UID 1000) en lugar de root.
+   - Ajustados los permisos de archivos mediante `COPY --chown=node:node`.
+
+2. **Restricción de Puertos (Security Audit)**:
+   - **MinIO**: La consola de administración (9001) ahora solo es accesible desde `127.0.0.1` en todos los entornos.
+   - **Redis**: El puerto `6379` en desarrollo ahora está bindeado a `127.0.0.1`.
+   - **Bases de Datos (Dev)**: PostgreSQL (`5432`) y MongoDB (`27017`) ahora están bindeados a `127.0.0.1`.
+   - **DB Server**: Eliminada la exposición del puerto `8080` en el entorno de GitHub, ya que es una comunicación puramente interna.
+
+3. **Optimización de Orquestación**:
+   - Añadidos `healthcheck` a los servicios de PostgreSQL.
+   - Implementada la condición `service_healthy` en las dependencias de `db_server` para asegurar un arranque ordenado.
+   - Verificada la sintaxis de todos los archivos (`docker-compose.yml`, `.dev.yml`, `.gh.yml`).
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/Dockerfile` | **MODIFICADO** |
+| `docker-compose.yml` | **MODIFICADO** |
+| `docker-compose.dev.yml` | **MODIFICADO** |
+| `docker-compose.gh.yml` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-22] Frontend: Fix de Importación en SalaLlenaModal
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir el fallo de compilación causado por una ruta relativa incorrecta en la importación de variables de estilo.

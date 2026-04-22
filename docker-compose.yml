@@ -36,8 +36,10 @@ services:
     networks:      
       - tfm_net
     depends_on:
-      - db_sql
-      - mongodb
+      db_sql:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
     restart: unless-stopped
 
   middle_server:
@@ -74,7 +76,7 @@ services:
     container_name: minio
     ports:
       - "9000:9000"
-      - "9001:9001"
+      - "127.0.0.1:9001:9001"
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
