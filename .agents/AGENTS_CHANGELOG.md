@@ -1,3 +1,25 @@
+## [2026-04-22] Home Page: Simplificación Extrema en Móvil
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Transformar la página de inicio en dispositivos móviles en una "Landing Page" de una sola pantalla, mostrando únicamente la sección Hero y ocultando el resto del contenido para una experiencia más directa y limpia.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Ajuste de Visibilidad y Dimensiones (SCSS)**:
+   - Ocultadas las secciones `.codex-content`, `.cta-section`, `.home-footer` y `.scroll-hint` en dispositivos móviles (<= 600px).
+   - Ajustada la `.hero-section` para que ocupe exactamente el espacio visible: `height: calc(100dvh - 72px)`. El uso de `dvh` (Dynamic Viewport Height) asegura que el contenido se ajuste incluso cuando aparecen/desaparecen las barras del navegador.
+   - Restados los `72px` correspondientes a la altura de la Navbar fija para evitar cualquier desbordamiento.
+   - Refinados los tamaños de fuente, escalas de logo y márgenes internos en móviles para garantizar que todo el contenido "quepa" en una sola pantalla sin necesidad de `overflow: hidden`.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/home/home.component.scss` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-22] Navbar: Logo Centrado en Móvil
 
 **Agente**: Antigravity (Google DeepMind)
