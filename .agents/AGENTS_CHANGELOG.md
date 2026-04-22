@@ -14,10 +14,10 @@
    - Añadido `ConfirmAbandonModalComponent` con temática vikinga para evitar salidas accidentales de la partida.
    - Implementado `CambiarContrasenaModalComponent` con validación de formularios en la sección de configuración.
 
-3. **Infraestructura Preparada**: 
-   - **Sockets**: Estructura de suscripciones `setupGameSubscriptions()` lista en `GamePageComponent`.
-   - **MinIO**: Lógica de subida preparada en `UserConfigComponent` con validaciones detalladas de TODO.
-   - **Persistencia**: Preparada la capa de servicios REST y el manejo de persistencia en `UserConfig`.
+3. **Infraestructura Preparada (Frontend-Only)**: 
+   - **Sockets**: Estructura de suscripciones `setupGameSubscriptions()` lista para recibir el estado autoritativo del Middle Server.
+   - **Avatares**: Preparada la captura de archivos para envío al Middle Server (quien se encargará del redimensionado y persistencia).
+   - **Persistencia**: Preparada la delegación de peticiones de configuración al Middle Server.
 
 ### 🗂️ Archivos Modificados/Creados:
 
