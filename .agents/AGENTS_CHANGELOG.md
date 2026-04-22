@@ -1,3 +1,28 @@
+## [2026-04-22] Game Page: Eliminación de Espacio Vacío (Sin Navbar)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir el layout de la página de juego para eliminar el hueco de 72px en la parte superior cuando la barra de navegación está oculta.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Layout Dinámico (HTML)**:
+   - Añadida la clase condicional `[class.no-navbar]="!showNavbar()"` al elemento `<main>` en `app.html`. 
+   - Esto permite detectar programáticamente cuándo la Navbar está ausente.
+
+2. **Refactorización de Estilos Globales (SCSS)**:
+   - Añadida una regla CSS en `styles.scss` para el selector `.main-layout.no-navbar`.
+   - Se ha establecido `padding-top: 0` para esta clase, anulando el padding por defecto de la Navbar.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/app.html` | **MODIFICADO** |
+| `front/src/styles.scss` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-22] Internacionalización del Motor de Juego (Game Engine)
 
 **Agente**: Antigravity (Google DeepMind)
