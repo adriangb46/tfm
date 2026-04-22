@@ -1,4 +1,67 @@
-# Agents Activity Changelog
+## [2026-04-22] Unificación de Secretos de Handshaking y Fix de Tests IT
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver errores 401 Unauthorized en tests de integración causados por inconsistencias en el secret `DB_HANDSHAKE_SECRET`.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Unificación de Secretos**:
+   - Se estandarizó el uso de `test-secret-minimo-32-chars-ok-fixed!!` (ASCII) para evitar problemas de codificación con el acento anterior.
+   - Eliminados literales hardcodeados en `db_back/src/test/resources/application.properties` para permitir que el `DynamicPropertySource` de los tests de integración inyecte el valor correcto.
+
+2. **Estabilización de Infraestructura de Tests (Singleton Pattern)**:
+   - Implementado el **Singleton Container Pattern** en `AbstractIntegrationTest.java`.
+   - Los contenedores de PostgreSQL y MongoDB ahora se inician manualmente en un bloque `static` y se reutilizan para toda la suite de tests.
+   - Esto evita errores de `JDBC Connection Refused` causados por el reinicio de contenedores mientras Spring reutiliza un Application Context con puertos obsoletos.
+
+3. **Actualización de Tests Unitarios**:
+   - Alineados `AuthControllerTest.java` y `HandshakeServiceTest.java` con el nuevo secreto unificado.
+
+3. **Mantenimiento de Configuración**:
+   - Actualizado `.env.example` con el valor de ejemplo unificado.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/test/resources/application.properties` | **MODIFICADO** (Limpieza de literales) |
+| `db_back/src/test/java/com/tfm/db_back/api/AuthControllerTest.java` | **MODIFICADO** (Secreto unificado) |
+| `db_back/src/test/java/com/tfm/db_back/domain/service/HandshakeServiceTest.java` | **MODIFICADO** (Secreto unificado) |
+| `db_back/.env.example` | **MODIFICADO** (Ejemplo actualizado) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+
+
+## [2026-04-22] Estabilización de Tests y Restauración de Flyway (DB Server)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver errores de carga de contexto (`ApplicationContext`) en los tests de integración causados por una configuración errónea y un conflicto de beans de Flyway.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Configuración de Spring Boot 3.x/4.x Hardening**:
+   - Corregida la estructura de `application.yml`: Se anidaron `mongodb` y `flyway` correctamente bajo el bloque `spring:`.
+   - Migración de propiedades: Cambiado `spring.data.mongodb` por el moderno `spring.mongodb.uri` y `spring.mongodb.database` para evitar avisos de deprecación.
+   - Alineado `@Value("${async.pool-size}")` en `MongoConfig.java` con el YAML.
+
+2. **Resolución de Conflictos de Flyway**:
+   - **Eliminación de Bean Manual**: Se eliminó el bean `Flyway` manual en `DbBackApplication.java` que bloqueaba el orden normal de inicio de Spring, causando que Hibernate intentara validar tablas antes de ser creadas.
+   - **Autoconfiguración Restaurada**: Se habilitó `baseline-on-migrate: true` en el YAML para permitir que Flyway gestione bases de datos existentes o con estados previos en los contenedores.
+
+3. **Corrección de Tests de Integración**:
+   - `AbstractIntegrationTest.java`: Actualizado `DynamicPropertySource` para inyectar correctamente `spring.mongodb.uri`, asegurando que Testcontainers se comunique con la persistencia de analíticas.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/main/resources/application.yml` | **MODIFICADO** (Estructura y Baseline) |
+| `db_back/src/main/java/com/tfm/db_back/DbBackApplication.java` | **MODIFICADO** (Limpieza de Bean manual) |
+| `db_back/src/test/java/com/tfm/db_back/AbstractIntegrationTest.java` | **MODIFICADO** (Propiedades Mongo) |
+| `db_back/src/main/java/com/tfm/db_back/config/MongoConfig.java` | **MODIFICADO** (Alineación @Value) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
