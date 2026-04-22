@@ -1,3 +1,34 @@
+## [2026-04-22] Documentación de Proyectos: READMEs y Licencias
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Estandarizar la documentación de los sub-proyectos y asegurar la disponibilidad de la licencia en cada uno de ellos.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Documentación de Motor de Juego**:
+   - Creado `middle_server/README.md` detallando la arquitectura de Node.js + Socket.IO y responsabilidades del motor en tiempo real.
+
+2. **Documentación de Persistencia**:
+   - Creado `db_back/README.md` detallando el stack de Java 25 + Spring Boot, y la integración dual con PostgreSQL y MongoDB.
+
+3. **Estandarización de Licencias**:
+   - Creados archivos `LICENSE` en `front/`, `middle_server/` y `db_back/` replicando la Licencia MIT (Modificada para uso educativo) del root.
+   - Actualizado `front/README.md` para incluir la sección de licencia, manteniendo la coherencia con el resto de repositorios.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/README.md` | **CREADO** |
+| `middle_server/LICENSE` | **CREADO** |
+| `db_back/README.md` | **CREADO** |
+| `db_back/LICENSE` | **CREADO** |
+| `front/LICENSE` | **CREADO** |
+| `front/README.md` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-22] Unificación de Secretos de Handshaking y Fix de Tests IT
 
 **Agente**: Antigravity (Google DeepMind)
