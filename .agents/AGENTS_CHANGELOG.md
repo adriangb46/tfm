@@ -1,3 +1,39 @@
+## [2026-04-22] - Implementación de Modelos de Datos en Memoria (Middle Server)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Establecer la base del motor de juego mediante la implementación de modelos de datos autoritativos y serializables para partidas, jugadores, tropas y eventos.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Infraestructura de Motor**:
+   - Migrado `middle_server/package.json` a **ES Modules** para cumplimiento de estándares.
+   - Implementado `ClansLoader` para la carga dinámica de estadísticas desde `clans.json`.
+   - Creado `clans.json` inicial con datos de 3 clanes (Berserkers, Valkirias, Jarls).
+
+2. **Modelos de Dominio (In-Memory)**:
+   - `Troop`: Gestión de vida y estado de despliegue.
+   - `Player`: Estado de recursos, capital e investigaciones.
+   - `Game`: Contenedor de estado de partida y cola de eventos.
+   - `GameEvent`: Estructura para el scheduler (Time Wheel).
+
+3. **Gestión de Estado**:
+   - Implementado `GameStore` (Singleton) como almacén central de todas las partidas activas.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/package.json` | **MODIFICADO** (type: module) |
+| `middle_server/src/models/troop.js` | **CREADO** |
+| `middle_server/src/models/player.js` | **CREADO** |
+| `middle_server/src/models/game.js` | **CREADO** |
+| `middle_server/src/models/game-event.js` | **CREADO** |
+| `middle_server/src/game/state/game-store.js` | **CREADO** |
+| `middle_server/src/utils/clans-loader.js` | **CREADO** |
+| `middle_server/clans.json` | **CREADO** |
+
+---
+
 ## [2026-04-22] - Optimización de Combate y UX
 
 **Agente**: Antigravity (Google DeepMind)
