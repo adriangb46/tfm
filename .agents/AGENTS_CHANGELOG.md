@@ -1,3 +1,34 @@
+## [2026-04-23] Frontend: Refactorización y Estandarización de SCSS
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Organizar y documentar el código SCSS de toda la aplicación, consolidando las `@media queries` al final de los archivos y añadiendo comentarios descriptivos en español para mejorar la mantenibilidad.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Estandarización de Estructura**:
+   - Reubicación sistemática de todos los bloques `@media` y mixins responsivos (`@include mobile`, `@include tablet`) al final de cada archivo.
+   - Preservación estricta de la especificidad y el orden de cascada para evitar cambios visuales no deseados.
+
+2. **Documentación Técnica**:
+   - Añadidos encabezados descriptivos y comentarios de sección en español en todos los archivos SCSS procesados.
+   - Documentación de lógica compleja como animaciones, efectos de cristal y selectores dinámicos.
+
+3. **Alcance de la Refactorización**:
+   - **Modales del Juego**: `game-log`, `lobby`, `entrenar`, `aviso`, `atacar`, `reglas`, `visualizar-tropas`, `anadir-tropa-ataque`.
+   - **Modales del Lobby**: `unirse-partida`, `sala-llena`, `crear-partida`.
+   - **Páginas**: `lobby-page`, `characters-page`, `home`, `statistics`, `game`.
+   - **Componentes Compartidos**: `navbar`, `auth`, `global-debug`.
+   - **Estilos Globales**: `styles.scss`, `variables.scss`, `tokens.scss`.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/**/*.scss` | **REFACTORIZADO** (Múltiples archivos) |
+| `front/src/styles/*.scss` | **REFACTORIZADO** (Variables y Tokens) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-22] Docker: Hardening de Infraestructura y Seguridad
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Asegurar la infraestructura de contenedores limitando la exposición de puertos y configurando usuarios no-root.
