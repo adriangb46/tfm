@@ -1,3 +1,33 @@
+## [2026-04-23] Frontend: Integración de Documentación (Compodoc)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar un sistema de documentación técnica automatizado similar a Javadoc para el frontend de Angular.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Instalación y Setup**:
+   - Instalado `@compodoc/compodoc` como dependencia de desarrollo.
+   - Configurado `tsconfig.doc.json` para la extracción de metadatos de Angular.
+
+2. **Automatización y CI/CD**:
+   - Añadidos scripts `doc:build` y `doc:serve` en `package.json`.
+   - Creado workflow `front/.github/workflows/deploy-docs.yml` para despliegue manual a GitHub Pages.
+   - Generada la documentación base inicial (20+ archivos).
+
+3. **Mantenimiento**:
+   - Actualizado `.gitignore` para excluir la carpeta `documentation/` del control de versiones.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/package.json` | **MODIFICADO** (Scripts y Deps) |
+| `front/tsconfig.doc.json` | **CREADO** |
+| `front/.gitignore` | **MODIFICADO** |
+| `front/.github/workflows/deploy-docs.yml` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-23] Frontend: Refactorización y Estandarización de SCSS
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Organizar y documentar el código SCSS de toda la aplicación, consolidando las `@media queries` al final de los archivos y añadiendo comentarios descriptivos en español para mejorar la mantenibilidad.
