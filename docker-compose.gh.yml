@@ -3,9 +3,9 @@ services:
     image: ghcr.io/adriangb46/tfm-database-sql:latest
     container_name: db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgress
-      POSTGRES_DB: tfm
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -20,8 +20,8 @@ services:
     image: ghcr.io/adriangb46/tfm-database-nosql:latest
     container_name: mongodb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     networks:
       - tfm_net
     volumes:
@@ -33,8 +33,10 @@ services:
     container_name: db_server
     environment:
       - DB_HANDSHAKE_SECRET=${DB_HANDSHAKE_SECRET}
-      - POSTGRES_URL=jdbc:postgresql://database-sql:5432/tfm
-      - MONGODB_URL=mongodb://admin:password@database-nosql:27017/vikingclanwars?authSource=admin
+      - POSTGRES_URL=jdbc:postgresql://database-sql:5432/${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - MONGODB_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@database-nosql:27017/vikingclanwars?authSource=admin
     networks:      
       - tfm_net
     depends_on:
@@ -53,10 +55,10 @@ services:
       - DB_SERVER_URL=http://db-server:8080
       - DB_HANDSHAKE_SECRET=${DB_HANDSHAKE_SECRET}
       - MINIO_ENDPOINT=http://storage-minio:9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin
-      - MINIO_BUCKET_AVATARS=avatars
-      - MINIO_PUBLIC_BASE_URL=http://localhost:9000/avatars
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - MINIO_BUCKET_AVATARS=${MINIO_BUCKET_AVATARS}
+      - MINIO_PUBLIC_BASE_URL=${MINIO_PUBLIC_BASE_URL}
       - REDIS_URL=redis://cache-redis:6379
     networks:      
       - tfm_net
@@ -80,8 +82,8 @@ services:
       - "9000:9000"
       - "127.0.0.1:9001:9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
@@ -95,9 +97,9 @@ services:
       - storage-minio
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc alias set myminio http://storage-minio:9000 minioadmin minioadmin;
-      /usr/bin/mc mb myminio/avatars;
-      /usr/bin/mc anonymous set public myminio/avatars;
+      /usr/bin/mc alias set myminio http://storage-minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc mb myminio/${MINIO_BUCKET_AVATARS};
+      /usr/bin/mc anonymous set public myminio/${MINIO_BUCKET_AVATARS};
       exit 0;
       "
     networks:
@@ -106,12 +108,27 @@ services:
   frontend:
     image: ghcr.io/adriangb46/tfm-frontend:latest
     container_name: front
-    ports:
-      - "${FRONTEND_PUBLISH_PORT:-4200}:80"
     networks:
       - tfm_net
     depends_on:
       - middle-server
+    restart: unless-stopped
+
+  nginx-proxy:
+    image: ghcr.io/adriangb46/tfm-proxy-nginx:latest
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+    volumes:
+      - letsencrypt_data:/etc/letsencrypt
+      - certbot_data:/var/www/certbot
+    networks:
+      - tfm_net
+    depends_on:
+      - frontend
     restart: unless-stopped
 
   bastion:
@@ -121,9 +138,9 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Madrid
-      - USER_NAME=viking
+      - USER_NAME=${BASTION_USER_NAME}
       - PASSWORD_ACCESS=true
-      - USER_PASSWORD=viking_secret # IMPORTANTE: Cambiar en producción o usar claves SSH
+      - USER_PASSWORD=${BASTION_USER_PASSWORD}
     ports:
       - "2222:22"
     networks:
@@ -136,6 +153,10 @@ volumes:
   mongodb_data:
     driver: local
   minio_data:
+    driver: local
+  letsencrypt_data:
+    driver: local
+  certbot_data:
     driver: local
 
 networks:

@@ -1,0 +1,49 @@
+server {
+    listen 80;
+    listen [::]:80;
+    # La variable DOMAIN_NAME vendrá inyectada desde el docker-compose
+    server_name ${DOMAIN_NAME} www.${DOMAIN_NAME};
+
+    # Regla para permitir la validación de Let's Encrypt (Certbot)
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    # Redirigir el resto del tráfico HTTP a HTTPS
+    # DESCOMENTA LA SIGUIENTE LÍNEA CUANDO TENGAS EL CERTIFICADO SSL
+    # return 301 https://$host$request_uri;
+
+    # MIENTRAS NO TENGAS SSL, EL TRÁFICO HTTP IRÁ DIRECTO AL FRONTEND
+    # COMENTA ESTE BLOQUE 'location /' CUANDO HAYAS DESCOMENTADO LA REDIRECCIÓN 301 DE ARRIBA
+    location / {
+        proxy_pass http://front:80;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# DESCOMENTA EL SIGUIENTE BLOQUE 'server' UNA VEZ HAYAS GENERADO LOS CERTIFICADOS
+# server {
+#     listen 443 ssl;
+#     listen [::]:443 ssl;
+#     server_name ${DOMAIN_NAME} www.${DOMAIN_NAME};
+#
+#     # Rutas de los certificados generados por Let's Encrypt
+#     ssl_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem;
+#     ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;
+#
+#     # Opciones de seguridad SSL recomendadas
+#     ssl_protocols TLSv1.2 TLSv1.3;
+#     ssl_prefer_server_ciphers on;
+#     ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+#
+#     location / {
+#         proxy_pass http://front:80;
+#         proxy_set_header Host $host;
+#         proxy_set_header X-Real-IP $remote_addr;
+#         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#         proxy_set_header X-Forwarded-Proto $scheme;
+#     }
+# }

@@ -1,3 +1,56 @@
+## [2026-04-26] Docker: Parametrización Completa de Secretos (Entornos y Portainer)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Eliminar todos los secretos e información sensible de los archivos de Docker Compose para maximizar la seguridad, permitiendo inyectarlos como variables de entorno a través de Portainer o archivos `.env`.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Refactorización de `docker-compose.gh.yml` (Producción)**:
+   - Convertidas las credenciales de PostgreSQL, MongoDB, MinIO y Bastion (SSH) a variables de entorno (`${VAR}`) sin valores por defecto. Esto obliga a definir de forma segura los valores en el stack de Portainer, evitando credenciales por defecto en producción.
+   - Sincronizados los parámetros de conexión JDBC en el contenedor `db-server`.
+
+2. **Refactorización de `docker-compose.yml` (Desarrollo)**:
+   - Aplicada la misma lógica de variables de entorno, pero incluyendo valores por defecto (fallback `:-`) para garantizar que el entorno local pueda seguir arrancando con un simple `docker-compose up` sin requerir configuraciones exhaustivas previas para los desarrolladores.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose.yml` | **MODIFICADO** |
+| `docker-compose.gh.yml` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-25] Docker: Integración de Nginx Reverse Proxy (HTTPS)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Añadir un contenedor de Nginx para actuar como proxy inverso y exponer el frontend a través de HTTPS, preparando la integración con Let's Encrypt.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Configuración Nginx**:
+   - Creada plantilla dinámica `nginx/templates/default.conf.template` que usa la variable de entorno `${DOMAIN_NAME}` para inyectar el dominio en tiempo de ejecución (`envsubst`).
+   - Añadida ruta para `.well-known/acme-challenge/` para permitir la validación de dominios de Certbot / Let's Encrypt sin necesidad de parar el servidor.
+   - Preparado bloque de servidor HTTPS (comentado) para facilitar la activación de SSL una vez se obtengan los certificados.
+   - Redirección del tráfico al contenedor interno de Angular (`http://front:80`).
+   - Creado `nginx/Dockerfile` para empaquetar la configuración dentro de una imagen personalizada.
+
+2. **Ajuste de Archivos Docker Compose y CI**:
+   - Añadido un nuevo step a `main-ci.yml` para compilar y subir la imagen proxy (`ghcr.io/.../tfm-proxy-nginx:latest`).
+   - Añadido el servicio `nginx-proxy` a `docker-compose.yml` (con `build`) y `docker-compose.gh.yml` (con `image` pre-construida).
+   - Inyectada la variable de entorno `DOMAIN_NAME` en ambos archivos.
+   - Modificados los volúmenes en producción (`gh.yml`) para usar Named Volumes (`letsencrypt_data`, `certbot_data`) evitando crear carpetas locales en el host.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `nginx/conf.d/default.conf` | **CREADO** |
+| `docker-compose.yml` | **MODIFICADO** |
+| `docker-compose.gh.yml` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-23] Frontend: Integración de Documentación (Compodoc)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar un sistema de documentación técnica automatizado similar a Javadoc para el frontend de Angular.

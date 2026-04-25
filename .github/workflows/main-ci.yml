@@ -88,3 +88,14 @@ jobs:
             docker tag $SRC $DEST
             docker push $DEST
           done
+
+      # ---------------------------------------------------------
+      # 3. Build Custom Nginx Proxy Image
+      # ---------------------------------------------------------
+      - name: Build and Push Nginx Proxy
+        if: github.event_name != 'pull_request'
+        run: |
+          DEST="${{ env.REGISTRY }}/${{ env.IMAGE_BASE_LOWER }}-proxy-nginx:latest"
+          echo "Building Nginx Proxy as $DEST"
+          docker build -t $DEST ./nginx
+          docker push $DEST
