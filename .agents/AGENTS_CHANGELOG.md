@@ -1,14 +1,16 @@
-## [2026-04-28] - DB Back: Script de pruebas de endpoints
+## [2026-04-28] - DB Back: Script completo de pruebas de endpoints
 **Agente**: Antigravity (Google DeepMind)
-**Objetivo**: Crear un script en Python para probar rápidamente los endpoints REST internos del `db_back` y verificar el handshake y generación de JWT.
+**Objetivo**: Crear y extender un script en Python para probar exhaustivamente todos los endpoints REST internos del `db_back` comprobando el ciclo completo de vida de datos.
 
 ### 📝 Resumen de Tareas Realizadas:
 
-1. **Creación de Script (`test_db_endpoints.py`)**:
+1. **Creación y Expansión del Script (`test_db_endpoints.py`)**:
    - Implementada carga de variables de entorno con `python-dotenv`.
-   - Realiza petición de handshake (`/internal/auth/handshake`) usando la variable `DB_HANDSHAKE_SECRET`.
-   - Extrae el token JWT devuelto.
-   - Realiza petición de prueba autenticada a `/internal/games/active` usando el token obtenido.
+   - Autenticación (`/internal/auth`): Realiza handshake y obtiene el JWT de sesión interna.
+   - Usuarios (`/internal/users`): Prueba de creación (con generador aleatorio para evitar colisiones), obtención por ID, por nombre de usuario, y actualización de avatar.
+   - Personajes (`/internal/characters`): Creación de personajes para los usuarios con distintos clanes (`FURY`, `SONG`), y comprobación de consultas cruzadas.
+   - Partidas (`/internal/games`): Inicia una partida con los personajes creados, prueba la obtención de partidas activas, el volcado de estado opaco (StateDumpRequestDto), y finaliza la partida enviando el UUID del ganador.
+   - Analíticas (`/internal/analytics`): Genera y envía un snapshot simulado con formato correcto hacia MongoDB.
    
 2. **Control de Versiones**:
    - Añadido `test_db_endpoints.py` a `.gitignore` para prevenir subidas accidentales al repositorio.
@@ -17,7 +19,7 @@
 
 | Archivo | Acción |
 |---------|--------|
-| `test_db_endpoints.py` | **CREADO** |
+| `test_db_endpoints.py` | **CREADO / EXTENDIDO** |
 | `.gitignore` | **MODIFICADO** |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
