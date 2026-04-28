@@ -5,13 +5,13 @@ Este documento detalla las tareas asignadas al **Desarrollador A** para la imple
 ---
 
 ## Sprint 1: Infraestructura y Seguridad
-*   [ ] **Configurar Servidor Socket.IO**:
+*   [x] **Configurar Servidor Socket.IO**:
     *   Implementar la base en `src/connectors/socket-handler.js`.
     *   Habilitar CORS restringido al origen del Frontend.
-*   [ ] **Middleware de Autenticación**:
+*   [x] **Middleware de Autenticación**:
     *   Validar JWT en el handshake de Socket.IO.
-    *   Extraer `userId`, `characterId` y `clanId` del token y asociarlos al socket.
-*   [ ] **Gestión de Salas (Rooms)**:
+    *   Extraer identidad del token y asociarlos al socket.
+*   [x] **Gestión de Salas (Rooms)**:
     *   Unir automáticamente a los jugadores a una sala identificada por el `gameId` al conectar.
 
 ## Sprint 2: El Motor de Tiempo (Time Wheel)
