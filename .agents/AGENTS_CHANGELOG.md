@@ -1,3 +1,107 @@
+## [2026-04-28] - Implementación de Comunicación Socket.IO (Middle Server a Frontend)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Establecer la comunicación en tiempo real entre el Frontend y el Middle Server mediante Socket.IO, cumpliendo las tareas del Sprint 1 del Desarrollador A.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Frontend**:
+   - Instalación de `socket.io-client`.
+   - Creación de `SocketService` (`core/game/socket.service.ts`) que mantiene una conexión singleton (una sesión por usuario). Extrae el JWT vía `AuthService` y usa la URL de `AppConfigService`.
+   - Modificación de `GameService` para conectar el socket al unirse/crear partida.
+
+2. **Middle Server**:
+   - Creación de manejador específico `src/connectors/socket-handler.js` con soporte para el evento `join_game`.
+   - Modificación de `index.js` para usar el nuevo manejador separado.
+
+3. **Sprint Tracker**:
+   - Marcadas las tareas del Sprint 1 como completadas en `.agents/tasks_dev_a.md`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/package.json` | **MODIFICADO** (Dependencia) |
+| `front/src/app/core/game/socket.service.ts` | **CREADO** |
+| `front/src/app/core/game/game.service.ts` | **MODIFICADO** |
+| `middle_server/src/connectors/socket-handler.js` | **MODIFICADO** |
+| `middle_server/index.js` | **MODIFICADO** |
+| `.agents/tasks_dev_a.md` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-28] - Integración Login: Frontend → Middle Server
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Conectar el flujo de login del Frontend Angular al endpoint real `POST /api/login` del Middle Server, alineando el contrato JWT y adoptando el patrón `APP_INITIALIZER` + JSON externo para la configuración de entorno.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Middle Server — Contrato JWT**:
+   - `auth-controller.js`: El JWT ahora emite `{ sub: username, role }` siguiendo el estándar RFC 7519. Se eliminan `userId`, `characterId` y `clanId` del token (son estado de juego, no de sesión).
+   - `middleware/auth.js`: `socket.user` mapea los nuevos campos `{ username: decoded.sub, role: decoded.role }`.
+
+2. **Frontend — Configuración de Entorno (APP_INITIALIZER + JSON)**:
+   - `src/assets/config.json`: Fichero externo con `middleServerUrl`. No compilado en el bundle; permite cambiar entorno sin recompilar.
+   - `core/config/app-config.model.ts`: Interface `AppConfig` que tipifica el JSON.
+   - `core/config/app-config.service.ts`: `AppConfigService` con método `load()` que carga el JSON via `HttpClient` como `Promise`.
+   - `app.config.ts`: Añadido `provideHttpClient()` y `APP_INITIALIZER` que ejecuta `AppConfigService.load()` antes de cualquier componente.
+
+3. **Frontend — Capa de Autenticación Real**:
+   - `core/auth/auth.model.ts`: `JwtPayload` actualizado a `{ sub, role, iat, exp }`.
+   - `core/auth/auth-api.service.ts` **[NUEVO]**: Servicio HTTP dedicado al Middle Server. Llama a `POST /api/login` y devuelve `Observable<{ token }>`.
+   - `core/auth/auth.service.ts`: `login()` reemplaza el mock por una llamada real a `AuthApiService`. `register()` mantiene el mock con `TODO` explícito.
+
+4. **Verificación**: `tsc --noEmit` pasa con **0 errores**.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/http/auth-controller.js` | **MODIFICADO** |
+| `middle_server/src/middleware/auth.js` | **MODIFICADO** |
+| `front/src/assets/config.json` | **CREADO** |
+| `front/src/app/core/config/app-config.model.ts` | **CREADO** |
+| `front/src/app/core/config/app-config.service.ts` | **CREADO** |
+| `front/src/app/app.config.ts` | **MODIFICADO** |
+| `front/src/app/core/auth/auth.model.ts` | **MODIFICADO** |
+| `front/src/app/core/auth/auth-api.service.ts` | **CREADO** |
+| `front/src/app/core/auth/auth.service.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-28] - Middle Server: Arquitectura Base y Taquilla HTTP
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Establecer el núcleo del servidor con Express y Socket.IO, además de implementar el controlador HTTP para el Login.
+
+### 📝 Resumen de Tareas Realizadas:
+1. **Inicialización del Servidor (`index.js`)**:
+   - Montado servidor Express para exponer la API REST (`/api`).
+   - Montado servidor Socket.IO compartiendo el mismo puerto HTTP.
+   - Conectado el `socketAuthMiddleware` creado anteriormente.
+2. **Controlador de Autenticación (`auth-controller.js`)**:
+   - Creado el endpoint de Login (`POST /api/login`) que actuará como "Taquilla".
+   - Implementada la validación (temporalmente simulada a la espera del DB Connector).
+   - Implementada la firma y expedición del JWT con una expiración de 2h.
+3. **Enrutador HTTP (`routes.js`)**:
+   - Creado el manejador de rutas para aislar los endpoints REST del archivo principal.
+
+---
+
+## [2026-04-28] - Middle Server: Implementación de Seguridad Base (Auth)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar el middleware de autenticación por WebSockets y la configuración centralizada de variables de entorno para el Middle Server.
+
+### 📝 Resumen de Tareas Realizadas:
+1. **Configuración Centralizada**:
+   - Creado `src/config/index.js` usando `dotenv` y `Object.freeze()` para cargar el `.env` raíz y evitar fugas de `process.env`.
+   - Se añadió el patrón *Fail-Fast* para el `JWT_SECRET`.
+2. **Middleware Auth (Sockets)**:
+   - Implementado `socketAuthMiddleware` en `src/middleware/auth.js`.
+   - Incluye extracción segura del token (header o auth), validación criptográfica con `jsonwebtoken` y mapeo del `userId`/`characterId` al objeto `socket.user`.
+
+---
+
 ## [2026-04-28] - Middle Server Sprint Planning
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Organizar el desarrollo en paralelo del Middle Server mediante la creación de planes de sprint específicos para dos desarrolladores (Dev A y Dev B).
