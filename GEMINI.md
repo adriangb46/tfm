@@ -64,7 +64,7 @@ A wrong move by the agent can cause Git conflicts that block both developers.
 
 ## Communication
 
-- **Frontend ↔ Middle**: HTTPS for login and game join; Socket.IO (with JWT) for all game events.
+- **Frontend ↔ Middle**: HTTPS only for login; all other interactions (join game, actions, etc.) via Socket.IO (with JWT).
 - **Middle ↔ DB Server**: HTTP REST with a JWT handshake token issued by the DB server on startup.
 - All tokens are JWT. Secrets are stored in environment variables only.
 

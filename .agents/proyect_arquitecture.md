@@ -13,7 +13,7 @@ The system is composed of four independent services that communicate over HTTP a
 ┌─────────────────────────────────────────────────────────────┐
 │                        CLIENT                               │
 │                   Angular 20 (SPA)                          │
-│   HTTPS (login, join)  |  Socket.IO (game)  |  PUT (avatar) │
+│   HTTPS (login)  |  Socket.IO (join, game)  |  PUT (avatar) │
 └──────┬─────────────────┴──────────────────────────┬─────────┘
        │                                             │ PUT (signed URL)
 ┌──────▼──────────────────────────────────┐  ┌──────▼─────────┐
@@ -56,8 +56,8 @@ Redis is the ephemeral store — it only holds JWT blacklist entries and rate li
 
 - Single-page application. No server-side rendering.
 - Communicates with the Middle via:
-  - **HTTPS** for: user login, character creation, creating/joining a game.
-  - **Socket.IO** (authenticated via JWT) for: all in-game events, real-time state updates.
+  - **HTTPS** for: user login.
+  - **Socket.IO** (authenticated via JWT) for: creating/joining a game, character creation, all in-game events, real-time state updates.
 - Stores the JWT in memory (not `localStorage`). On page reload, the user must re-authenticate.
 - All game state displayed is derived from events pushed by the Middle. The frontend never calculates game outcomes.
 
@@ -110,7 +110,7 @@ Redis is the ephemeral store — it only holds JWT blacklist entries and rate li
 - Default limits `[PROPOSED — adjust as needed]`:
   - `POST /auth/login` → 10 requests / 60 s per IP
   - `POST /auth/register` → 5 requests / 60 s per IP
-  - `POST /games/join` → 20 requests / 60 s per IP
+  - `Socket.IO (join game event)` → 20 requests / 60 s per IP [PROPOSED]
   - All other public endpoints → 60 requests / 60 s per IP
 - On limit exceeded → `429 Too Many Requests` with `Retry-After` header.
 - Implementation: use `express-rate-limit` with `rate-limit-redis` as the store — minimal boilerplate, production-ready.
@@ -148,9 +148,9 @@ LOGIN:
   Middle --JWT response + opens socket-->  Front
 
 JOIN/CREATE GAME:
-  Front  --HTTPS POST /games-->  Middle
+  Front  --socket emit game:join-->  Middle
   Middle --HTTPS POST /internal/games-->  DB Server (persist)
-  Middle --socket emit game:joined-->  Front
+  Middle --socket emit game:joined (ACK)-->  Front
 
 IN-GAME (all subsequent events):
   Front  --socket emit game:action-->  Middle
@@ -173,6 +173,17 @@ AVATAR UPLOAD:
   DB Server --UPDATE users SET avatar_url-->  PostgreSQL
   Middle --HTTPS 200 { avatarUrl }-->  Front
 ```
+
+### 3.4 Session Concurrency (Kick Policy)
+
+The system enforces a **strictly single-session policy per user** via WebSockets:
+- The Middle Server maintains an in-memory mapping of `userId -> socketId`.
+- When a new socket connection is established for a `userId` that already has an active socket:
+  1. The Middle Server emits a `session_overwritten` event to the **old** socket.
+  2. The Middle Server forcibly disconnects the **old** socket.
+  3. The **new** socket becomes the authoritative session for that user.
+- This prevents game state desynchronization and ensures players cannot manipulate their game from multiple devices simultaneously.
+
 
 ---
 

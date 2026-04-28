@@ -1,3 +1,44 @@
+## [2026-04-28] - Middle Server Sprint Planning
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Organizar el desarrollo en paralelo del Middle Server mediante la creación de planes de sprint específicos para dos desarrolladores (Dev A y Dev B).
+
+### 📝 Resumen de Tareas Realizadas:
+1. **Creación de Planes de Sprint**:
+   - **`.agents/tasks_dev_a.md`**: Tareas de infraestructura, Sockets, Time Wheel y Motor de Combate.
+   - **`.agents/tasks_dev_b.md`**: Tareas de Persistencia (DB Client), Economía, Árbol Tecnológico y Sincronización de Estado.
+2. **Seguridad**: Incluidas directrices de validación de JWT y sanitización en los planes.
+
+---
+
+## [2026-04-28] Arquitectura: Consolidación de Comunicación vía Sockets (Front ↔ Middle)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Refactorizar la estrategia de comunicación entre el Frontend y el Middle Server para usar WebSockets (Socket.io) de forma exclusiva para todas las acciones de juego, dejando HTTP REST únicamente para el flujo inicial de Login/Registro.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Actualización de Documentación de Arquitectura**:
+   - **`GEMINI.md`**: Modificada la regla de comunicación para especificar que HTTPS es solo para login y el resto es vía Socket.io con JWT.
+   - **`.agents/proyect_arquitecture.md`**:
+     - Actualizado el diagrama de arquitectura para reflejar el cambio.
+     - Redefinidos los flujos de "Unirse/Crear partida" y "Creación de personaje" como eventos de socket en lugar de peticiones HTTP.
+     - Ajustada la sección de Rate Limiting para contemplar límites en eventos de Socket.io.
+     - Sincronizado el flujo de comunicación visual (`JOIN/CREATE GAME`).
+     - **Añadida Sección 3.4 (Session Concurrency)**: Implementada la política "Last Connection Wins" (Kick) para evitar sesiones duplicadas del mismo usuario.
+
+2. **Auditoría de DB Server (Java)**:
+   - Revisados los controladores (`UserController`, `GameController`, `AuthController`) en el `db_back`.
+   - Se ha confirmado que el DB Server ya está correctamente aislado como una API interna consumida por el Middle Server mediante handshake JWT, por lo que **no requiere ajustes** ante este cambio (el Middle Server sigue siendo su único cliente REST).
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `GEMINI.md` | **MODIFICADO** |
+| `.agents/proyect_arquitecture.md` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-26] Docker: Parametrización Completa de Secretos (Entornos y Portainer)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Eliminar todos los secretos e información sensible de los archivos de Docker Compose para maximizar la seguridad, permitiendo inyectarlos como variables de entorno a través de Portainer o archivos `.env`.
