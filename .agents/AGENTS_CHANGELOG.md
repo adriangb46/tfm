@@ -1,3 +1,28 @@
+## [2026-04-28] - DB Back: Script de pruebas de endpoints
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Crear un script en Python para probar rápidamente los endpoints REST internos del `db_back` y verificar el handshake y generación de JWT.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Creación de Script (`test_db_endpoints.py`)**:
+   - Implementada carga de variables de entorno con `python-dotenv`.
+   - Realiza petición de handshake (`/internal/auth/handshake`) usando la variable `DB_HANDSHAKE_SECRET`.
+   - Extrae el token JWT devuelto.
+   - Realiza petición de prueba autenticada a `/internal/games/active` usando el token obtenido.
+   
+2. **Control de Versiones**:
+   - Añadido `test_db_endpoints.py` a `.gitignore` para prevenir subidas accidentales al repositorio.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `test_db_endpoints.py` | **CREADO** |
+| `.gitignore` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-28] - Implementación de Comunicación Socket.IO (Middle Server a Frontend)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Establecer la comunicación en tiempo real entre el Frontend y el Middle Server mediante Socket.IO, cumpliendo las tareas del Sprint 1 del Desarrollador A.

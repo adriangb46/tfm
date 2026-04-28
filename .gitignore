@@ -5,3 +5,4 @@ middle_server
 node_modules
 package.json
 package-lock.json
+test_db_endpoints.py
