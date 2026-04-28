@@ -1,3 +1,29 @@
+## [2026-04-28] - Integración Registro: Frontend → Middle Server (Taquilla)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la "Puerta" de registro en el Middle Server (Dev A) y conectarla con el Frontend Angular, dejando el mock preparado a la espera del DB Connector (Dev B).
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Middle Server (Infraestructura / Dev A)**:
+   - `auth-controller.js`: Creado `registerController` que recibe `username`, `email` y `password`. Devuelve un JWT válido. Queda un mock temporal para la validación mientras el Dev B implementa el DB Connector.
+   - `routes.js`: Expuesta la ruta HTTP `POST /api/register` conectada al nuevo controlador.
+
+2. **Frontend (Conexión Real)**:
+   - `auth-api.service.ts`: Añadida la interfaz `RegisterCredentials` y el método `register()` apuntando a la nueva ruta real.
+   - `auth.service.ts`: Se ha eliminado el mock de registro temporal y ahora consume directamente `AuthApiService.register()`, parseando el token y logueando automáticamente al usuario. Limpieza de imports (`of`, `delay`, `tap`) no usados.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/http/auth-controller.js` | **MODIFICADO** |
+| `middle_server/src/http/routes.js` | **MODIFICADO** |
+| `front/src/app/core/auth/auth-api.service.ts` | **MODIFICADO** |
+| `front/src/app/core/auth/auth.service.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-28] - DB Back: Script completo de pruebas de endpoints
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Crear y extender un script en Python para probar exhaustivamente todos los endpoints REST internos del `db_back` comprobando el ciclo completo de vida de datos.
