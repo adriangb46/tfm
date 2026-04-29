@@ -110,8 +110,6 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile
-      args: 
-        - BACKEND_URL=http://localhost:3000
     container_name: front
     networks:
       - tfm_net

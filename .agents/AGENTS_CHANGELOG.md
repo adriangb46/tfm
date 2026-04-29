@@ -1,3 +1,79 @@
+## [2026-04-29] - Middle Server Sprint 2: Time Wheel (Motor de Tiempo)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar el Time Wheel — scheduler centralizado del Middle Server — que procesa todos los eventos de juego programados (transiciones de fase, llegada de tropas, ticks de recursos, volcados a DB) en un único bucle de setInterval.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **`src/config/index.js`**:
+   - Añadidas tres nuevas constantes al objeto de configuración centralizado:
+     - `timeWheelTickMs` (default 500ms, configurable via `TIME_WHEEL_TICK_MS`).
+     - `postgresDumpIntervalMs` (default 900.000ms = 15 min, via `POSTGRES_DUMP_INTERVAL_MS`).
+     - `mongoDbDumpIntervalMs` (default 7.200.000ms = 2h, via `MONGODB_DUMP_INTERVAL_MS`).
+
+2. **`src/game/engine/time-wheel.js`** (antes vacío):
+   - Clase `TimeWheel` con inyección de dependencias (`gameStore`, `io`, `config`).
+   - `start()` / `stop()` para control del bucle (stop() permite limpiar el timer en tests).
+   - `scheduleEvent(gameId, event)`: inserción ordenada por `executeAt` en la cola de la partida.
+   - `_processTick()`: itera sobre todas las partidas activas y procesa eventos vencidos (`executeAt <= now`).
+   - `_processEvent()`: despachador con garantía de idempotencia (flag `event.processed`).
+   - Manejadores implementados:
+     - `PHASE_TRANSITION_WAR` → cambia fase a `war`, emite `game:phase-change` vía Socket.IO, programa primer `RESOURCE_TICK`.
+     - `DB_DUMP_POSTGRES` y `DB_DUMP_MONGODB` → stub con re-scheduling automático del siguiente evento recurrente.
+     - `RESOURCE_TICK`, `TROOP_TRAINING_COMPLETE`, `TROOP_ARRIVAL` → stubs con TODO explícito para Dev B / Sprint 3.
+
+3. **`index.js`**:
+   - Importados `TimeWheel` y `gameStore`.
+   - El TimeWheel se instancia y arranca **después** de `initSocketHandler(io)` para tener `io` disponible.
+   - Numeración de pasos corregida (era dos pasos 4 → ahora 5 y 6).
+   - Log de arranque añadido confirmando el tick interval activo.
+
+4. **`.agents/tasks_dev_a.md`**:
+   - Sprint 2 marcado como completado (`[x]`).
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/config/index.js` | **MODIFICADO** |
+| `middle_server/src/game/engine/time-wheel.js` | **IMPLEMENTADO** (antes vacío) |
+| `middle_server/index.js` | **MODIFICADO** |
+| `.agents/tasks_dev_a.md` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-29] - Arquitectura: Reverse Proxy para Middle Server (Nginx)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Exponer el Middle Server a través del mismo Nginx Reverse Proxy que el Frontend para garantizar que las conexiones REST y WebSocket viajen seguras por HTTPS/WSS, resolviendo problemas de "Mixed Content" e integrando de manera transparente los entornos de desarrollo y producción.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Configuración de Nginx (`nginx/templates/default.conf.template`)**:
+   - Añadidas rutas `location /api/` y `location /socket.io/` para hacer proxy inverso transparente hacia el contenedor `middle_server` en el puerto 3000.
+   - Configurado el soporte para el protocolo de `Upgrade` requerido por WebSockets (WSS).
+
+2. **Adaptación Transparente del Frontend (`front`)**:
+   - Actualizado `src/assets/config.json` para definir `middleServerUrl` como string vacío (`""`). Esto obliga a que en producción todas las peticiones a la API y WebSockets usen la ruta relativa del navegador, pasando a través del proxy HTTPS.
+   - Creado `proxy.conf.json` para mantener 100% operativo el entorno de desarrollo local (`docker-compose.dev.yml`). Angular intercepta `/api` y `/socket.io` y los redirige localmente al puerto 3000 sin modificar código ni necesitar Nginx en local.
+   - Modificado `angular.json` para conectar automáticamente este `proxyConfig` al entorno de desarrollo (`ng serve`).
+
+3. **Limpieza de Variables Obsoletas (`docker-compose.yml`)**:
+   - Eliminado el pase inútil de la variable de entorno `BACKEND_URL` al contenedor del frontend y limpiado el Dockerfile del frontend, ya que la ruta relativa ahora unifica ambos entornos.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `nginx/templates/default.conf.template` | **MODIFICADO** |
+| `front/src/assets/config.json` | **MODIFICADO** |
+| `front/proxy.conf.json` | **CREADO** |
+| `front/angular.json` | **MODIFICADO** |
+| `front/Dockerfile` | **MODIFICADO** |
+| `docker-compose.yml` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-28] - Integración Registro: Frontend → Middle Server (Taquilla)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la "Puerta" de registro en el Middle Server (Dev A) y conectarla con el Frontend Angular, dejando el mock preparado a la espera del DB Connector (Dev B).
