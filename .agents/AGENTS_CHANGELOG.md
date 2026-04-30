@@ -1,3 +1,78 @@
+## [2026-04-30] - Frontend: Lobby — Refinamiento Responsive para Móviles
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar un diseño responsive para la página del Lobby, mejorando significativamente la visualización y usabilidad en dispositivos móviles.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Estilos (`lobby-page.component.scss`)**:
+   - Añadida la clase `.hero-actions` para apilar y dimensionar los botones principales en móvil.
+   - Refactorizado el bloque `@include mobile` para adaptar las nuevas pestañas y tarjetas:
+     - Botones principales a 100% de ancho.
+     - Botones de acción en tarjetas reubicados en un grid 1fr 1fr debajo del título.
+     - Metadatos (Clan y Código) agrupados en bloque separado con divisor para mejorar su legibilidad en pantallas estrechas.
+
+2. **Template (`lobby-page.component.html`)**:
+   - Eliminados estilos CSS inline rígidos (`display: flex...`) del contenedor de botones en la cabecera.
+   - Aplicada la clase `.hero-actions` para un control responsivo desde SCSS.
+
+3. **Previsualización**:
+   - Iterado sobre el diseño mediante un archivo de vista previa HTML puro (`.agents/previews/lobby-preview.html`) antes de aplicarlo al código de Angular.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO** |
+| `.agents/previews/lobby-preview.html` | **CREADO / MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-30] - Frontend: Lobby — Rediseño de Layout a Sistema de Pestañas
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Sustituir el layout de dos secciones apiladas (con colapso) por un panel de pestañas animado para las secciones "Partidas Activas" y "Partidas Terminadas" del Lobby.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Template (`lobby-page.component.html`)**:
+   - Eliminado el bloque `.lists-grid` con las dos `<section class="list-column">`.
+   - Implementado nuevo `<div class="tabs-panel">` con:
+     - `<div class="tabs-header" role="tablist">` — dos `<button class="tab-btn">` con binding `[class.active]`, `[attr.aria-selected]` y `(click)="setTab()"`.
+     - Badges de contador (`.tab-badge`) reactivos a `activeGames().length` y `finishedGames().length`.
+     - Dos `.tab-pane` con `[class.active]` para mostrar/ocultar el contenido.
+   - Tarjetas refactorizadas con estructura `.card-top` / `.card-actions` / `.card-meta`.
+   - Punto de color de clan (`.clan-dot`) dinámico con `[style.background]`.
+   - Badge de resultado `.result-badge` con clases `.result-victory` / `.result-defeat`.
+
+2. **Estilos (`lobby-page.component.scss`)**:
+   - Eliminadas clases: `.lists-grid`, `.list-column`, `.column-header`, `.header-icon`, `.scroll-area`.
+   - Añadidas clases: `.tabs-panel`, `.tabs-header`, `.tab-btn` (con `::after` animado), `.tab-badge`, `.tab-badge--active`, `.tabs-content`, `.tab-pane` (fade + slide), `.card`, `.card-top`, `.card-actions`, `.card-code`, `.clan-dot`, `.result-badge`, `.result-victory`, `.result-defeat`, `.btn-sm`.
+
+3. **Lógica (`lobby-page.component.ts`)**:
+   - Eliminado: signal `finishedGamesCollapsed` y método `toggleFinishedGames()`.
+   - Añadido: signal `activeTab: signal<'active' | 'finished'>('active')` y método `setTab(tab)`.
+
+4. **i18n (`es.ts` / `en.ts`)**:
+   - Añadidas claves `LOBBY.ENTER` y `LOBBY.CLAN` en ambos diccionarios.
+
+5. **Preview generado**:
+   - `.agents/previews/lobby-tabs-preview.html` — preview estático aprobado por el usuario antes de aplicar los cambios.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** |
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** |
+| `.agents/previews/lobby-tabs-preview.html` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-29] - Middle Server Sprint 2: Time Wheel (Motor de Tiempo)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar el Time Wheel — scheduler centralizado del Middle Server — que procesa todos los eventos de juego programados (transiciones de fase, llegada de tropas, ticks de recursos, volcados a DB) en un único bucle de setInterval.
