@@ -1,3 +1,47 @@
+## [2026-05-02] - Frontend: Corrección de dependencias y tipos de Socket.io
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Instalar el paquete faltante `socket.io-client` para resolver los errores de compilación y definir tipos explícitos en los eventos del socket.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Instalación de Dependencias**:
+   - Ejecutado `npm install` en el frontend para descargar `socket.io-client` y sus tipos.
+
+2. **Resolución de TS7006**:
+   - Añadido el tipo explícito `string` al parámetro `reason` en el evento `disconnect`.
+   - Añadido el tipo explícito `Error` al parámetro `error` en el evento `connect_error`.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/core/game/socket.service.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-04-29] - Frontend: Refinamiento de UI y Bugfix en Lobby
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Aplicar el diseño refinado para el modal de Crear Partida y corregir un bug de Angular en la página del lobby que impedía cerrar los modales.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Bugfix (Lobby Page)**:
+   - Corregido el nombre del output en `lobby-page.component.html` para `crear-partida-modal`, `unirse-partida-modal` y `sala-llena-modal`.
+   - Modificado de `(closeModal)="showXXX.set(false)"` a `(closed)="showXXX.set(false)"` para emparejar con el `output<void>()` `closed` definido en cada modal.
+
+2. **Flujo /refine-ui**:
+   - Completada la integración del modal `Crear Partida` con Angular, manteniendo el layout visual desarrollado en la fase de preview.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-28] - Integración Registro: Frontend → Middle Server (Taquilla)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la "Puerta" de registro en el Middle Server (Dev A) y conectarla con el Frontend Angular, dejando el mock preparado a la espera del DB Connector (Dev B).
