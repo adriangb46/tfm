@@ -3358,3 +3358,51 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 | Archivo | Acción |
 |---------|--------|
 | `front/src/app/pages/lobby-page/lobby-page.component.scss` | Modificado |
+
+---
+
+## 2026-05-02 - Ajuste de Hero Section en Home (Refine UI)
+
+**Agente**: Antigravity
+**Objetivo**: Evitar que el navbar oculte la parte superior de la imagen de fondo y del logo en la home.
+
+### Resumen de Cambios:
+- Se añadió margin-top: 72px y se ajustó la altura a calc(100vh - 72px) en .hero-section dentro de home.component.scss para empujar toda la sección por debajo de la navbar fija.
+- Se ajustó el background-position a center top para garantizar que la imagen original se muestre íntegramente desde la parte superior.
+
+### Archivos Modificados:
+| Archivo | Acción |
+|---------|--------|
+| front/src/app/pages/home/home.component.scss | Modificado |
+
+---
+
+## 2026-05-02 - Corrección de Desbordamiento del Logo en Home (Refine UI)
+
+**Agente**: Antigravity
+**Objetivo**: Arreglar el recorte del logo en pantallas donde el contenido era más alto que el contenedor flex centrado.
+
+### Resumen de Cambios:
+- Se reemplazó height por min-height en .hero-section (tanto global como en móvil) para permitir que el contenedor crezca y evitar que el flexbox "corte" el contenido superior (el logo).
+- Se añadió un padding vertical de 40px a .hero-content para garantizar un margen de seguridad superior e inferior.
+
+### Archivos Modificados:
+| Archivo | Acción |
+|---------|--------|
+| front/src/app/pages/home/home.component.scss | Modificado |
+
+---
+
+## 2026-05-02 - Refinamiento de Hero Section (Refine UI)
+
+**Agente**: Antigravity
+**Objetivo**: Eliminar el espacio ("hueco") entre la navbar y el inicio de la imagen de fondo, manteniendo el logo visible y sin recortes.
+
+### Resumen de Cambios:
+- Se eliminó el margin-top: 72px de .hero-section y se restauró min-height: 100vh (y 100dvh en móvil) para que la imagen de fondo ocupe la pantalla completa y arranque desde el tope superior sin dejar huecos.
+- Se aumentó el padding-top de .hero-content a 100px para asegurar que el logo (<app-logo>) sea empujado hacia abajo lo suficiente como para no quedar escondido detrás de la navbar de 72px.
+
+### Archivos Modificados:
+| Archivo | Acción |
+|---------|--------|
+| front/src/app/pages/home/home.component.scss | Modificado |
