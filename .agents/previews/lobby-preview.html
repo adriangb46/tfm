@@ -1,101 +1,77 @@
-<!-- PREVIEW ONLY — not production code -->
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lobby — Viking Clan Wars (Preview)</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview - Lobby</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Outfit:wght@400;600;700&display=swap"
+    rel="stylesheet">
   <style>
-    /* ── Tokens (Dark) ─────────────────────────────────────── */
+    /* ==========================================================================
+       THEME TOKENS (from front_color_guide.md)
+       ========================================================================== */
     :root {
-      --color-bg-primary:   #0d0c18;
+      --color-bg-primary: #0d0c18;
       --color-bg-secondary: #1a1830;
-      --color-bg-tertiary:  #141220;
-      --color-bg-card:      #211f38;
-      --color-bg-modal:     #252342;
-      --color-bg-glass:     rgba(33, 31, 56, 0.7);
-      --color-text-primary:   #e8e0d0;
+      --color-bg-tertiary: #141220;
+      --color-bg-card: #211f38;
+      --color-bg-modal: #252342;
+
+      --color-text-primary: #e8e0d0;
       --color-text-secondary: #b8a898;
-      --color-text-disabled:  #5a5068;
-      --color-text-inverse:   #0d0c18;
-      --color-gold:        #c9a84c;
-      --color-gold-light:  #e8c96a;
-      --color-gold-dark:   #9a7a30;
-      --color-gold-muted:  rgba(201, 168, 76, 0.15);
-      --color-border-strong:  #c9a84c;
+      --color-text-inverse: #0d0c18;
+
+      --color-gold: #c9a84c;
+      --color-gold-light: #e8c96a;
+      --color-gold-muted: rgba(201, 168, 76, 0.15);
+
       --color-border-default: #3a3555;
-      --color-border-faint:   #252342;
-      --color-success:    #2d8a4e;
-      --color-error:      #c0392b;
-      --color-error-bg:   rgba(192, 57, 43, 0.15);
-      --color-scrollbar-thumb: #3a3555;
+
+      --color-success: #2d8a4e;
+      --color-success-bg: rgba(45, 138, 78, 0.15);
+      --color-error: #c0392b;
+      --color-error-bg: rgba(192, 57, 43, 0.15);
+
+      --color-clan-fury: #c0392b;
+      --color-clan-divine: #4a90d9;
+
+      --color-bg-glass: rgba(33, 31, 56, 0.7);
     }
 
-    /* ── Reset ─────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+    /* ==========================================================================
+       BASE STYLES
+       ========================================================================== */
     body {
-      font-family: 'Outfit', sans-serif;
-      background: var(--color-bg-primary);
+      margin: 0;
+      padding: 0;
+      background-color: var(--color-bg-primary);
       color: var(--color-text-primary);
-      min-height: 100vh;
+      font-family: 'Outfit', sans-serif;
+      /* Simular altura con navbar (fijo sin scroll general) */
+      height: 100vh;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
-    /* ── Navbar (simulada) ─────────────────────────────────── */
-    nav {
-      background: var(--color-bg-glass);
+    /* Simulación del navbar */
+    .mock-navbar {
+      height: 74px;
+      background: var(--color-bg-secondary);
       border-bottom: 1px solid var(--color-border-default);
-      padding: 0 2rem;
-      height: 64px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      backdrop-filter: blur(12px);
+      padding: 0 2rem;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      color: var(--color-gold);
       flex-shrink: 0;
     }
 
-    .nav-brand {
-      font-family: 'Cinzel', serif;
-      color: var(--color-gold);
-      font-size: 1.1rem;
-      letter-spacing: 2px;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--color-text-secondary);
-      text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--color-gold); }
-    .nav-links a.active { color: var(--color-gold); }
-
-    .nav-user {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      border: 2px solid var(--color-gold);
-      background: var(--color-bg-card);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--color-gold);
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    /* ── Lobby Container ───────────────────────────────────── */
+    /* ==========================================================================
+       LOBBY CONTAINER
+       ========================================================================== */
     .lobby-container {
       display: flex;
       flex-direction: column;
@@ -105,9 +81,11 @@
       max-width: 1400px;
       width: 100%;
       margin: 0 auto;
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
 
-    /* ── Hero Section ──────────────────────────────────────── */
+    /* HERO SECTION */
     .hero-section {
       background: var(--color-bg-glass);
       border: 1px solid var(--color-border-default);
@@ -120,6 +98,7 @@
     }
 
     .hero-welcome h2 {
+      margin: 0;
       font-family: 'Cinzel', serif;
       color: var(--color-gold);
       font-size: 1.8rem;
@@ -129,11 +108,195 @@
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
+      justify-content: center;
     }
 
-    /* ── Buttons ───────────────────────────────────────────── */
+    /* TABS PANEL */
+    .tabs-panel {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      background: var(--color-bg-glass);
+      border: 1px solid var(--color-border-default);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .tabs-header {
+      display: flex;
+      border-bottom: 1px solid var(--color-border-default);
+      flex-shrink: 0;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 1rem 1.5rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      position: relative;
+      transition: color 0.25s;
+    }
+
+    .tab-btn::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--color-gold);
+      transform: scaleX(0);
+      transition: transform 0.25s;
+    }
+
+    .tab-btn.active {
+      color: var(--color-gold);
+    }
+
+    .tab-btn.active::after {
+      transform: scaleX(1);
+    }
+
+    .tab-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-gold-muted);
+      border: 1px solid var(--color-border-default);
+      border-radius: 20px;
+      padding: 0.1rem 0.55rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+    }
+
+    .tab-btn.active .tab-badge--active {
+      background: var(--color-success-bg);
+      border-color: var(--color-success);
+      color: var(--color-success);
+    }
+
+    .tabs-content {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      overflow: auto;
+    }
+
+    .tab-pane {
+      padding: 1.5rem;
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--color-bg-card);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 0.85rem;
+      border: 1px solid var(--color-border-default);
+    }
+
+    .card:last-child {
+      margin-bottom: 0;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-title {
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1rem;
+      color: var(--color-text-primary);
+    }
+
+    .clan-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .card-meta {
+      font-size: 0.82rem;
+      color: var(--color-text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .card-meta strong {
+      color: var(--color-text-primary);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    .card-code {
+      font-family: monospace;
+      background: var(--color-bg-tertiary);
+      border-radius: 4px;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      letter-spacing: 1px;
+    }
+
+    .result-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .result-victory {
+      background: var(--color-success-bg);
+      color: var(--color-success);
+      border: 1px solid var(--color-success);
+    }
+
+    .result-defeat {
+      background: var(--color-error-bg);
+      color: var(--color-error);
+      border: 1px solid var(--color-error);
+    }
+
+    /* BUTTONS */
     .btn {
-      padding: 0.6rem 1.4rem;
+      padding: 0.6rem 1.2rem;
       border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
@@ -141,394 +304,291 @@
       font-size: 0.85rem;
       font-family: 'Outfit', sans-serif;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: all 0.2s;
     }
-
-    .btn:active { transform: scale(0.96); }
 
     .btn-gold {
       background: var(--color-gold);
       color: var(--color-text-inverse);
     }
-    .btn-gold:hover { background: var(--color-gold-light); }
 
     .btn-outline {
       background: transparent;
       border: 1px solid var(--color-gold);
       color: var(--color-gold);
     }
-    .btn-outline:hover { background: var(--color-gold-muted); }
-
-    .btn-ghost {
-      background: var(--color-bg-card);
-      color: var(--color-text-secondary);
-      border: 1px solid var(--color-border-default);
-    }
-    .btn-ghost:hover { color: var(--color-text-primary); border-color: var(--color-border-strong); }
 
     .btn-danger {
       background: transparent;
       border: 1px solid var(--color-error);
       color: var(--color-error);
     }
-    .btn-danger:hover { background: var(--color-error-bg); }
 
-    /* ── Tabs Panel ────────────────────────────────────────── */
-    .games-panel {
-      background: var(--color-bg-glass);
-      border: 1px solid var(--color-border-default);
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-height: 0;
-      overflow: hidden;
-    }
-
-    /* Tab Bar */
-    .tab-bar {
-      display: flex;
-      border-bottom: 1px solid var(--color-border-default);
-      flex-shrink: 0;
-      padding: 0 1.5rem;
-    }
-
-    .tab-btn {
-      background: transparent;
-      border: none;
-      border-bottom: 3px solid transparent;
+    .btn-ghost {
+      background: var(--color-bg-tertiary);
       color: var(--color-text-secondary);
-      font-family: 'Cinzel', serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 1rem 1.25rem;
-      cursor: pointer;
-      transition: color 0.2s, border-color 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: -1px; /* overlap the border-bottom */
     }
 
-    .tab-btn:hover {
-      color: var(--color-text-primary);
-    }
-
-    .tab-btn.active {
-      color: var(--color-gold);
-      border-bottom-color: var(--color-gold);
-    }
-
-    .tab-badge {
-      background: var(--color-gold-muted);
-      color: var(--color-gold);
-      border: 1px solid var(--color-gold);
-      border-radius: 10px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 1px 7px;
-      min-width: 20px;
-      text-align: center;
-      line-height: 1.6;
-    }
-
-    .tab-badge.finished {
-      background: rgba(184, 168, 152, 0.1);
-      color: var(--color-text-secondary);
-      border-color: var(--color-border-default);
-    }
-
-    /* Tab Content */
-    .tab-content {
-      display: none;
-      flex-direction: column;
-      flex: 1;
-      min-height: 0;
-      padding: 1.5rem;
-    }
-
-    .tab-content.active {
-      display: flex;
-    }
-
-    /* Scroll area */
-    .scroll-area {
-      flex: 1;
-      overflow-y: auto;
-      padding-right: 0.5rem;
-    }
-
-    .scroll-area::-webkit-scrollbar { width: 4px; }
-    .scroll-area::-webkit-scrollbar-thumb {
-      background: var(--color-scrollbar-thumb);
-      border-radius: 10px;
-    }
-
-    /* Empty state */
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      flex: 1;
-      color: var(--color-text-disabled);
-      padding: 3rem;
-    }
-
-    .empty-state .empty-icon { font-size: 2.5rem; opacity: 0.4; }
-    .empty-state p { font-size: 0.9rem; text-align: center; }
-
-    /* ── Cards ─────────────────────────────────────────────── */
-    .card {
-      background: var(--color-bg-card);
-      border-radius: 8px;
-      padding: 1.25rem;
-      margin-bottom: 0.75rem;
-      border: 1px solid var(--color-border-default);
-      transition: border-color 0.2s;
-    }
-
-    .card:hover { border-color: var(--color-gold-dark); }
-
-    .card-title {
-      font-weight: 700;
-      display: block;
-      margin-bottom: 0.75rem;
-      font-size: 1.05rem;
-      color: var(--color-text-primary);
-    }
-
-    .card-meta {
-      font-size: 0.85rem;
-      color: var(--color-text-secondary);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .card-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .result-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
+    .btn-sm {
+      padding: 0.4rem 0.85rem;
       font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      padding: 2px 8px;
-      border-radius: 4px;
     }
 
-    .result-badge.victory {
-      color: var(--color-success);
-      background: rgba(45, 138, 78, 0.12);
-      border: 1px solid rgba(45, 138, 78, 0.3);
-    }
+    /* ==========================================================================
+       RESPONSIVE DESIGN (MOBILE FOCUS)
+       ========================================================================== */
+    @media (max-width: 768px) {
+      .mock-navbar {
+        padding: 0 1rem;
+        justify-content: center;
+      }
 
-    .result-badge.defeat {
-      color: var(--color-error);
-      background: var(--color-error-bg);
-      border: 1px solid rgba(192, 57, 43, 0.3);
+      .lobby-container {
+        padding: 1rem;
+        gap: 1.5rem;
+      }
+
+      /* Hero Section: Centered and stacked */
+      .hero-section {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+        padding: 1.5rem 1rem;
+      }
+
+      .hero-welcome h2 {
+        font-size: 1.4rem;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+        /* Botones a ancho completo en móvil */
+        padding: 0.8rem;
+        /* Un poco más altos para tocarlos fácil */
+      }
+
+      /* Tabs Panel */
+      .tab-btn {
+        padding: 0.8rem 0.5rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        flex-direction: column;
+        /* Apilar texto y badge */
+        gap: 0.3rem;
+      }
+
+      .tab-pane {
+        padding: 1rem;
+      }
+
+      /* Cards: Adaptaciones para móvil */
+      .card-top {
+        flex-direction: column;
+        align-items: stretch;
+        /* Ocupar todo el ancho */
+        gap: 0.8rem;
+      }
+
+      .card-title {
+        font-size: 1.1rem;
+        justify-content: center;
+        /* Centrar el título de la partida si se desea, o dejar izq */
+      }
+
+      .card-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        /* Dos botones lado a lado, o 1fr para apilarlos */
+        gap: 0.5rem;
+      }
+
+      .card-actions .btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .card-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px dashed var(--color-border-default);
+      }
+
+      .card-meta>span {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+      }
     }
   </style>
 </head>
+
 <body>
 
-  <!-- Navbar simulada -->
-  <nav>
-    <span class="nav-brand">⚔ VIKING CLAN WARS</span>
-    <ul class="nav-links">
-      <li><a href="#">Home</a></li>
-      <li><a href="#" class="active">Lobby</a></li>
-      <li><a href="#">Personajes</a></li>
-      <li><a href="#">Reglas</a></li>
-    </ul>
-    <div class="nav-user" title="Menú de usuario">👤</div>
-  </nav>
+  <div class="mock-navbar">
+    VIKING CLAN WARS (MOCK)
+  </div>
 
-  <!-- Lobby principal -->
   <div class="lobby-container">
 
-    <!-- Hero: bienvenida + acciones -->
+    <!-- Hero Section -->
     <section class="hero-section">
       <div class="hero-welcome">
-        <h2>BIENVENIDO, GUERRERO</h2>
+        <h2>LOBBY</h2>
       </div>
       <div class="hero-actions">
-        <button class="btn btn-gold">⚔ NUEVA PARTIDA</button>
-        <button class="btn btn-outline">🛡 UNIRSE A PARTIDA</button>
+        <button class="btn btn-gold">NUEVA PARTIDA</button>
+        <button class="btn btn-outline">UNIRSE A PARTIDA</button>
       </div>
     </section>
 
-    <!-- Panel con pestañas -->
-    <div class="games-panel">
-
-      <!-- Tab Bar -->
-      <div class="tab-bar" role="tablist">
-        <button
-          id="tab-activas"
-          class="tab-btn active"
-          role="tab"
-          aria-selected="true"
-          aria-controls="panel-activas"
-          onclick="switchTab('activas')"
-        >
-          Partidas Activas
-          <span class="tab-badge">3</span>
+    <!-- Tabs Panel -->
+    <div class="tabs-panel">
+      <!-- Tabs Header -->
+      <div class="tabs-header">
+        <button class="tab-btn active">
+          ACTIVAS
+          <span class="tab-badge tab-badge--active">2</span>
         </button>
-        <button
-          id="tab-terminadas"
-          class="tab-btn"
-          role="tab"
-          aria-selected="false"
-          aria-controls="panel-terminadas"
-          onclick="switchTab('terminadas')"
-        >
-          Partidas Terminadas
-          <span class="tab-badge finished">5</span>
+        <button class="tab-btn">
+          TERMINADAS
+          <span class="tab-badge">1</span>
         </button>
       </div>
 
-      <!-- Tab: Activas -->
-      <div id="panel-activas" class="tab-content active" role="tabpanel" aria-labelledby="tab-activas">
-        <div class="scroll-area">
+      <!-- Tabs Content -->
+      <div class="tabs-content">
+        <!-- Active Games -->
+        <div class="tab-pane active">
 
           <div class="card">
-            <span class="card-title">La Batalla del Norte</span>
-            <div class="card-meta">
-              <span>COD: a3f9b1</span>
+            <div class="card-top">
+              <span class="card-title">
+                <span class="clan-dot" style="background: var(--color-clan-fury)"></span>
+                La Ira de Odín
+              </span>
               <div class="card-actions">
-                <button class="btn btn-gold">Entrar</button>
-                <button class="btn btn-danger">Salir</button>
+                <button class="btn btn-gold btn-sm">ENTRAR</button>
+                <button class="btn btn-danger btn-sm">ABANDONAR</button>
               </div>
+            </div>
+            <div class="card-meta">
+              <span>Clan: <strong>Berserkers</strong></span>
+              <span class="card-code">ABC-123</span>
             </div>
           </div>
 
           <div class="card">
-            <span class="card-title">Valhalla o Morir</span>
-            <div class="card-meta">
-              <span>COD: c7d2e5</span>
+            <div class="card-top">
+              <span class="card-title">
+                <span class="clan-dot" style="background: var(--color-clan-divine)"></span>
+                Defensa del Norte
+              </span>
               <div class="card-actions">
-                <button class="btn btn-gold">Entrar</button>
-                <button class="btn btn-danger">Salir</button>
+                <button class="btn btn-gold btn-sm">ENTRAR</button>
+                <button class="btn btn-danger btn-sm">ABANDONAR</button>
               </div>
+            </div>
+            <div class="card-meta">
+              <span>Clan: <strong>Valkirias</strong></span>
+              <span class="card-code">XYZ-987</span>
             </div>
           </div>
 
           <div class="card">
-            <span class="card-title">Ragnarök</span>
-            <div class="card-meta">
-              <span>COD: 88fa12</span>
+            <div class="card-top">
+              <span class="card-title">
+                <span class="clan-dot" style="background: var(--color-success)"></span>
+                Bosque de los Sabios
+              </span>
               <div class="card-actions">
-                <button class="btn btn-gold">Entrar</button>
-                <button class="btn btn-danger">Salir</button>
+                <button class="btn btn-gold btn-sm">ENTRAR</button>
+                <button class="btn btn-danger btn-sm">ABANDONAR</button>
               </div>
+            </div>
+            <div class="card-meta">
+              <span>Clan: <strong>Seidr</strong></span>
+              <span class="card-code">AAA-111</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <span class="card-title">
+                <span class="clan-dot" style="background: var(--color-clan-fury)"></span>
+                El Asedio
+              </span>
+              <div class="card-actions">
+                <button class="btn btn-gold btn-sm">ENTRAR</button>
+                <button class="btn btn-danger btn-sm">ABANDONAR</button>
+              </div>
+            </div>
+            <div class="card-meta">
+              <span>Clan: <strong>Berserkers</strong></span>
+              <span class="card-code">BBB-222</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <span class="card-title">
+                <span class="clan-dot" style="background: var(--color-gold)"></span>
+                La Última Frontera
+              </span>
+              <div class="card-actions">
+                <button class="btn btn-gold btn-sm">ENTRAR</button>
+                <button class="btn btn-danger btn-sm">ABANDONAR</button>
+              </div>
+            </div>
+            <div class="card-meta">
+              <span>Clan: <strong>Jarls</strong></span>
+              <span class="card-code">CCC-333</span>
             </div>
           </div>
 
         </div>
       </div>
-
-      <!-- Tab: Terminadas -->
-      <div id="panel-terminadas" class="tab-content" role="tabpanel" aria-labelledby="tab-terminadas">
-        <div class="scroll-area">
-
-          <div class="card">
-            <span class="card-title">Invasión Escandinava</span>
-            <div class="card-meta">
-              <div>
-                <span class="result-badge victory">✓ VICTORIA</span>
-              </div>
-              <div class="card-actions">
-                <button class="btn btn-ghost">Estadísticas</button>
-                <button class="btn btn-danger">Borrar</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <span class="card-title">El Gran Asedio</span>
-            <div class="card-meta">
-              <div>
-                <span class="result-badge defeat">✗ DERROTA</span>
-              </div>
-              <div class="card-actions">
-                <button class="btn btn-ghost">Estadísticas</button>
-                <button class="btn btn-danger">Borrar</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <span class="card-title">Tierras del Hielo</span>
-            <div class="card-meta">
-              <div>
-                <span class="result-badge victory">✓ VICTORIA</span>
-              </div>
-              <div class="card-actions">
-                <button class="btn btn-ghost">Estadísticas</button>
-                <button class="btn btn-danger">Borrar</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <span class="card-title">La Purga de Midgard</span>
-            <div class="card-meta">
-              <div>
-                <span class="result-badge defeat">✗ DERROTA</span>
-              </div>
-              <div class="card-actions">
-                <button class="btn btn-ghost">Estadísticas</button>
-                <button class="btn btn-danger">Borrar</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <span class="card-title">Sangre y Gloria</span>
-            <div class="card-meta">
-              <div>
-                <span class="result-badge victory">✓ VICTORIA</span>
-              </div>
-              <div class="card-actions">
-                <button class="btn btn-ghost">Estadísticas</button>
-                <button class="btn btn-danger">Borrar</button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
     </div>
+
   </div>
 
+  <!-- Script to toggle tabs for preview interactivity -->
   <script>
-    function switchTab(which) {
-      // Desactivar todos
-      document.querySelectorAll('.tab-btn').forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        // Simple mock toggle
+        if (tab.innerText.includes('TERMINADAS')) {
+          document.querySelector('.tab-pane').innerHTML = `
+            <div class="card">
+              <div class="card-top">
+                <span class="card-title">Guerra Pasada</span>
+                <div class="card-actions">
+                  <button class="btn btn-ghost btn-sm">ESTADÍSTICAS</button>
+                  <button class="btn btn-danger btn-sm">BORRAR</button>
+                </div>
+              </div>
+              <div class="card-meta">
+                <span class="result-badge result-victory">VICTORIA</span>
+                <span class="card-code">OLD-555</span>
+              </div>
+            </div>
+          `;
+        } else {
+          location.reload(); // Quick reset for preview purposes
+        }
       });
-      document.querySelectorAll('.tab-content').forEach(p => p.classList.remove('active'));
-
-      // Activar el seleccionado
-      document.getElementById('tab-' + which).classList.add('active');
-      document.getElementById('tab-' + which).setAttribute('aria-selected', 'true');
-      document.getElementById('panel-' + which).classList.add('active');
-    }
+    });
   </script>
-
 </body>
+
 </html>

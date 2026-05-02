@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<!-- PREVIEW ONLY — not production code -->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lobby — Pestañas Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       TOKENS (dark theme only para este preview)
+       ============================================================ */
+    :root {
+      --color-bg-primary:     #0d0c18;
+      --color-bg-secondary:   #1a1830;
+      --color-bg-tertiary:    #141220;
+      --color-bg-card:        #211f38;
+      --color-bg-modal:       #252342;
+      --color-bg-glass:       rgba(33, 31, 56, 0.7);
+      --color-text-primary:   #e8e0d0;
+      --color-text-secondary: #b8a898;
+      --color-text-disabled:  #5a5068;
+      --color-text-inverse:   #0d0c18;
+      --color-gold:           #c9a84c;
+      --color-gold-light:     #e8c96a;
+      --color-gold-dark:      #9a7a30;
+      --color-gold-muted:     rgba(201, 168, 76, 0.15);
+      --color-border-strong:  #c9a84c;
+      --color-border-default: #3a3555;
+      --color-border-faint:   #252342;
+      --color-success:        #2d8a4e;
+      --color-success-bg:     rgba(45, 138, 78, 0.15);
+      --color-error:          #c0392b;
+      --color-error-bg:       rgba(192, 57, 43, 0.15);
+      --color-clan-fury:      #c0392b;
+      --color-clan-rune:      #10b981;
+      --color-clan-divine:    #4a90d9;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ============================================================
+       NAVBAR SIMULADA
+       ============================================================ */
+    .navbar {
+      height: 74px;
+      background: var(--color-bg-glass);
+      border-bottom: 1px solid var(--color-border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      flex-shrink: 0;
+    }
+    .navbar-brand {
+      font-family: 'Cinzel', serif;
+      color: var(--color-gold);
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+    .navbar-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .navbar-links a {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .navbar-links a:hover { color: var(--color-gold); }
+    .navbar-links a.active { color: var(--color-gold); }
+    .navbar-user {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--color-bg-card);
+      border: 2px solid var(--color-border-default);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-gold);
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    /* ============================================================
+       LOBBY CONTAINER
+       ============================================================ */
+    .lobby-container {
+      display: flex;
+      flex-direction: column;
+      height: calc(100dvh - 74px);
+      padding: 2rem;
+      gap: 1.5rem;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* ============================================================
+       HERO SECTION
+       ============================================================ */
+    .hero-section {
+      background: var(--color-bg-glass);
+      border: 1px solid var(--color-border-default);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .hero-welcome h2 {
+      font-family: 'Cinzel', serif;
+      color: var(--color-gold);
+      font-size: 1.6rem;
+      letter-spacing: 2px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* ============================================================
+       BOTONES
+       ============================================================ */
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-size: 0.85rem;
+      font-family: 'Outfit', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.2s;
+    }
+    .btn:active { transform: scale(0.95); }
+    .btn-gold {
+      background: var(--color-gold);
+      color: var(--color-text-inverse);
+    }
+    .btn-gold:hover { background: var(--color-gold-light); }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--color-gold);
+      color: var(--color-gold);
+    }
+    .btn-outline:hover { background: var(--color-gold-muted); }
+    .btn-ghost {
+      background: var(--color-bg-tertiary);
+      color: var(--color-text-secondary);
+    }
+    .btn-ghost:hover { color: var(--color-text-primary); background: var(--color-bg-card); }
+    .btn-danger {
+      background: transparent;
+      border: 1px solid var(--color-error);
+      color: var(--color-error);
+    }
+    .btn-danger:hover { background: var(--color-error-bg); }
+    .btn-sm {
+      padding: 0.4rem 0.85rem;
+      font-size: 0.78rem;
+    }
+
+    /* ============================================================
+       TABS PANEL
+       ============================================================ */
+    .tabs-panel {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      background: var(--color-bg-glass);
+      border: 1px solid var(--color-border-default);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    /* --- Tab headers --- */
+    .tabs-header {
+      display: flex;
+      border-bottom: 1px solid var(--color-border-default);
+      flex-shrink: 0;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 1rem 1.5rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      position: relative;
+      transition: color 0.25s;
+    }
+
+    .tab-btn::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--color-gold);
+      transform: scaleX(0);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tab-btn:hover {
+      color: var(--color-text-primary);
+    }
+
+    .tab-btn.active {
+      color: var(--color-gold);
+    }
+
+    .tab-btn.active::after {
+      transform: scaleX(1);
+    }
+
+    /* Badge contador */
+    .tab-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-gold-muted);
+      border: 1px solid var(--color-border-default);
+      border-radius: 20px;
+      padding: 0.1rem 0.55rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      transition: all 0.25s;
+    }
+
+    .tab-btn.active .tab-badge {
+      background: var(--color-gold);
+      border-color: var(--color-gold);
+      color: var(--color-text-inverse);
+    }
+
+    /* badge rojo para partidas activas (si hay alguna) */
+    .tab-badge.active-badge {
+      background: rgba(45, 138, 78, 0.2);
+      border-color: var(--color-success);
+      color: var(--color-success);
+    }
+    .tab-btn.active .tab-badge.active-badge {
+      background: var(--color-success);
+      border-color: var(--color-success);
+      color: #fff;
+    }
+
+    /* --- Tab content --- */
+    .tabs-content {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab-pane {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      padding: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(6px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .tab-pane.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .tab-pane::-webkit-scrollbar { width: 4px; }
+    .tab-pane::-webkit-scrollbar-thumb {
+      background: var(--color-border-default);
+      border-radius: 10px;
+    }
+
+    /* ============================================================
+       TARJETAS DE PARTIDA
+       ============================================================ */
+    .card {
+      background: var(--color-bg-card);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 0.85rem;
+      border: 1px solid var(--color-border-default);
+      transition: border-color 0.2s;
+    }
+    .card:hover { border-color: rgba(201, 168, 76, 0.35); }
+    .card:last-child { margin-bottom: 0; }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .clan-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .card-meta {
+      font-size: 0.82rem;
+      color: var(--color-text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .card-code {
+      font-family: monospace;
+      background: var(--color-bg-tertiary);
+      border-radius: 4px;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      letter-spacing: 1px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* Badge resultado */
+    .result-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+    .result-victory {
+      background: var(--color-success-bg);
+      color: var(--color-success);
+      border: 1px solid var(--color-success);
+    }
+    .result-defeat {
+      background: var(--color-error-bg);
+      color: var(--color-error);
+      border: 1px solid var(--color-error);
+    }
+
+    /* Estado vacío */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 3rem;
+      color: var(--color-text-disabled);
+      text-align: center;
+      height: 100%;
+    }
+    .empty-state .empty-icon {
+      font-size: 2.5rem;
+      opacity: 0.4;
+    }
+    .empty-state p {
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR SIMULADA -->
+  <nav class="navbar">
+    <span class="navbar-brand">☩ VIKING CLAN WARS</span>
+    <ul class="navbar-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#" class="active">Lobby</a></li>
+      <li><a href="#">Personajes</a></li>
+      <li><a href="#">Reglas</a></li>
+    </ul>
+    <div class="navbar-user">⚔</div>
+  </nav>
+
+  <!-- LOBBY -->
+  <div class="lobby-container">
+
+    <!-- Hero -->
+    <section class="hero-section">
+      <div class="hero-welcome">
+        <h2>Bienvenido, Erik</h2>
+      </div>
+      <div class="hero-actions">
+        <button class="btn btn-gold" onclick="void(0)">Nueva Partida</button>
+        <button class="btn btn-outline" onclick="void(0)">Unirse a Partida</button>
+      </div>
+    </section>
+
+    <!-- Panel con pestañas -->
+    <div class="tabs-panel">
+
+      <!-- Cabecera de pestañas -->
+      <div class="tabs-header">
+        <button class="tab-btn active" id="tab-active-btn" onclick="switchTab('active')">
+          Partidas Activas
+          <span class="tab-badge active-badge" id="badge-active">2</span>
+        </button>
+        <button class="tab-btn" id="tab-finished-btn" onclick="switchTab('finished')">
+          Partidas Terminadas
+          <span class="tab-badge" id="badge-finished">2</span>
+        </button>
+      </div>
+
+      <!-- Contenido de pestañas -->
+      <div class="tabs-content">
+
+        <!-- Pestaña: Activas -->
+        <div class="tab-pane active" id="tab-active">
+
+          <!-- Partida 1 -->
+          <div class="card">
+            <div class="card-top">
+              <span class="card-title">
+                <span class="clan-dot" style="background: var(--color-clan-fury);"></span>
+                Batalla por Midgard
+              </span>
+              <div class="card-actions">
+                <button class="btn btn-gold btn-sm">Entrar</button>
+                <button class="btn btn-danger btn-sm">Salir</button>
+              </div>
+            </div>
+            <div class="card-meta">
+              <span>Clan: <strong style="color:var(--color-text-primary)">Berserkers</strong></span>
+              <span class="card-code">A7X9-B</span>
+            </div>
+          </div>
+
+          <!-- Partida 2 -->
+          <div class="card">
+            <div class="card-top">
+              <span class="card-title">
+                <span class="clan-dot" style="background: var(--color-clan-rune);"></span>
+                El Asedio de Valhalla
+              </span>
+              <div class="card-actions">
+                <button class="btn btn-gold btn-sm">Entrar</button>
+                <button class="btn btn-danger btn-sm">Salir</button>
+              </div>
+            </div>
+            <div class="card-meta">
+              <span>Clan: <strong style="color:var(--color-text-primary)">Seidr</strong></span>
+              <span class="card-code">K9M2-Z</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Pestaña: Terminadas -->
+        <div class="tab-pane" id="tab-finished">
+
+          <!-- Partida terminada 1 -->
+          <div class="card">
+            <div class="card-top">
+              <span class="card-title">
+                Guerra del Invierno
+              </span>
+              <div class="card-actions">
+                <button class="btn btn-ghost btn-sm">Estadísticas</button>
+                <button class="btn btn-danger btn-sm">Borrar</button>
+              </div>
+            </div>
+            <div class="card-meta">
+              <span class="result-badge result-victory">Victoria</span>
+              <span class="card-code">W2N4-P</span>
+            </div>
+          </div>
+
+          <!-- Partida terminada 2 -->
+          <div class="card">
+            <div class="card-top">
+              <span class="card-title">
+                Conflicto de Sangre
+              </span>
+              <div class="card-actions">
+                <button class="btn btn-ghost btn-sm">Estadísticas</button>
+                <button class="btn btn-danger btn-sm">Borrar</button>
+              </div>
+            </div>
+            <div class="card-meta">
+              <span class="result-badge result-defeat">Derrota</span>
+              <span class="card-code">B8V1-X</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div><!-- /tabs-content -->
+    </div><!-- /tabs-panel -->
+
+  </div><!-- /lobby-container -->
+
+  <script>
+    function switchTab(name) {
+      // Botones
+      document.getElementById('tab-active-btn').classList.toggle('active', name === 'active');
+      document.getElementById('tab-finished-btn').classList.toggle('active', name === 'finished');
+      // Paneles
+      document.getElementById('tab-active').classList.toggle('active', name === 'active');
+      document.getElementById('tab-finished').classList.toggle('active', name === 'finished');
+    }
+  </script>
+</body>
+</html>

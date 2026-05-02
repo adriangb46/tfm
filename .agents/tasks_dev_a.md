@@ -15,10 +15,10 @@ Este documento detalla las tareas asignadas al **Desarrollador A** para la imple
     *   Unir automáticamente a los jugadores a una sala identificada por el `gameId` al conectar.
 
 ## Sprint 2: El Motor de Tiempo (Time Wheel)
-*   [ ] **Bucle Principal**:
+*   [x] **Bucle Principal**:
     *   Crear `src/game/engine/time-wheel.js`.
     *   Implementar un `setInterval` de 1 segundo que recorra las partidas activas en `gameStore`.
-*   [ ] **Procesador de Eventos**:
+*   [x] **Procesador de Eventos**:
     *   Implementar la lógica para disparar eventos de la `eventQueue` (ej: llegada de tropas, fin de investigación).
     *   Asegurar que los eventos sean idempotentes.
 
