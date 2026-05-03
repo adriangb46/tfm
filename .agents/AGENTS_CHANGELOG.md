@@ -1,3 +1,26 @@
+## [2026-05-03] - Middle Server: Implementación de DbConnector (Cliente REST interno)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar el cliente REST `db-connector.js` para permitir que el Middle Server se comunique de forma segura con el DB Server usando `fetch` nativo y autenticación JWT interna.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Implementación de `DbConnector`**:
+   - Creado archivo `middle_server/src/connectors/db-connector.js` exportando la instancia singleton `dbConnector`.
+   - Implementado método `performHandshake()` para obtener el JWT inicial usando el `dbHandshakeToken` de configuración.
+   - Implementado wrapper `fetchWithAuth()` para interceptar 401 y renegociar el token transparentemente antes de reintentar la petición.
+2. **Endpoints de DB Server Integrados**:
+   - Usuarios: `createUser`, `getUser`, `getUserByUsername`, `updateAvatar`.
+   - Partidas: `createGame`, `getActiveGames`, `getGame`, `dumpState`, `endGame`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/connectors/db-connector.js` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-04-28] - Integración Registro: Frontend → Middle Server (Taquilla)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la "Puerta" de registro en el Middle Server (Dev A) y conectarla con el Frontend Angular, dejando el mock preparado a la espera del DB Connector (Dev B).
