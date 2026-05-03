@@ -1,3 +1,24 @@
+## [2026-05-03] - Middle Server: Implementación de Handshake de Seguridad Estático
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la solicitud del token de handshake estático al arrancar el Middle Server para la comunicación inicial con el DB Server.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Middle Server (Inicialización)**:
+   - Modificado `index.js` envolviendo el inicio del servidor en una función asíncrona `startServer()`.
+   - Añadida llamada a `await dbConnector.performHandshake()` garantizando que el token de seguridad se obtiene antes de levantar el servidor HTTP y el Time Wheel.
+
+*Nota: Por indicaciones explícitas, el token de handshake no se renueva automáticamente tras su expiración, sino que será un token estático con renovación manual vinculada al login.*
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/index.js` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-03] - Middle Server: Implementación de DbConnector (Cliente REST interno)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar el cliente REST `db-connector.js` para permitir que el Middle Server se comunique de forma segura con el DB Server usando `fetch` nativo y autenticación JWT interna.
