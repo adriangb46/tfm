@@ -1,5 +1,28 @@
-<<<<<<< HEAD
-=======
+## [2026-05-03] - Proyecto: Sincronización de Tareas y Seguimiento Frontend
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Sincronizar los archivos de tareas (`tasks_dev_a.md`, `tasks_dev_b.md`) con los desarrollos recientes de los compañeros y crear un seguimiento específico para el Frontend.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Sincronización de Tareas (Backend)**:
+   - **`tasks_dev_b.md`**: Marcado el Sprint 1 como completado (DbConnector, Handshake y SyncManager ya implementados).
+   - **`tasks_dev_a.md`**: Verificado el estado del Sprint 4 (Victory Conditions).
+2. **Creación de `tasks_front.md`** [NUEVO]:
+   - Centralizadas las tareas del frontend realizadas hasta la fecha (i18n, Layout Códice, Refactorización de Reglas).
+   - Definidos los próximos pasos para la UI de juego y visualización de personajes.
+3. **Mantenimiento**:
+   - Resuelto conflicto en `AGENTS_CHANGELOG.md` tras el rebase.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.agents/tasks_dev_b.md` | **MODIFICADO** (Sprint 1 → `[x]`) |
+| `.agents/tasks_front.md` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-03] - Frontend: Refactorización Premium de la Pantalla de Reglas
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Rediseñar la pantalla de reglas (`RulesPageComponent`) para cumplir con la arquitectura del proyecto, resolver problemas de desbordamiento en móviles y actualizar el contenido a la versión actual de los clanes y mecánicas.
@@ -123,7 +146,6 @@
 
 ---
 
->>>>>>> d7e8cd1 (feat: refactor rules page with premium glassmorphism layout and updated game mechanics)
 ## [2026-05-03] - Middle Server: Implementación de Handshake de Seguridad Estático
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la solicitud del token de handshake estático al arrancar el Middle Server para la comunicación inicial con el DB Server.
