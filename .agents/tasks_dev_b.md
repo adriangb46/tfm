@@ -5,12 +5,12 @@ Este documento detalla las tareas asignadas al **Desarrollador B** para la imple
 ---
 
 ## Sprint 1: Conectividad y Persistencia
-*   [x] **Cliente REST (DB Connector)**:
+*   [ ] **Cliente REST (DB Connector)**:
     *   Implementar `src/connectors/db-connector.js` para comunicarse con el DB Server (Spring Boot).
-*   [x] **Handshake de Seguridad**:
+*   [ ] **Handshake de Seguridad**:
     *   Implementar la solicitud del token de handshake al arrancar el servidor.
     *   Almacenar y renovar el token automáticamente si expira.
-*   [x] **Sincronización de Partidas**:
+*   [ ] **Sincronización de Partidas**:
     *   Cargar el estado inicial de las partidas desde el DB Server al `gameStore`.
     *   Implementar el volcado periódico (cada 15 min) del estado de memoria a la DB.
 
@@ -22,10 +22,10 @@ Este documento detalla las tareas asignadas al **Desarrollador B** para la imple
     *   Validar que el jugador tenga créditos suficientes y los requisitos tecnológicos.
 
 ## Sprint 3: Árbol Tecnológico (Investigación)
-*   [ ] **Sistema de Investigaciones**:
+*   [x] **Sistema de Investigaciones**:
     *   Implementar la acción de iniciar investigación (consume créditos de investigación).
     *   Gestionar el estado `researchInProgress` en el modelo `Player`.
-*   [ ] **Aplicación de Mejoras (Buffs)**:
+*   [x] **Aplicación de Mejoras (Buffs)**:
     *   Lógica para que las tecnologías desbloqueadas afecten a las estadísticas (ej: +10% daño, -5% coste).
 
 ## Sprint 4: Sincronización del Cliente (Frontend)

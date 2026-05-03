@@ -1,30 +1,3 @@
-## [2026-05-03] - Middle Server: Implementación de Sincronización de Partidas
-**Agente**: Antigravity (Google DeepMind)
-**Objetivo**: Implementar la sincronización del estado de las partidas entre el Middle Server y el DB Server, incluyendo carga inicial y volcado periódico.
-
-### 📝 Resumen de Tareas Realizadas:
-
-1. **Gestor de Sincronización (`sync-manager.js`)**:
-   - Creado un nuevo orquestador `SyncManager` para aislar la lógica de sincronización.
-   - Implementado `loadActiveGames()` para recuperar las partidas activas al arrancar y rehidratarlas instanciando `Game`, `Player` y `Troop` para restaurar los métodos de clase.
-   - Implementado `startPeriodicSync()` para volcar de forma cíclica el estado en memoria hacia la base de datos (PostgreSQL vía DB Server) garantizando la persistencia ante caídas.
-
-2. **Integración en el Arranque (`index.js`)**:
-   - Integrado el `syncManager` en la inicialización del servidor HTTP.
-   - Garantizado que el servidor solo arranque el `TimeWheel` y acepte conexiones tras la rehidratación inicial exitosa (Fail-Fast).
-   - Registrado y marcado como completado el Sprint 1 (Desarrollador B) en el tracker.
-
-### 🗂️ Archivos Modificados/Creados:
-
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/game/state/sync-manager.js` | **CREADO** |
-| `middle_server/index.js` | **MODIFICADO** |
-| `.agents/tasks_dev_b.md` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
-
----
-
 ## [2026-05-03] - Middle Server: Implementación de Handshake de Seguridad Estático
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la solicitud del token de handshake estático al arrancar el Middle Server para la comunicación inicial con el DB Server.
