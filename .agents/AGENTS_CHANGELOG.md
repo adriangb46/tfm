@@ -1,3 +1,42 @@
+## [2026-05-03] - Middle Server Sprint 4 Dev A: Condiciones de Victoria
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar las condiciones de fin de partida del Middle Server (Sprint 4 Dev A): detectar cuándo solo queda un jugador vivo (victoria) o ninguno (empate), transicionar la partida a la fase `end` y notificar al DB Server y al frontend.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **`src/game/engine/victory-checker.js`** [NUEVO]:
+   - `checkVictory(game, io)`: función pura que evalúa la condición de fin solo si `game.phase === 'war'`.
+   - `_getActivePlayers(game)`: filtra jugadores con `capitalHealth > 0` y `eliminated === false`.
+   - Lógica de resolución:
+     - 1 superviviente → ese `characterId` es el ganador.
+     - 0 supervivientes → empate (`winnerCharacterId = null`), compatible con el `EndGameRequestDto` del DB Server que ya soporta null.
+   - Idempotencia garantizada: si la fase ya es `end` o `finished`, la función retorna sin efectos.
+   - Transición a fase `end` (no `finished`) — la partida sigue en memoria pero sin aceptar más ataques.
+   - Emite `game:ended` via Socket.IO con `{ gameId, winnerCharacterId, phase: 'end' }` a todos los clientes de la sala.
+   - Llama a `dbConnector.endGame()` de forma no bloqueante (`.then().catch()`): los errores de red no rompen el flujo del Time Wheel; el estado en memoria ya está resuelto.
+
+2. **`src/game/engine/time-wheel.js`** [MODIFICADO]:
+   - Añadido import de `checkVictory` desde `./victory-checker.js`.
+   - Actualizado el JSDoc del constructor para listar `TROOP_ARRIVAL` con la anotación Sprint 4.
+   - En el `case 'TROOP_ARRIVAL'`: se llama a `checkVictory(game, this.io)` tras la stub de combat-resolver. Cuando Sprint 3 implemente `_handleTroopArrival()`, el `checkVictory` deberá moverse ahí.
+
+3. **Revisión del DB Server**:
+   - `EndGameRequestDto` ya acepta `winnerCharacterId: UUID | null` — **sin cambios necesarios**.
+   - `GameController.POST /internal/games/{id}/end` ya soporta el caso de empate — **sin cambios necesarios**.
+   - `GameResponseDto` ya incluye `winnerCharacterId` y `endedAt` — **sin cambios necesarios**.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/game/engine/victory-checker.js` | **CREADO** |
+| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** (import + TROOP_ARRIVAL handler) |
+| `.agents/tasks_dev_a.md` | **MODIFICADO** (Sprint 4 → `[x]`) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-03] - Middle Server Sprint 3 Dev B: Árbol Tecnológico + Actualización Frontend
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar el sistema completo de investigaciones tecnológicas del Middle Server (Sprint 3 Dev B), cargando los datos de juego desde `clans.yml` y actualizando las páginas de información del frontend para reflejar los 6 clanes reales definidos en el YAML.

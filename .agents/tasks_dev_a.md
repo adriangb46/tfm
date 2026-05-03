@@ -33,8 +33,8 @@ Este documento detalla las tareas asignadas al **Desarrollador A** para la imple
 ## Sprint 4: Ciclo de Vida del Juego
 *   [x] **Fases de Partida**:
     *   Lógica para transiciones automáticas: `waiting` -> `preparation` (5 min) -> `war`.
-*   [ ] **Condiciones de Victoria**:
-    *   Detectar cuando solo quedan 2 jugadores con salud en la capital y disparar el fin de la partida.
+*   [x] **Condiciones de Victoria**:
+    *   Detectar cuando solo quedan 2 jugadores con salud en la capital y disparar el fin de la partida.(es una fase mas, no es que haya terminado la partida, esta sigue en war pero solo hay dos jugadores, la partida termina cuando solo quede un jugador, el ganador, si ambos se quedan sin vida a la vez, no gana ninguno y termina la partida. (revisa si hay probelmas con el dbback))
 
 ---
 
