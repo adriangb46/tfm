@@ -1,3 +1,61 @@
+## [2026-05-03] - Middle Server: Fix Crítico de Rehidratación de Estado de Partida (SyncManager)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir el mecanismo de rehidratación del Middle Server tras un reinicio, resolviendo la desalineación total entre el `GameResponseDto` del DB Server y la lógica de lectura de `SyncManager.js`.
+
+### 📝 Resumen del Problema:
+El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`, `eventQueue` directamente del `GameResponseDto`, cuando en realidad esos campos NO existen en ese DTO. El DB Server devuelve el estado completo de la partida dentro del campo `latestStateJson` (String JSON opaco), que era completamente ignorado. Resultado: cada reinicio del Middle Server generaba partidas vacías en memoria.
+
+### ✅ Solución Implementada:
+
+1. **Ruta principal (con volcado previo)**: Si `latestStateJson` no es null, se parsea el JSON y se rehidrata completamente la partida desde él (`_rehydrateFromStateJson()`).
+2. **Ruta fallback (sin volcado)**: Si `latestStateJson` es null (partida recién creada), se construye un esqueleto usando los `participants` del DTO (`_rehydrateFromParticipants()`).
+3. **Lógica de rehidratación refactorizada** en métodos privados:
+   - `_rehydrateFromStateJson(gameDto)`: Parsea el JSON opaco → rehidrata `Game`, jugadores y tropas.
+   - `_rehydrateFromParticipants(gameDto)`: Construye esqueleto mínimo desde `participants[]`.
+   - `_rehydratePlayer(playerData)`: Reconstruye `Player` y todas sus `Troop`s.
+   - `_mapStatusToPhase(status)`: Traduce `GameStatus` (mayúsculas del enum Java) a fases internas en minúsculas.
+4. **Manejo de errores defensivo**: Si el `latestStateJson` está corrupto (JSON inválido), se cae automáticamente al fallback de participantes en lugar de romper el arranque.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/game/state/sync-manager.js` | **MODIFICADO** (reescritura completa del mecanismo de rehidratación) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-03] - Seguridad: Gestión de Roles y JTI en JWT
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la correcta gestión de roles y la inclusión del campo `jti` en los JWT generados por el Middle Server, actualizando la base de datos para soportar la persistencia de los roles de usuario.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **DB Server**:
+   - Creada migración de Flyway `V3__add_role_to_users.sql` para añadir la columna `role` a la tabla `users` (con valor por defecto `USER` y actualización del admin `agb445` a `ADMIN`).
+   - Actualizada la entidad `User` y `UserResponseDto` para incluir el campo `role`.
+   - Modificado `UserServiceImpl` para establecer el rol inicial en `USER` al registrar usuarios y para incluir el rol en el mapeo al DTO.
+   - Actualizados `UserServiceImplTest` y `UserControllerTest` para reflejar los cambios en los constructores de `User` y `UserResponseDto`.
+
+2. **Middle Server**:
+   - Modificado `auth-controller.js` para extraer el `role` correctamente de la respuesta del DB Server e inyectarlo en el payload del JWT de sesión.
+   - Añadido soporte nativo de Node.js `crypto.randomUUID()` para inyectar el campo requerido `jti` en todos los tokens emitidos, cumpliendo con la sección §2 de `security.md`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/main/resources/db/migration/V3__add_role_to_users.sql` | **CREADO** |
+| `db_back/src/main/java/com/tfm/db_back/domain/model/User.java` | **MODIFICADO** |
+| `db_back/src/main/java/com/tfm/db_back/api/dto/UserResponseDto.java` | **MODIFICADO** |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java` | **MODIFICADO** |
+| `db_back/src/test/java/com/tfm/db_back/domain/service/UserServiceImplTest.java` | **MODIFICADO** |
+| `db_back/src/test/java/com/tfm/db_back/api/UserControllerTest.java` | **MODIFICADO** |
+| `middle_server/src/http/auth-controller.js` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-03] - Proyecto: Auditoría de Incongruencias entre Capas
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Realizar una auditoría profunda de los contratos de datos y comunicación entre el Frontend, Middle Server y DB Server para identificar discrepancias técnicas y riesgos de seguridad.
