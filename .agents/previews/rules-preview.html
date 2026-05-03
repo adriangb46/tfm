@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leyes de Midgard - Preview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Outfit:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        /* PREVIEW ONLY — not production code */
+        :root {
+            --color-bg-primary: #0d0c18;
+            --color-bg-secondary: #1a1830;
+            --color-bg-tertiary: #141220;
+            --color-bg-card: #211f38;
+            --color-text-primary: #e8e0d0;
+            --color-text-secondary: #b8a898;
+            --color-gold: #c9a84c;
+            --color-gold-light: #e8c96a;
+            --color-gold-muted: rgba(201, 168, 76, 0.15);
+            --color-border-default: #3a3555;
+            --color-border-faint: #252342;
+            --color-error: #c0392b;
+            --color-error-bg: rgba(192, 57, 43, 0.15);
+            --color-phase-prep: #4a90d9;
+            --color-phase-war: #c0392b;
+            --color-phase-end: #c9a84c;
+            
+            /* Clan Colors */
+            --color-clan-fury: #c0392b;
+            --color-clan-divine: #4a90d9;
+            --color-clan-iron: #8a9ba8;
+            --color-clan-song: #8b5cf6;
+            --color-clan-rune: #10b981;
+            --color-clan-death: #7c6b9e;
+            --color-clan-shadow: #7c6b9e; /* same as death */
+            --color-clan-storm: #4a90d9; /* same as divine or custom */
+            --color-clan-frost: #8a9ba8; /* same as iron or custom */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at center, var(--color-bg-secondary) 0%, var(--color-bg-primary) 100%);
+            color: var(--color-text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .reglas-container {
+            min-height: 100vh;
+            padding: 4rem 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .page-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            letter-spacing: 0.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            background: linear-gradient(to bottom, var(--color-gold-light) 0%, var(--color-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .title-divider {
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+            width: 250px;
+            margin: 0 auto;
+            border-radius: 2px;
+            box-shadow: 0 0 15px var(--color-gold-muted);
+        }
+
+        .rules-content {
+            display: flex;
+            flex-direction: column;
+            gap: 6rem;
+        }
+
+        .rules-section {
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-gold-light);
+            text-align: center;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .section-title::before, .section-title::after {
+            content: '';
+            height: 1px;
+            background: var(--color-border-default);
+            flex: 1;
+            max-width: 100px;
+        }
+
+        /* Panels */
+        .glass-panel {
+            background: rgba(33, 31, 56, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--color-border-default);
+            border-radius: 8px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass-panel:hover {
+            border-color: var(--color-gold);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Matrix grid (Advantages) */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .matrix-row {
+            background: var(--color-bg-tertiary);
+            padding: 1.2rem;
+            border-radius: 4px;
+            border: 1px solid var(--color-border-faint);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: 1px;
+            transition: transform 0.2s;
+        }
+
+        .matrix-row:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-gold);
+        }
+
+        .clan-name { font-weight: 800; font-size: 0.9rem; }
+        .arrow { color: var(--color-gold); font-size: 1.2rem; opacity: 0.6; }
+
+        .fury { color: #c0392b; }
+        .iron { color: #8a9ba8; }
+        .divine { color: #4a90d9; }
+        .shadow { color: #7c6b9e; }
+        .storm { color: #4a90d9; }
+        .frost { color: #8a9ba8; }
+
+        /* Rules Grid */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .rule-box {
+            padding: 2rem;
+        }
+
+        .rule-box h3 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--color-gold);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .rule-box p {
+            color: var(--color-text-secondary);
+            font-size: 1rem;
+        }
+
+        .full-width { grid-column: 1 / -1; }
+
+        .warning-box {
+            margin-top: 2rem;
+            background: var(--color-error-bg);
+            border: 1px solid var(--color-error);
+            padding: 1.5rem;
+            color: var(--color-error);
+            text-align: center;
+            border-radius: 4px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        /* Timeline */
+        .era-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            border-left: 2px dashed var(--color-border-default);
+            padding-left: 2rem;
+            margin-left: 1rem;
+        }
+
+        .era-point {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        .era-point::before {
+            content: '';
+            position: absolute;
+            left: -2.6rem;
+            top: 1rem;
+            width: 1rem;
+            height: 1rem;
+            background: var(--color-bg-primary);
+            border: 2px solid var(--color-gold);
+            border-radius: 50%;
+        }
+
+        .era-indicator {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--color-bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            flex-shrink: 0;
+            border: 2px solid transparent;
+        }
+
+        .era-indicator.prep { color: var(--color-phase-prep); border-color: var(--color-phase-prep); }
+        .era-indicator.war { color: var(--color-phase-war); border-color: var(--color-phase-war); }
+        .era-indicator.end { color: var(--color-phase-end); border-color: var(--color-phase-end); }
+
+        .era-info h3 { font-family: 'Outfit', sans-serif; margin-bottom: 0.5rem; }
+        .era-info p { color: var(--color-text-secondary); }
+
+        /* Responsive */
+        @media (max-width: 850px) {
+            .rules-grid { grid-template-columns: 1fr; }
+            .matrix-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            .reglas-container { padding: 2rem 1rem; }
+            .page-header h1 { font-size: 2.2rem; letter-spacing: 0.2rem; }
+            .glass-panel { padding: 1.5rem; }
+            .era-point { flex-direction: column; gap: 1rem; }
+            .era-point::before { left: -2.35rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="reglas-container">
+        <header class="page-header">
+            <h1>LEYES DE MIDGARD</h1>
+            <div class="title-divider"></div>
+        </header>
+
+        <main class="rules-content">
+            <!-- 1. El Círculo del Destino -->
+            <section class="rules-section">
+                <h2 class="section-title">El Círculo del Destino</h2>
+                <div class="glass-panel">
+                    <p style="text-align: center; margin-bottom: 2rem; color: var(--color-text-secondary);">
+                        Ciertos clanes tienen una ventaja natural sobre otros. Atacar a un clan vulnerable infligirá un <strong>1.5x de daño extra</strong>.
+                    </p>
+                    <div class="matrix-grid">
+                        <div class="matrix-row">
+                            <span class="clan-name fury">FURY</span>
+                            <span class="arrow">➔</span>
+                            <span class="clan-name iron">IRON</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="clan-name iron">IRON</span>
+                            <span class="arrow">➔</span>
+                            <span class="clan-name divine">DIVINE</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="clan-name divine">DIVINE</span>
+                            <span class="arrow">➔</span>
+                            <span class="clan-name shadow">SHADOW</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="clan-name shadow">SHADOW</span>
+                            <span class="arrow">➔</span>
+                            <span class="clan-name storm">STORM</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="clan-name storm">STORM</span>
+                            <span class="arrow">➔</span>
+                            <span class="clan-name frost">FROST</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="clan-name frost">FROST</span>
+                            <span class="arrow">➔</span>
+                            <span class="clan-name fury">FURY</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Mecánicas de Combate -->
+            <section class="rules-section">
+                <h2 class="section-title">Arte de la Guerra</h2>
+                <div class="rules-grid">
+                    <div class="rule-box glass-panel">
+                        <h3>Daño Simultáneo</h3>
+                        <p>Las batallas son brutales: ambos bandos se infligen daño al mismo tiempo basado en su poder total. No hay turnos, solo gloria.</p>
+                    </div>
+                    <div class="rule-box glass-panel">
+                        <h3>Escudo de Tropas</h3>
+                        <p>Las tropas en la capital protegen la estructura. La Capital solo recibe daño si todas sus tropas defensoras mueren primero.</p>
+                    </div>
+                    <div class="rule-box glass-panel full-width">
+                        <h3>Bonos de Batalla</h3>
+                        <ul style="list-style: none; color: var(--color-text-secondary);">
+                            <li style="margin-bottom: 0.5rem;">◈ <strong>Ataque:</strong> 1.5x si posees ventaja de linaje.</li>
+                            <li style="margin-bottom: 0.5rem;">◈ <strong>Defensa:</strong> 1.1x de potencia defensiva al proteger tu propia capital.</li>
+                        </ul>
+                        <div class="warning-box">
+                            SI TU CAPITAL CAE A 0, TU SAGA HA TERMINADO.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Fases de la Lucha -->
+            <section class="rules-section">
+                <h2 class="section-title">El Flujo del Tiempo</h2>
+                <div class="era-timeline">
+                    <div class="era-point">
+                        <div class="era-indicator prep">I</div>
+                        <div class="era-info">
+                            <h3>Preparación (5 min)</h3>
+                            <p>Los dioses bendicen el campo con paz. No se permiten ataques. Aprovecha para entrenar tus primeras tropas y planificar tu estrategia.</p>
+                        </div>
+                    </div>
+                    <div class="era-point">
+                        <div class="era-indicator war">II</div>
+                        <div class="era-info">
+                            <h3>Guerra Total</h3>
+                            <p>Se abren las puertas del conflicto. Los recursos se entregan cada 30-60 segundos. Es el momento de lanzar tus ataques y conquistar Midgard.</p>
+                        </div>
+                    </div>
+                    <div class="era-point">
+                        <div class="era-indicator end">III</div>
+                        <div class="era-info">
+                            <h3>El Veredicto (Showdown)</h3>
+                            <p>Cuando solo quedan 2 clanes, la victoria se decide. La intensidad aumenta hasta que solo uno prevalece.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Economía -->
+            <section class="rules-section">
+                <h2 class="section-title">Recursos</h2>
+                <div class="rules-grid">
+                    <div class="glass-panel">
+                        <h3 style="color: var(--color-gold);">💰 Oro (AP)</h3>
+                        <p>Créditos generados por tus tierras. Úsalos para reclutar tropas y expandir tu ejército.</p>
+                    </div>
+                    <div class="glass-panel">
+                        <h3 style="color: var(--color-gold);">💜 Sabiduría (RP)</h3>
+                        <p>Puntos obtenidos por el daño infligido. Úsalos para avanzar en tu Árbol Tecnológico.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
