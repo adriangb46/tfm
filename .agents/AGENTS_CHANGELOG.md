@@ -19,6 +19,60 @@
 
 ---
 
+## [2026-05-03] - DB Server Sprint 6: Hardening, Auditorías e Integración Docker
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Realizar las auditorías `/arch-audit` y `/security-audit` para validar la integridad arquitectónica y de seguridad del `db_server`, así como subsanar hallazgos y finalizar el Sprint 6.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Auditorías Exitosas (100/100)**:
+   - Se han generado los reportes formales `arch_audit_report.md` y `security_audit_report.md`.
+   - Ninguna de las dos auditorías ha arrojado errores de nivel CRITICAL o HIGH en la implementación del DB Server.
+2. **Subsanación de Riesgos Menores**:
+   - Se han eliminado las configuraciones por defecto (fallbacks) de contraseñas de PostgreSQL en el `application.yml` principal para evitar fugas de credenciales en entornos no controlados (se requerirá que se inyecten estrictamente mediante variables de entorno).
+3. **Validación de Infraestructura**:
+   - Comprobada la correcta existencia de `AbstractIntegrationTest` conectando a PostgreSQL y MongoDB con Testcontainers.
+   - Comprobado el `Dockerfile` y la configuración del usuario no privilegiado `appuser`.
+4. **Cierre de Ciclo**:
+   - El Sprint 6 se ha marcado oficialmente como completado, logrando dar por finalizado el componente servidor de base de datos (`db_back`).
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/main/resources/application.yml` | **MODIFICADO** (Eliminados fallbacks de contraseña) |
+| `arch_audit_report.md` | **CREADO** |
+| `security_audit_report.md` | **CREADO** |
+| `.agents/db_server_sprints/db_server_sprints.md` | **MODIFICADO** (Sprint 6 marcado como DONE) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-03] - DB Server Sprint 5: Revisión y Cierre
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Revisar, validar y dar por completado el Sprint 5 del DB Server (MongoDB y Analytics), que ya había sido implementado previamente pero no documentado como completado.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Corrección de Configuración (`application.yml`)**:
+   - Ajustada la jerarquía de propiedades de Spring Boot 3 para MongoDB (movido `mongodb.uri` dentro del bloque `data:` para asegurar `spring.data.mongodb.uri`).
+2. **Validación de Código (Sprint 5)**:
+   - Verificada la correcta implementación asíncrona en `AnalyticsServiceImpl` con manejo silencioso de errores de MongoDB (fire-and-forget).
+   - Verificada la existencia y correcta anotación de los documentos `GameSnapshotDocument` y `BattleEventDocument` de acuerdo con la Sección 6 de la arquitectura.
+   - Confirmado que `AnalyticsController` devuelve un código de estado `202 Accepted` de forma inmediata.
+3. **Actualización de Estado**:
+   - Marcado el Sprint 5 como `DONE` en `.agents/db_server_sprints/db_server_sprints.md`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/main/resources/application.yml` | **MODIFICADO** |
+| `.agents/db_server_sprints/db_server_sprints.md` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-03] - DB Server: Fix AuthControllerTest
 
 **Agente**: Antigravity (Google DeepMind)

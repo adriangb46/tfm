@@ -437,7 +437,7 @@ goal: >
   Writes to MongoDB asynchronously — never blocks game persistence flow.
   Both collections match the schema in architecture Section 6.
 duration_estimate: 4 days
-status: PENDING
+status: DONE  # 2026-05-03 — implementado y validado
 depends_on: [sprint_4]
 
 architecture_refs:
@@ -495,7 +495,7 @@ goal: >
   Dockerfile with non-root user.
   /arch-audit and /security-audit both pass with score >= 80.
 duration_estimate: 1 week
-status: PENDING
+status: DONE  # 2026-05-03 — Completado: Testcontainers implementado, Dockerfile correcto, Auditorías pasadas con éxito 100/100
 depends_on: [sprint_5]
 
 architecture_refs:
