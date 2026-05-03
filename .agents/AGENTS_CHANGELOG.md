@@ -1,3 +1,27 @@
+## [2026-05-03] - Proyecto: Actualización de Auditoría de Arquitectura
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Actualizar el documento `audit_incongruencias.md` reflejando el estado actual tras las últimas resoluciones y detectando nuevas divergencias estructurales frente a la documentación de arquitectura.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Auditoría de Arquitectura**:
+   - Confirmada la resolución de la gestión de roles (`jti` en JWT) y la correcta rehidratación de `latestStateJson` en `SyncManager.js`.
+   - Re-confirmada la persistencia de dos errores previos (ambigüedad `userId`/`username` y falta de endpoints en el cliente DB `db-connector.js`).
+   - Detectadas divergencias en la estructura de carpetas del Middle Server respecto a `proyect_arquitecture.md` (uso de `connectors/` en vez de `db/` y `socket/`).
+   - Detectada divergencia en el path de volcado (`/dump` frente a `/state`).
+
+2. **Actualización de Documentos**:
+   - Sobreescrito y actualizado el `audit_incongruencias.md` con este nuevo contexto de revisión.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `audit_incongruencias.md` | **MODIFICADO** (Actualizado con resultados de la nueva auditoría) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-03] - Middle Server: Fix Crítico de Rehidratación de Estado de Partida (SyncManager)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir el mecanismo de rehidratación del Middle Server tras un reinicio, resolviendo la desalineación total entre el `GameResponseDto` del DB Server y la lógica de lectura de `SyncManager.js`.
