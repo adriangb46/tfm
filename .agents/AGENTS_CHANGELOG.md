@@ -1,3 +1,39 @@
+## [2026-05-03] - Middle-DB Server: Sincronización de Contratos y Autenticación Real
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver inconsistencias arquitectónicas entre el Middle Server y el DB Server, migrando los mocks de "La Taquilla" a llamadas reales de validación y corrigiendo los endpoints de volcado de estado.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **DB Server**:
+   - Creado `VerifyCredentialsRequestDto` y `UnauthorizedException` (401).
+   - Añadido `POST /internal/auth/verify` en `AuthController`.
+   - Implementado `verifyCredentials` en `UserServiceImpl` con logs estructurados que no filtran contraseñas.
+   - Cambiado el endpoint de volcado de estado de `/state` a `/dump` en `GameController` para alinear con el cliente.
+2. **Middle Server**:
+   - Actualizado `dbConnector.js` para alinear rutas y payload de volcado (`PUT /internal/games/{id}/dump`).
+   - Eliminados los mocks en `auth-controller.js` para login y registro, conectando directamente con `dbConnector`.
+   - Corregida la ruta relativa del `.env` en `src/config/index.js`.
+3. **Seguridad**:
+   - Se ha garantizado la trazabilidad mediante `log.info` y `log.warn` en ambos servidores para los intentos de login, manteniendo los hashes y passwords ocultos.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/connectors/db-connector.js` | **MODIFICADO** |
+| `middle_server/src/http/auth-controller.js` | **MODIFICADO** |
+| `middle_server/src/config/index.js` | **MODIFICADO** |
+| `db_back/src/main/java/com/tfm/db_back/api/dto/VerifyCredentialsRequestDto.java` | **CREADO** |
+| `db_back/src/main/java/com/tfm/db_back/domain/exception/UnauthorizedException.java` | **CREADO** |
+| `db_back/src/main/java/com/tfm/db_back/api/GlobalExceptionHandler.java` | **MODIFICADO** |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserService.java` | **MODIFICADO** |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java` | **MODIFICADO** |
+| `db_back/src/main/java/com/tfm/db_back/api/AuthController.java` | **MODIFICADO** |
+| `db_back/src/main/java/com/tfm/db_back/api/GameController.java` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-03] - Proyecto: Sincronización de Tareas y Seguimiento Frontend
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Sincronizar los archivos de tareas (`tasks_dev_a.md`, `tasks_dev_b.md`) con los desarrollos recientes de los compañeros y crear un seguimiento específico para el Frontend.
