@@ -5,12 +5,12 @@ Este documento detalla las tareas asignadas al **Desarrollador B** para la imple
 ---
 
 ## Sprint 1: Conectividad y Persistencia
-*   [ ] **Cliente REST (DB Connector)**:
+*   [x] **Cliente REST (DB Connector)**:
     *   Implementar `src/connectors/db-connector.js` para comunicarse con el DB Server (Spring Boot).
-*   [ ] **Handshake de Seguridad**:
+*   [x] **Handshake de Seguridad**:
     *   Implementar la solicitud del token de handshake al arrancar el servidor.
     *   Almacenar y renovar el token automáticamente si expira.
-*   [ ] **Sincronización de Partidas**:
+*   [x] **Sincronización de Partidas**:
     *   Cargar el estado inicial de las partidas desde el DB Server al `gameStore`.
     *   Implementar el volcado periódico (cada 15 min) del estado de memoria a la DB.
 
