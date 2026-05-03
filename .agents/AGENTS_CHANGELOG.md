@@ -1,3 +1,42 @@
+## [2026-05-03] - DB Server: Fix AuthControllerTest
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Arreglar fallo de compilación en `AuthControllerTest` tras la adición de `UserService` al constructor de `AuthController`.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Corrección de Test**:
+   - Importado y añadido mock de `UserService`.
+   - Modificada la instanciación de `AuthController` en el método `setUp()` del test para incluir el nuevo mock de `UserService`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/test/java/com/tfm/db_back/api/AuthControllerTest.java` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-03] - DB Server: Usuario Administrador por Defecto
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Añadir un usuario administrador por defecto (`agb445`) en la base de datos utilizando scripts de migración de Flyway.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Script de Migración**:
+   - Creado `V2__insert_admin_user.sql` para insertar el usuario `agb445` con el correo `agb445@admin.com`.
+   - Utilizada la extensión `pgcrypto` de PostgreSQL (`crypt` y `gen_salt('bf')`) para generar de forma segura y transparente el hash BCrypt de la contraseña (`admin12345`), manteniendo compatibilidad total con el `UserService` de Java.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/main/resources/db/migration/V2__insert_admin_user.sql` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-03] - Middle-DB Server: Sincronización de Contratos y Autenticación Real
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver inconsistencias arquitectónicas entre el Middle Server y el DB Server, migrando los mocks de "La Taquilla" a llamadas reales de validación y corrigiendo los endpoints de volcado de estado.
