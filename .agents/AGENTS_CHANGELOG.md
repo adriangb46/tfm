@@ -1,3 +1,28 @@
+## [2026-05-03] - Proyecto: Auditoría de Incongruencias entre Capas
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Realizar una auditoría profunda de los contratos de datos y comunicación entre el Frontend, Middle Server y DB Server para identificar discrepancias técnicas y riesgos de seguridad.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Auditoría de Integración**:
+   - Identificada falta de columna `role` en DB Server, requerida por el Middle y Frontend para gestión de permisos.
+   - Detectado fallo crítico en la rehidratación de partidas (`SyncManager.js`) por desalineación con el `GameResponseDto` del DB Server.
+   - Localizada inconsistencia en el casing de fases de juego (Mayúsculas vs Minúsculas) entre las tres capas.
+   - Identificada ambigüedad en la identificación de usuarios (`username` en JWT vs `userId` en modelo de juego).
+2. **Documentación y Reporte**:
+   - Generado reporte detallado en `audit_incongruencias.md` (archivo excluido de git).
+   - Actualizado `.gitignore` para proteger el reporte de auditoría.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `audit_incongruencias.md` | **CREADO** (excluido de git) |
+| `.gitignore` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-03] - DB Server: Actualización de script de prueba de endpoints
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Actualizar `test_db_endpoints.py` para reflejar los cambios recientes en la API del servidor de base de datos, incluyendo nuevos endpoints de verificación y cambios en las rutas de volcado de estado.
