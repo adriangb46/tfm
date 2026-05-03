@@ -1,3 +1,59 @@
+## [2026-05-03] - Middle Server Sprint 3 Dev B: Árbol Tecnológico + Actualización Frontend
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar el sistema completo de investigaciones tecnológicas del Middle Server (Sprint 3 Dev B), cargando los datos de juego desde `clans.yml` y actualizando las páginas de información del frontend para reflejar los 6 clanes reales definidos en el YAML.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **`middle_server/package.json`**:
+   - Añadida dependencia `js-yaml ^4.1.0` (el binario ya estaba en `node_modules`).
+
+2. **`src/config/game-data-loader.js`** [NUEVO]:
+   - Carga `clans.yml` al arrancar el servidor usando `fs.readFileSync` + `js-yaml`.
+   - Convierte el array de clanes en un mapa indexado por `id` para acceso O(1).
+   - Patrón Fail-Fast: error inmediato si el archivo no existe o falta la sección `clans`.
+   - Exporta `gameData` inmutable (`Object.freeze`).
+
+3. **`index.js`**:
+   - Añadida importación de `gameData` (se ejecuta y valida en startup).
+
+4. **`src/game/actions/game-actions.js`** [IMPLEMENTADO — antes vacío]:
+   - `startResearch(game, characterId, researchId, timeWheel)` con 7 validaciones de negocio:
+     fase válida, jugador existe, sin investigación en curso, tecnología del clan correcto, no ya desbloqueada, prerrequisitos cumplidos, créditos suficientes.
+   - Descuenta `rpCost`, establece `researchInProgress` y encola evento `RESEARCH_COMPLETE`.
+   - Stub `trainTroop()` reservado para Sprint 2.
+
+5. **`src/game/engine/time-wheel.js`**:
+   - Añadido `case 'RESEARCH_COMPLETE'` en `_processEvent()`.
+   - `_handleResearchComplete(game, payload)`: idempotente, actualiza `unlockedResearches`, limpia `researchInProgress`, emite `player:research-complete` vía Socket.IO.
+
+6. **`src/game/engine/research-buffs.js`** [NUEVO]:
+   - `getResearchMultipliers(unlockedResearches, clanId)`: calcula multiplicadores acumulados multiplicativamente (attack, defense, health, speed, capitalHealth, capitalDefense, income).
+   - `applyAttackBuffs(rawDamage, unlockedResearches, clanId)`: helper para el combat-resolver futuro.
+
+7. **Frontend — Alineación con `clans.yml`**:
+   - `home.component.ts`: 6 clanes reales con IDs del YAML y arquetipos nuevos (shadow, frost, storm).
+   - `crear-partida-modal.component.ts`: `CLANES` actualizado con IDs/nombres/iconos reales.
+   - `es.ts` / `en.ts`: Ciclo de ventajas hexagonal actualizado (FURY>IRON>DIVINE>SHADOW>STORM>FROST>FURY). Descripción del árbol tecnológico mejorada.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/package.json` | **MODIFICADO** (js-yaml) |
+| `middle_server/src/config/game-data-loader.js` | **CREADO** |
+| `middle_server/index.js` | **MODIFICADO** |
+| `middle_server/src/game/actions/game-actions.js` | **IMPLEMENTADO** (antes vacío) |
+| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** |
+| `middle_server/src/game/engine/research-buffs.js` | **CREADO** |
+| `front/src/app/pages/home/home.component.ts` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/modals/crear-partida-modal/crear-partida-modal.component.ts` | **MODIFICADO** |
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** |
+| `.agents/tasks_dev_b.md` | **MODIFICADO** (Sprint 3 → `[x]`) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-03] - Middle Server: Implementación de Handshake de Seguridad Estático
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la solicitud del token de handshake estático al arrancar el Middle Server para la comunicación inicial con el DB Server.

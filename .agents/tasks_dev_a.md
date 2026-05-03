@@ -31,7 +31,7 @@ Este documento detalla las tareas asignadas al **Desarrollador A** para la imple
     *   Calcular daños basados en tropas, salud de capital y ventajas de clan (tipo piedra-papel-tijera).
 
 ## Sprint 4: Ciclo de Vida del Juego
-*   [ ] **Fases de Partida**:
+*   [x] **Fases de Partida**:
     *   Lógica para transiciones automáticas: `waiting` -> `preparation` (5 min) -> `war`.
 *   [ ] **Condiciones de Victoria**:
     *   Detectar cuando solo quedan 2 jugadores con salud en la capital y disparar el fin de la partida.
