@@ -1,3 +1,24 @@
+## [2026-05-03] - DB Server: Actualización de script de prueba de endpoints
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Actualizar `test_db_endpoints.py` para reflejar los cambios recientes en la API del servidor de base de datos, incluyendo nuevos endpoints de verificación y cambios en las rutas de volcado de estado.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Sincronización de API**:
+   - Añadida prueba para el nuevo endpoint `/internal/auth/verify`.
+   - Renombrado el endpoint de volcado de estado de `/state` a `/dump` en la sección de pruebas de partidas.
+   - Actualizados los códigos de estado esperados (201 para creaciones de usuarios, personajes y partidas).
+   - Corregido el flujo de prueba para incluir la verificación de credenciales inmediatamente después de la creación del usuario.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `test_db_endpoints.py` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-03] - DB Server: Fix AuthControllerTest
 
 **Agente**: Antigravity (Google DeepMind)
