@@ -1,3 +1,70 @@
+## [2026-05-04] - Frontend: Corrección de Carga de Datos de Clanes (Arquetipos)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver el error por el cual no se cargaban las tropas ni el árbol tecnológico al iniciar una partida, normalizando el uso de arquetipos en mayúsculas en el `GameContext`.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Modales de Entrada**:
+   - Actualizados `CrearPartidaModalComponent` y `UnirsePartidaModalComponent` para enviar el **arquetipo** del clan (ej: `FURY`) en lugar del ID interno (ej: `berserkers`) al establecer el contexto de la partida.
+
+2. **Página de Juego**:
+   - Refactorizada la lógica de búsqueda en `GamePageComponent` para que sea robusta, permitiendo encontrar datos del clan tanto por arquetipo como por ID (case-insensitive), asegurando que las tropas iniciales, las opciones de entrenamiento y el árbol tecnológico se carguen correctamente.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/lobby-page/modals/crear-partida-modal/crear-partida-modal.component.ts` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.ts` | **MODIFICADO** |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Proyecto: Configuración Global y Fix de Arranque Docker
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Centralizar la configuración en un único archivo `.env` en la raíz del proyecto y corregir errores de validación que impedían el arranque del Middle Server en Docker.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Configuración Global**:
+   - Creado archivo `.env` en la raíz del proyecto con todas las variables necesarias para `middle_server`, `db-server` e infraestructura (Postgres, Mongo, Redis, MinIO).
+   - Asegurada la carga robusta en el Middle Server forzando `override: true` en `dotenv` para priorizar el archivo físico sobre variables vacías del entorno Docker.
+
+2. **Middleware (Rate Limiting)**:
+   - Corregido error `ERR_ERL_KEY_GEN_IPV6` eliminando el `keyGenerator` manual redundante, permitiendo que `express-rate-limit` use su lógica por defecto compatible con IPv6 y proxies.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.env` | **CREADO** (Raíz del proyecto) |
+| `middle_server/src/middleware/rate-limiter.js` | **MODIFICADO** (Fix validación) |
+| `middle_server/src/config/index.js` | **MODIFICADO** (Dotenv override) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - DB Server: Inserción de Usuario Administrador Inicial
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Poblar la base de datos con el usuario administrador inicial `agb445` para permitir el acceso al sistema tras el despliegue.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Migraciones SQL**:
+   - Completada la migración `V2__insert_admin_user.sql`.
+   - Insertado el usuario `agb445` con el correo `adrian@vikingclanwars.com`.
+   - La contraseña `admin12345` ha sido encriptada usando `crypt` con `gen_salt('bf')` aprovechando la extensión `pgcrypto` habilitada en la V1.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/main/resources/db/migration/V2__insert_admin_user.sql` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-04] - Frontend: Alineación de Clanes con CLANS_DATA y Limpieza de Mocks
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir errores de tipos `TS2678` y alinear visualmente el frontend con los 6 arquetipos de clanes reales (`FURY`, `DIVINE`, `IRON`, `SHADOW`, `FROST`, `STORM`) definidos en `clans.data.ts`, eliminando además datos de ejemplo hardcodeados.
