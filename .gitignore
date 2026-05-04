@@ -10,3 +10,4 @@ test_db_endpoints.py
 .agents/previews
 audit_incongruencias.md
 docker-compose-ddbb.yml
+MISSING_FEATURES.md

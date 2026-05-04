@@ -1,3 +1,95 @@
+## [2026-05-04] - Middle Server: Infraestructura y Seguridad (Avatares, Rate Limiting, Handshake Docker)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la gestión de avatares (subida, validación, redimensionado, persistencia en MinIO/PostgreSQL), rate limiting con Redis para endpoints sensibles, y corregir los nombres de servicios Docker para compatibilidad con Tomcat 11.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Gestión de Avatares**:
+   - Creado `minio-connector.js` — cliente S3 compatible con MinIO para la subida de avatares.
+   - Creado `avatar-controller.js` — controlador completo que valida magic bytes (`file-type`), redimensiona a 200×200 px (`sharp`, formato WebP), sube a MinIO con nombre UUID, y persiste la URL en PostgreSQL via DB Server.
+   - Configurado `multer` en `routes.js` para parseo de `multipart/form-data` con límite de 5 MB.
+   - Añadidas propiedades MinIO al objeto de configuración centralizado.
+   - El frontend recupera avatares directamente desde la URL pública de MinIO (bucket `public-read`).
+
+2. **Rate Limiting**:
+   - Creado `rate-limiter.js` con factoría de limitadores usando `express-rate-limit` + `RedisStore`.
+   - Protegido `POST /api/login` (20 req / 15 min por IP) y `POST /api/register` (10 req / 60 min por IP).
+   - Implementado rate limiting manual con Redis `INCR`+`EXPIRE` para el evento Socket.IO `join_game` (40 req / 1 min por IP).
+   - Todos los umbrales son configurables via variables de entorno.
+
+3. **Handshake Docker**:
+   - Renombrados servicios `db_server` → `db-server` y `db_sql` → `db-sql` en `docker-compose.yml` (producción) para compatibilidad con Tomcat 11 (RFC de nombres de dominio).
+   - Creado script de validación `scratch/test-handshake-docker.sh` que prueba el flujo completo: handshake correcto, petición autenticada, rechazo sin token, y rechazo con secreto incorrecto.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/config/index.js` | **MODIFICADO** (config MinIO + rate limiting) |
+| `middle_server/src/connectors/minio-connector.js` | **CREADO** |
+| `middle_server/src/http/avatar-controller.js` | **CREADO** |
+| `middle_server/src/http/routes.js` | **MODIFICADO** (ruta avatar + rate limiters) |
+| `middle_server/src/middleware/rate-limiter.js` | **CREADO** |
+| `middle_server/src/connectors/socket-handler.js` | **MODIFICADO** (rate limit join_game) |
+| `middle_server/package.json` | **MODIFICADO** (por el usuario — nuevas dependencias) |
+| `docker-compose.yml` | **MODIFICADO** (rename servicios para Tomcat 11) |
+| `middle_server/scratch/test-handshake-docker.sh` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Middle Server: Implementación de Persistencia Analítica
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar el volcado periódico del estado del juego a MongoDB con fines analíticos y verificar la sincronización a PostgreSQL.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **DB Connector**:
+   - Añadido el método `publishAnalyticsSnapshot` en `db-connector.js` para enviar el DTO analítico al endpoint `POST /internal/analytics/snapshots` del DB Server.
+2. **Sync Manager**:
+   - Implementado `_mapGameToAnalyticsSnapshot` para convertir las entidades en memoria a la estructura esperada de `AnalyticsSnapshotRequestDto`. Se ha dejado pendiente (`[]`) el campo `battleEvents` hasta que se implemente `combat-resolver.js`.
+   - Implementado `startPeriodicAnalyticsSync(intervalMs)` para hacer volcados periódicos.
+3. **Inicio del Servidor**:
+   - Ejecutado `syncManager.startPeriodicAnalyticsSync` en `index.js`.
+4. **Documentación**:
+   - Actualizado `MISSING_FEATURES.md` para reflejar la compleción del requerimiento de "Persistencia y Sincronización".
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/connectors/db-connector.js` | **MODIFICADO** |
+| `middle_server/src/game/state/sync-manager.js` | **MODIFICADO** |
+| `middle_server/index.js` | **MODIFICADO** |
+| `MISSING_FEATURES.md` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Proyecto: Auditoría de Implementación y Reporte de Faltantes
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Realizar una revisión integral del proyecto para identificar funcionalidades pendientes en todas las capas y generar un reporte detallado para el desarrollador.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Auditoría Integral**:
+   - Analizadas las 3 capas (Front, Middle, DB) frente a la arquitectura y planes de tareas.
+   - Identificadas carencias críticas en el Middle Server (Combate, Economía, Dumps reales).
+   - Identificadas carencias en el Frontend (Integración real de Sockets, Árbol Tecnológico).
+2. **Documentación**:
+   - Creado `MISSING_FEATURES.md` con el detalle de los hallazgos.
+   - Actualizado `.gitignore` para excluir el reporte de Git según solicitud del usuario.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `MISSING_FEATURES.md` | **CREADO** (excluido de git) |
+| `.gitignore` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-04] - DB Server: Actualización de Autores en todas las clases
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Añadir los tags @author de ambos desarrolladores (Adrián González Blanco y Adriana Cabaleiro Álvarez) a todos los archivos de Java del DB Server.
