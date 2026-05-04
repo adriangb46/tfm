@@ -1,3 +1,30 @@
+## [2026-05-04] - Proyecto: Auditoría y Actualización de Funcionalidades Pendientes
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Revisar y actualizar `MISSING_FEATURES.md` para reflejar el estado real del proyecto tras las últimas implementaciones de seguridad, infraestructura y lógica de juego.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Auditoría de Código**:
+   - Confirmado que el volcado de base de datos (PostgreSQL y MongoDB) **está implementado** en `SyncManager.js` de forma periódica, por lo que se ha marcado como completado.
+   - Confirmado que las investigaciones tecnológicas (`startResearch`) están implementadas y operativas.
+   - Identificada la **ausencia** de la acción `startGame` y el timer de preparación de 5 minutos.
+   - Identificada la **ausencia** de la lógica de entrenamiento de tropas y ataques (solo existen stubs/placeholders).
+   - Verificado que el frontend todavía utiliza mocks para eventos de combate y log de batalla.
+2. **Actualización de Documentación**:
+   - Actualizado `MISSING_FEATURES.md` con un desglose más preciso de lo que falta para el MVP.
+   - Reorganizadas las tareas completadas (`[x]`) para dar visibilidad a los logros recientes (Logout, JWT Security, Folder alignment, etc.).
+3. **Validación de Seguridad**:
+   - Revisado `security.md` para asegurar que las nuevas tareas (Fog of War) cumplen con los requisitos de privacidad de datos.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `MISSING_FEATURES.md` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-04] - Proyecto: Alineación Arquitectónica y Sanitización de Logs
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Completar las tareas pendientes del `MISSING_FEATURES.md` relacionadas con la arquitectura, estructura de carpetas del Middle Server y logs en producción.
