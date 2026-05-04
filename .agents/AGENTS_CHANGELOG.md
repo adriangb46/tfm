@@ -1,3 +1,22 @@
+## [2026-05-04] - DB Server: Actualización de Autores en todas las clases
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Añadir los tags @author de ambos desarrolladores (Adrián González Blanco y Adriana Cabaleiro Álvarez) a todos los archivos de Java del DB Server.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **DB Server**:
+   - Automatizada la actualización de 54 archivos .java en db_back/src/main/java.
+   - Verificado que todos los archivos contienen ahora ambos autores.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/main/java/**/*` (54 archivos) | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-04] - Middle Server: Forzar Sobrescritura de Variables de Entorno
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver la falta de `JWT_SECRET` en el contenedor forzando a `dotenv` a sobrescribir variables que Docker pueda estar inicializando vacías.

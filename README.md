@@ -55,7 +55,7 @@ docker-compose -f docker-compose.dev.yml up -d
 
 ## 👥 Desarrolladores
 
-*   **Adrián González Blando**
+*   **Adrián González Blanco**
 *   **Adriana Cabaleiro Álvarez**
 
 ## 📄 Licencia
