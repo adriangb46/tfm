@@ -48,11 +48,11 @@ services:
         condition: service_started
     restart: unless-stopped
 
-  middle_server:
+  middle-server:
     build:
       context: ./middle_server
       dockerfile: Dockerfile
-    container_name: middle_server
+    container_name: middle-server
     ports:
       - "3000:3000"
     environment:
@@ -118,7 +118,7 @@ services:
     networks:
       - tfm_net
     depends_on:
-     - middle_server
+     - middle-server
     restart: unless-stopped
       
   nginx-proxy:

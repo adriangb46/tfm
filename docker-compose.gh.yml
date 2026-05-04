@@ -48,7 +48,7 @@ services:
 
   middle-server:
     image: ghcr.io/adriangb46/tfm-middle-server:latest
-    container_name: middle_server
+    container_name: middle-server
     ports:
       - "3000:3000"
     environment:

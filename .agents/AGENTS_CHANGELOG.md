@@ -1,3 +1,136 @@
+## [2026-05-04] - Proyecto: Implementación de Listado y Creación de Partidas Real
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Migrar la gestión de partidas de mocks a una implementación real extremo a extremo, permitiendo a los usuarios ver sus partidas y crear nuevas desde el Lobby.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **DB Server (Java)**:
+   - Añadida consulta personalizada en `GameRepository` para filtrar partidas por `userId` mediante JOINs con `GameParticipant` y `Character`.
+   - Implementado endpoint `GET /internal/games/by-user/{userId}` en `GameController` y su correspondiente lógica en `GameService`.
+2. **Middle Server (Node.js)**:
+   - **JWT**: Incluido el `userId` en el payload del token para permitir la identificación del usuario en las llamadas internas.
+   - **DbConnector**: Añadidos métodos para consultar personajes y partidas del usuario en el DB Server.
+   - **Controladores**: Implementados `getMyGamesController` y `createGameController`. Este último gestiona la creación automática de personajes si es necesario y la rehidratación inmediata en memoria (`gameStore`).
+   - **Rutas**: Registradas las nuevas rutas protegidas bajo `/api/games`.
+3. **Frontend (Angular)**:
+   - **GameService**: Sustituidas las simulaciones por llamadas HTTP reales al Middle Server.
+   - **Lobby**: Implementada la carga dinámica de partidas del usuario al inicializar la página, eliminando los datos de prueba.
+   - **Creación**: El modal de creación ahora persiste los datos en el servidor y redirige a la partida real.
+4. **Pruebas**:
+   - Actualizado el script `test_db_endpoints.py` para incluir la verificación del nuevo endpoint de filtrado de partidas.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/main/java/com/tfm/db_back/domain/repository/GameRepository.java` | **MODIFICADO** |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/GameService.java` | **MODIFICADO** |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/GameServiceImpl.java` | **MODIFICADO** |
+| `db_back/src/main/java/com/tfm/db_back/api/GameController.java` | **MODIFICADO** |
+| `middle_server/src/http/auth-controller.js` | **MODIFICADO** |
+| `middle_server/src/connectors/db-connector.js` | **MODIFICADO** |
+| `middle_server/src/http/games-controller.js` | **MODIFICADO** |
+| `middle_server/src/http/routes.js` | **MODIFICADO** |
+| `front/src/app/core/game/game.service.ts` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/modals/crear-partida-modal/crear-partida-modal.component.ts` | **MODIFICADO** |
+| `test_db_endpoints.py` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Infraestructura: Estandarización de Nombres (RFC) y Fix de Proxy Frontend
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver el error `ECONNREFUSED` en el frontend y estandarizar los nombres de servicios Docker para cumplir con RFC (eliminando guiones bajos en nombres de host).
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Estandarización de Servicios**:
+   - Renombrado el servicio `middle_server` a `middle-server` en `docker-compose.dev.yml` y `docker-compose.yml`.
+   - Actualizados los nombres de contenedores a `middle-server-dev` y `middle-server` para consistencia.
+2. **Corrección de Conectividad Frontend**:
+   - Actualizado `front/proxy.conf.json` para que el target sea `http://middle-server:3000`. Esto permite que el servidor de desarrollo de Angular (Vite) resuelva correctamente el contenedor del Middle Server dentro de la red de Docker.
+3. **Actualización de Nginx**:
+   - Modificada la plantilla `nginx/templates/default.conf.template` para reflejar el nuevo nombre del servicio en las reglas de `proxy_pass`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose.dev.yml` | **MODIFICADO** |
+| `docker-compose.yml` | **MODIFICADO** |
+| `docker-compose.gh.yml` | **MODIFICADO** |
+| `front/proxy.conf.json` | **MODIFICADO** |
+| `nginx/templates/default.conf.template` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - DB Server: Usuarios de Test para Desarrollo
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Añadir 4 usuarios de prueba (`viking1` a `viking4`) para facilitar las pruebas de integración y desarrollo del motor de juego multijugador.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Migración de Base de Datos**:
+   - Creada migración de Flyway `V4__add_test_users.sql`.
+   - Insertados 4 usuarios con contraseñas hasheadas (`pass12345`) usando `pgcrypto` (`crypt` con salt `bf`).
+   - Todos los usuarios de prueba tienen el rol `USER` por defecto.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `db_back/src/main/resources/db/migration/V4__add_test_users.sql` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Proyecto: Workflow de Limpieza de Código (/clean-code)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Crear un procedimiento estandarizado para la revisión de funcionalidades y eliminación de código basura, legacy o redundante, asegurando la mantenibilidad a largo plazo.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Definición de Proceso**:
+   - Creado el workflow [clean-code.md](file:///.agents/workflows/clean-code.md).
+   - El workflow incluye pasos para la detección de código muerto, artefactos de depuración, mocks antiguos y desalineaciones arquitectónicas.
+2. **Integración**:
+   - Diseñado para ser invocado mediante el comando `/clean-code`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `.agents/workflows/clean-code.md` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Proyecto: Auditoría de Funcionalidades Pendientes y MVP
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Realizar una revisión exhaustiva de los componentes implementados frente a los requisitos de arquitectura para identificar qué piezas faltan para completar el MVP.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Auditoría de Estado**:
+   - Identificadas acciones de juego pendientes (`trainTroop`, `attack`) y lógica de motor (`RESOURCE_TICK`, `combat-resolver`).
+   - Detectadas inconsistencias de identificación de usuario (`userId` vs `username`).
+   - Mapeadas las necesidades de sincronización de bases de datos (PostgreSQL/MongoDB dumps).
+2. **Documentación Interna**:
+   - Creado archivo `MISSING_FEATURES.md` (excluido de Git) centralizando todos los hallazgos técnicos y de negocio pendientes.
+   - Incluida sección de deuda técnica estructural (alineación de carpetas).
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `MISSING_FEATURES.md` | **CREADO** (excluido de git) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-04] - Middle Server: Forzar Sobrescritura de Variables de Entorno
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver la falta de `JWT_SECRET` en el contenedor forzando a `dotenv` a sobrescribir variables que Docker pueda estar inicializando vacías.

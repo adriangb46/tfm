@@ -55,9 +55,9 @@ services:
       - db-sql
       - mongodb
 
-  middle_server:
+  middle-server:
     image: node:22-alpine
-    container_name: middle_server_dev
+    container_name: middle-server-dev
     working_dir: /app
     volumes:
       - ./middle_server:/app
@@ -136,7 +136,7 @@ services:
     networks:
       - tfm_net_dev
     depends_on:
-      - middle_server
+      - middle-server
 
 volumes:
   postgres_data_dev:
