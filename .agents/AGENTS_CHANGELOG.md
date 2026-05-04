@@ -1,3 +1,27 @@
+## [2026-05-04] - Middle Server Sprint 2 Dev B: Generación de Recursos
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la lógica de "ticks" económicos para la generación de recursos durante las fases de Guerra y Veredicto, y la asignación inicial en la fase de Preparación.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Configuración**: Añadidas las constantes `MAX_ECONOMIC_CREDITS` y `MAX_RESEARCH_CREDITS` a `config/index.js` con valores por defecto (1500) según los costes del `clans.yml`.
+2. **Game Model**: Actualizado `src/models/game.js` para asignar el 100% de créditos a los jugadores al establecer la fase a `preparation`.
+3. **TimeWheel**: Implementado `_handleResourceTick` en `src/game/engine/time-wheel.js` para calcular y asignar créditos:
+   - **Guerra (Ragnarök)**: 20% del máximo cada 30-60 segundos.
+   - **Veredicto (End)**: 15% del máximo cada 20 segundos.
+   - Emite `game:state-update` a la sala de Socket.io tras la actualización.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/config/index.js` | **MODIFICADO** |
+| `middle_server/src/models/game.js` | **MODIFICADO** |
+| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-04] - Middle Server: Forzar Sobrescritura de Variables de Entorno
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver la falta de `JWT_SECRET` en el contenedor forzando a `dotenv` a sobrescribir variables que Docker pueda estar inicializando vacías.
