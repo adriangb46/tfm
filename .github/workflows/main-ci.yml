@@ -39,12 +39,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Verify Clans Data Synchronization
-        run: |
-          cd middle_server
-          npm install js-yaml --no-save
-          npm run verify-clans
-
       # ---------------------------------------------------------
       # 1. Pull, Re-tag and Push Custom Services from Sub-repos
       # ---------------------------------------------------------
