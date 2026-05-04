@@ -32,6 +32,20 @@ jobs:
           echo "IMAGE_BASE_LOWER=$(echo ${{ env.IMAGE_BASE }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       # ---------------------------------------------------------
+      # 0. Verify Data Synchronization
+      # ---------------------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify Clans Data Synchronization
+        run: |
+          cd middle_server
+          npm install js-yaml --no-save
+          npm run verify-clans
+
+      # ---------------------------------------------------------
       # 1. Pull, Re-tag and Push Custom Services from Sub-repos
       # ---------------------------------------------------------
 

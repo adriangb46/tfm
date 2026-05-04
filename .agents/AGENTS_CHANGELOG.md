@@ -4357,3 +4357,63 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 | Archivo | Acción |
 |---------|--------|
 | front/src/app/pages/home/home.component.scss | Modificado |
+
+---
+
+## [2026-05-04] Frontend — Modal Árbol Tecnológico (Tech Tree)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar el modal interactivo del Árbol Tecnológico, permitiendo visualizar y desbloquear dinámicamente las tecnologías de cada clan basadas en los puntos de investigación (Sabiduría).
+
+### 📝 Resumen de Cambios:
+
+1. **Estructura de Datos Dinámica**:
+   - Parseo de `middle_server/clans.yml` a `front/src/app/core/game/clans.data.ts`.
+   - Se añadió la interfaz `Technology` en `attack.types.ts`.
+2. **Componente de Interfaz (`ArbolTecnologicoModalComponent`)**:
+   - Diseño reactivo y escalable que organiza automáticamente las tecnologías en "tiers" (niveles) calculando sus dependencias (`requirements`).
+   - UI adaptada con la paleta de colores del juego, animaciones y estados (Bloqueado, Desbloqueable, Desbloqueado).
+3. **Integración en `GamePageComponent`**:
+   - Lógica de apertura/cierre y mock de investigación (`onResearchTechnology`), restando Research Points (RP).
+4. **Traducciones**:
+   - Agregadas cadenas para `GAME.MODALS.TECH` en inglés (`en.ts`) y español (`es.ts`).
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/game/modals/attack.types.ts` | Modificado |
+| `front/src/app/core/game/clans.data.ts` | **CREADO** |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.ts` | **CREADO** |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.html` | **CREADO** |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.scss` | **CREADO** |
+| `front/src/app/pages/game/game.component.ts` | Modificado |
+| `front/src/app/pages/game/game.component.html` | Modificado |
+| `front/src/app/core/i18n/languages/en.ts` | Modificado |
+| `front/src/app/core/i18n/languages/es.ts` | Modificado |
+
+---
+
+## [2026-05-04] DevOps — Script de Validación de Sincronización de Datos
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que los archivos de datos estáticos en el backend (`clans.yml`) y frontend (`clans.data.ts`) se mantengan perfectamente sincronizados para evitar errores en tiempo de ejecución.
+
+### 📝 Resumen de Cambios:
+
+1. **Script de Verificación (`verify-clans-sync.js`)**:
+   - Implementado en `middle_server/scripts/`.
+   - Realiza una comparación profunda (deep comparison) entre el YAML de configuración y el archivo TypeScript del frontend.
+   - Valida que todas las tecnologías, costes, requisitos y nombres coincidan exactamente.
+2. **Integración en Ciclo de Vida**:
+   - Añadido comando `npm run verify-clans` en el `package.json` del Middle Server.
+3. **Automatización CI/CD**:
+   - Incorporado un nuevo paso en el workflow de GitHub Actions (`main-ci.yml`) que ejecuta la validación antes de cualquier proceso de empaquetado. Si los archivos no coinciden, la build fallará automáticamente.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/scripts/verify-clans-sync.js` | **CREADO** |
+| `middle_server/package.json` | Modificado |
+| `.github/workflows/main-ci.yml` | Modificado |
