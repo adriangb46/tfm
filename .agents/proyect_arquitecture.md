@@ -158,7 +158,7 @@ IN-GAME (all subsequent events):
   Middle --socket broadcast game:state-update-->  Front(s)
 
 PERSISTENCE DUMP (background, every 15 min):
-  Middle  --HTTPS PUT /internal/games/{id}/state-->  DB Server
+  Middle  --HTTPS PUT /internal/games/{id}/dump-->  DB Server
   DB Server --persists to PostgreSQL-->
 
 ANALYTICS DUMP (background, every 2 h):
@@ -222,7 +222,7 @@ The system enforces a **strictly single-session policy per user** via WebSockets
 | `POST` | `/internal/games` | Create a new game record. |
 | `GET` | `/internal/games/{id}` | Get game record (used on Middle restart to recover state). |
 | `GET` | `/internal/games/active` | List all games with status not `finished` (used on restart recovery). |
-| `PUT` | `/internal/games/{id}/state` | Full game state dump. Body: `{ stateJson }`. |
+| `PUT` | `/internal/games/{id}/dump` | Full game state dump. Body: `{ stateJson }`. |
 | `POST` | `/internal/games/{id}/end` | Mark game as finished. Body: `{ winnerCharacterId }`. |
 
 ### Analytics

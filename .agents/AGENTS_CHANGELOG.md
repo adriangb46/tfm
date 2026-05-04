@@ -1,6 +1,38 @@
-## [2026-05-04] - Middle Server: Forzar Sobrescritura de Variables de Entorno
+## [2026-05-04] - Proyecto: Alineación Arquitectónica y Sanitización de Logs
 **Agente**: Antigravity (Google DeepMind)
-**Objetivo**: Resolver la falta de `JWT_SECRET` en el contenedor forzando a `dotenv` a sobrescribir variables que Docker pueda estar inicializando vacías.
+**Objetivo**: Completar las tareas pendientes del `MISSING_FEATURES.md` relacionadas con la arquitectura, estructura de carpetas del Middle Server y logs en producción.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Documentación de Arquitectura**:
+   - Actualizado `.agents/proyect_arquitecture.md` para reflejar el endpoint `/internal/games/{id}/dump` (antes `/state`).
+2. **Estructura de Carpetas (Middle Server)**:
+   - Eliminada la carpeta `src/connectors/` a favor de `src/socket/` y `src/db/`, cumpliendo estrictamente con la arquitectura definida.
+   - Movido `socket-handler.js` a `src/socket/`.
+   - Movidos `db-connector.js`, `minio-connector.js` y `redis-connector.js` a `src/db/`.
+   - Actualizados todos los imports (`require`/`import`) en todo el proyecto para reflejar las nuevas rutas.
+3. **Logs en Producción**:
+   - Analizado todo el Middle Server y DB Server. Los logs existentes de diagnóstico ya estaban sanitizados (solo imprimían IDs o mensajes).
+   - Para cumplir con el requerimiento de "logs completos pero limpios", se ha añadido un middleware de `logger` en `middle_server/index.js` que registra metadatos de las peticiones (tiempo, método, query) y sanitiza el body (ocultando `password` o `secret`).
+   - Creado `RequestLoggingConfig.java` en `db_back` para habilitar logs similares en el backend.
+4. **Actualización de Estado**:
+   - Marcadas las tres tareas correspondientes como `[x]` en `MISSING_FEATURES.md`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `MISSING_FEATURES.md` | **MODIFICADO** |
+| `.agents/proyect_arquitecture.md` | **MODIFICADO** |
+| `middle_server/index.js` | **MODIFICADO** |
+| `db_back/src/main/java/com/tfm/db_back/config/RequestLoggingConfig.java` | **CREADO** |
+| `middle_server/src/connectors/*` | **MOVIDOS** a `db/` y `socket/` |
+| Varios archivos `.js` en Middle Server | **MODIFICADOS** (rutas de import) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Middle Server: Forzar Sobrescritura de Variables de Entorno
 
 ### 📝 Resumen de Tareas Realizadas:
 
