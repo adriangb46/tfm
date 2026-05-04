@@ -1,4 +1,142 @@
+## [2026-05-04] - Frontend: Alineación de Clanes con CLANS_DATA y Limpieza de Mocks
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir errores de tipos `TS2678` y alinear visualmente el frontend con los 6 arquetipos de clanes reales (`FURY`, `DIVINE`, `IRON`, `SHADOW`, `FROST`, `STORM`) definidos en `clans.data.ts`, eliminando además datos de ejemplo hardcodeados.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Corrección de Tipos y Plantillas**:
+   - Resueltos errores `TS2678` actualizando los `@switch` en `lobby.modal.html` y `game.component.html` para usar los IDs de clan en mayúsculas (`ClanId`).
+   - Normalizados los bindings de clase CSS para usar `.toLowerCase()`, asegurando compatibilidad con las variables de diseño.
+   - Actualizados los emojis representativos de cada uno de los 6 clanes.
+
+2. **Diseño y Estilos (Tokens)**:
+   - Actualizado `tokens.scss` para incluir los colores específicos de los nuevos arquetipos: `SHADOW` (azul oscuro), `FROST` (azul claro) y `STORM` (naranja/ámbar).
+   - Eliminados los tokens obsoletos (`song`, `rune`, `death`).
+   - Reflejados los cambios tanto en el tema oscuro como en el tema claro.
+
+3. **Limpieza de Datos de Ejemplo**:
+   - **Lobby**: Eliminadas las partidas activas y finalizadas de ejemplo; el lobby ahora inicia vacío esperando datos reales.
+   - **Game Engine**: Eliminados los jugadores enemigos de ejemplo en el mapa. Ahora solo se muestra el jugador local inicialmente.
+   - **Tropas**: Las tropas disponibles y las opciones de entrenamiento ahora se cargan dinámicamente desde `CLANS_DATA` basándose en el clan seleccionado, eliminando nombres genéricos como "Guerrero 1".
+
+4. **Mapa Táctico**:
+   - Actualizadas las clases de posición de los nodos (`.node-shadow`, `.node-frost`, `.node-storm`) para que coincidan con los nuevos arquetipos y se posicionen correctamente en los continentes.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/styles/tokens.scss` | **MODIFICADO** (Nuevos colores de clanes) |
+| `front/src/app/pages/game/modals/lobby.modal.html` | **MODIFICADO** (Switch de clanes) |
+| `front/src/app/pages/game/modals/lobby.modal.scss` | **MODIFICADO** (Clases de clanes) |
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO** (Switch de clanes y mapa) |
+| `front/src/app/pages/game/game.component.scss` | **MODIFICADO** (Posiciones de nodos) |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** (Dinamicidad de tropas y limpieza) |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** (Limpieza de mocks) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Proyecto: Implementación de Clanes Dinámicos (API + Frontend)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Migrar el sistema de clanes de datos estáticos hardcodeados a una gestión dinámica basada en `clans.yml` del Middle Server, exponiendo un nuevo endpoint y actualizando el Frontend para consumirlo.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Middle Server (Backend)**:
+   - Creado `clans-controller.js` para servir la configuración completa de clanes desde `clans.yml` (vía `game-data-loader.js`).
+   - Registrado endpoint `GET /api/clans` en `routes.js` como ruta pública.
+
+2. **Frontend (Core)**:
+   - Creado `GameApiService` para gestionar las llamadas HTTP relacionadas con el juego.
+   - Actualizado `GameService` para incluir el método `getClans()`.
+   - Actualizado `attack.types.ts` con los nuevos `ClanId` en mayúsculas (`FURY`, `DIVINE`, `IRON`, `SHADOW`, `FROST`, `STORM`) y actualizado el ciclo de ventajas hexagonal.
+
+3. **Frontend (UI/Components)**:
+   - **Characters Page**: Refactorizada para cargar clanes dinámicamente, mapeando ventajas y debilidades en tiempo real y asignando iconos temáticos.
+   - **Unirse Partida Modal**: Refactorizada para obtener clanes desde el servidor, eliminando la constante estática `CLANES`.
+   - **Game Page**: Actualizada para sincronizar el árbol tecnológico con los datos del servidor y normalizar los IDs de clan a mayúsculas en todo el componente.
+
+4. **Limpieza**:
+   - Preparada la eliminación de `front/src/app/core/game/clans.data.ts` (pendiente confirmación de borrado).
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/http/clans-controller.js` | **CREADO** |
+| `middle_server/src/http/routes.js` | **MODIFICADO** |
+| `front/src/app/core/game/game-api.service.ts` | **CREADO** |
+| `front/src/app/core/game/game.service.ts` | **MODIFICADO** |
+| `front/src/app/pages/game/modals/attack.types.ts` | **MODIFICADO** |
+| `front/src/app/pages/characters-page/characters-page.component.ts` | **MODIFICADO** |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.ts` | **MODIFICADO** |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Proyecto: Actualización del Reporte de Funcionalidades Pendientes
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Revisar el estado actual del proyecto tras las implementaciones de infraestructura, persistencia y UI, y actualizar el documento `MISSING_FEATURES.md`.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Auditoría de Estado**:
+   - Verificado que la **Infraestructura** (Avatares, Rate Limiting, Handshake, Logout) está al 100%.
+   - Verificado que la **Persistencia** (PostgreSQL, MongoDB, Rehidratación) está operativa.
+   - Identificado que el **Árbol Tecnológico** (UI/UX) está completado con diseño premium FOE, pero pendiente de integración con el Middle Server.
+   - Re-confirmada la ausencia de lógica de **Combate**, **Economía** y **Entrenamiento** real en el Middle Server.
+   - Identificado que el **Frontend** sigue usando mocks para la mayoría de las interacciones de juego en tiempo real.
+
+2. **Documentación**:
+   - Actualizado `MISSING_FEATURES.md` con el estado refinado de cada componente.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `MISSING_FEATURES.md` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Frontend: Refactorización Premium del Árbol Tecnológico (Estilo FOE)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Rediseñar completamente el modal del árbol tecnológico para que tenga una estructura de árbol horizontal inspirada en Forge of Empires, con conexiones visuales, tiers como capas y una sección final exclusiva para la unidad legendaria.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Diseño Visual (UI/UX)**:
+   - Implementado layout horizontal con tiers como columnas (`tier-section`).
+   - El árbol ahora se expande hacia la derecha, permitiendo únicamente scroll horizontal mediante arrastre (estilo FOE).
+   - Rediseñadas las tecnologías como tarjetas ricas que muestran icono, descripción, coste y estado.
+   - Añadido un Tier 4 exclusivo para la última investigación (unidad legendaria) con un estilo visual diferenciado (violeta/legendario).
+
+2. **Lógica de Conexiones (SVG)**:
+   - Implementado sistema de dibujo dinámico de líneas SVG con forma de "codo" (ángulos rectos).
+   - Las líneas se recalculan automáticamente al abrir el modal o cambiar el tamaño de la ventana mediante `ResizeObserver`.
+   - Las conexiones se iluminan en dorado cuando el requisito previo ha sido investigado.
+
+3. **Arquitectura Angular 20**:
+   - Refactorizado el componente `ArbolTecnologicoModalComponent` para usar `signals`, `computed`, `effect` e `inject()`.
+   - Implementada la lógica de arrastre (drag-to-scroll) nativa en el contenedor del árbol.
+   - Actualizado el template para usar la nueva sintaxis de control de flujo (`@if`, `@for`).
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.ts` | **MODIFICADO** (Lógica de dibujo y dragging) |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.html` | **MODIFICADO** (Estructura horizontal y SVG) |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.scss` | **MODIFICADO** (Estilos premium y FOE) |
+| `.agents/previews/arbol-tecnologico-preview.html` | **CREADO** (Preview estático confirmado) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-04] - Middle Server: Infraestructura y Seguridad (Avatares, Rate Limiting, Handshake Docker)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la gestión de avatares (subida, validación, redimensionado, persistencia en MinIO/PostgreSQL), rate limiting con Redis para endpoints sensibles, y corregir los nombres de servicios Docker para compatibilidad con Tomcat 11.
 
