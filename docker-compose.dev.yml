@@ -1,11 +1,11 @@
 services:
-  db_sql:
+  db-sql:
     image: postgres:15
     container_name: db_dev
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgress
-      POSTGRES_DB: tfm
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgress}
+      POSTGRES_DB: ${POSTGRES_DB:-tfm}
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
@@ -24,15 +24,15 @@ services:
     ports:
       - "127.0.0.1:27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-password}
     networks:
       - tfm_net_dev
     volumes:
       - mongodb_data_dev:/data/db
     restart: unless-stopped
 
-  db_server:
+  db-server:
     image: eclipse-temurin:25-jdk
     container_name: db_server_dev
     working_dir: /app
@@ -43,14 +43,20 @@ services:
       - "8080:8080"
     # Runs the app directly using the Maven wrapper, enabling hot-reload if configured
     command: ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+    environment:
+      - POSTGRES_URL=jdbc:postgresql://db-sql:5432/${POSTGRES_DB:-tfm}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - MONGODB_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/vikingclanwars?authSource=admin
+      - DB_HANDSHAKE_SECRET=${DB_HANDSHAKE_SECRET}
     networks:
       - tfm_net_dev
     depends_on:
-      - db_sql
+      - db-sql
       - mongodb
 
   middle_server:
-    image: node:20-alpine
+    image: node:22-alpine
     container_name: middle_server_dev
     working_dir: /app
     volumes:
@@ -60,17 +66,20 @@ services:
       - "3000:3000"
     environment:
       - MINIO_ENDPOINT=http://minio:9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-minioadmin}
       - MINIO_BUCKET_AVATARS=avatars
       - MINIO_PUBLIC_BASE_URL=http://localhost:9000/avatars
       - REDIS_URL=redis://redis:6379
-    # Assumes index.js is the entry point. You can add nodemon here if available
-    command: node index.js
+      - DB_SERVER_URL=http://db-server:8080
+      - DB_HANDSHAKE_TOKEN=${DB_HANDSHAKE_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+    # Installs dependencies y arranca con nodemon para hot-reload
+    command: sh -c "npm install && npm run dev"
     networks:
       - tfm_net_dev
     depends_on:
-      - db_server
+      - db-server
       - minio
       - redis
   
@@ -90,8 +99,8 @@ services:
       - "9000:9000"
       - "127.0.0.1:9001:9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
     volumes:
       - minio_data_dev:/data
     command: server /data --console-address ":9001"
@@ -105,7 +114,7 @@ services:
       - minio
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER:-minioadmin} ${MINIO_ROOT_PASSWORD:-minioadmin};
       /usr/bin/mc mb myminio/avatars;
       /usr/bin/mc anonymous set public myminio/avatars;
       exit 0;
@@ -114,7 +123,7 @@ services:
       - tfm_net_dev
 
   front:
-    image: node:20-alpine
+    image: node:22-alpine
     container_name: front_dev
     working_dir: /app
     volumes:
@@ -123,7 +132,7 @@ services:
     ports:
       - "4200:4200"
     # Runs ng serve for hot-module replacement
-    command: sh -c "npm install && npx ng serve --host 0.0.0.0 --disable-host-check"
+    command: sh -c "npm install && npx ng serve --host 0.0.0.0"
     networks:
       - tfm_net_dev
     depends_on:

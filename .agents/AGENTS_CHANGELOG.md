@@ -1,3 +1,268 @@
+## [2026-05-04] - Middle Server: Implementación de Logout Seguro con Redis Blacklist
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar un mecanismo de cierre de sesión seguro mediante la invalidación de JWTs utilizando una lista negra en Redis, cumpliendo con los requisitos de `security.md`.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Infraestructura y Configuración**:
+   - Instalada la dependencia `redis` en el Middle Server.
+   - Actualizado `config/index.js` para soportar `REDIS_URL` y mejorar la robustez de la carga del archivo `.env`.
+2. **Conector de Redis**:
+   - Creado `src/connectors/redis-connector.js` para gestionar la conexión con Redis y las operaciones de `blacklist` e `isBlacklisted`.
+3. **Middleware de Autenticación**:
+   - Actualizado `src/middleware/auth.js` para verificar si el `jti` del token está en la lista negra tanto en conexiones de Socket.IO como en peticiones HTTP.
+   - Implementado `httpAuthMiddleware` para proteger rutas REST.
+4. **Controladores y Rutas**:
+   - Implementado `logoutController` en `src/http/auth-controller.js` que calcula el TTL restante del token y lo añade a Redis.
+   - Expuesta la ruta `POST /logout` en `src/http/routes.js`.
+5. **Verificación**:
+   - Creado script de prueba `scratch/test-redis-logout.js` para validar la lógica de invalidación.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/package.json` | **MODIFICADO** |
+| `middle_server/src/config/index.js` | **MODIFICADO** |
+| `middle_server/src/connectors/redis-connector.js` | **CREADO** |
+| `middle_server/src/middleware/auth.js` | **MODIFICADO** |
+| `middle_server/src/http/auth-controller.js` | **MODIFICADO** |
+| `middle_server/src/http/routes.js` | **MODIFICADO** |
+| `middle_server/scratch/test-redis-logout.js` | **CREADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Infraestructura: Renombrado de Servicios Docker para Compatibilidad con Tomcat 11
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir el error `IllegalArgumentException: The character [_] is never valid in a domain name` de Tomcat 11, que rechazaba todas las peticiones del Middle Server al DB Server porque el nombre de host `db_server` contiene un guión bajo.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Renombrado de Servicios**:
+   - Renombrado el servicio `db_server` a `db-server` (guión en lugar de guión bajo).
+   - Renombrado el servicio `db_sql` a `db-sql` para consistencia y para que el JDBC URL también sea RFC-válido.
+2. **Actualización de Referencias**:
+   - Actualizadas las entradas `depends_on`, `POSTGRES_URL` y `DB_SERVER_URL` para usar los nuevos nombres.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose.dev.yml` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Middle Server: Reintentos con Backoff en Handshake
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Evitar el crash del Middle Server cuando el DB Server todavía está arrancando (Maven puede tardar varios minutos en compilar).
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Lógica de Reintentos en `db-connector.js`**:
+   - Añadidos reintentos con **backoff exponencial** al método `performHandshake`.
+   - Configuración por defecto: máximo **10 intentos**, empezando con 3s de espera y duplicando hasta un techo de 30s.
+   - El servidor solo muere (y propaga el error) si agota todos los reintentos sin éxito.
+   - Mantiene la compatibilidad total con la firma existente del método.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/connectors/db-connector.js` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Proyecto: Actualización a Node 22
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Subir la versión base de Node a la 22 para cumplir con los requisitos del proyecto (como advertía la librería `tablesort`).
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Actualización de Imágenes Docker**:
+   - Reemplazado `node:20-alpine` por `node:22-alpine` en las definiciones directas de los servicios `middle_server` y `front` dentro de `docker-compose.dev.yml`.
+   - Modificado el `FROM` de `middle_server/Dockerfile` a `node:22-alpine`.
+   - Modificado el `FROM` de la etapa de build en `front/Dockerfile` a `node:22-alpine`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose.dev.yml` | **MODIFICADO** |
+| `middle_server/Dockerfile` | **MODIFICADO** |
+| `front/Dockerfile` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Middle Server: Corrección Definitiva del Path de clans.yml
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir el error `EISDIR` y la resolución de ruta para el archivo `clans.yml` en el entorno de desarrollo.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Limpieza del Entorno**:
+   - Eliminado el directorio vacío `clans.yml` en la raíz del proyecto (creado accidentalmente por Docker Compose al intentar montar un archivo inexistente).
+2. **Corrección de Código (`game-data-loader.js`)**:
+   - Modificado el path de resolución de `../../../clans.yml` a `../../clans.yml`. El archivo se encuentra en `middle_server/clans.yml`, por lo que desde `middle_server/src/config/` solo era necesario subir dos niveles, no tres.
+3. **Reversión de Docker Compose**:
+   - Eliminado el volumen explícito de `clans.yml` en `docker-compose.dev.yml`, ya que el archivo ya está incluido de forma natural en el volumen general del código fuente (`./middle_server:/app`).
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `clans.yml` (raíz) | **ELIMINADO** (directorio vacío) |
+| `middle_server/src/config/game-data-loader.js` | **MODIFICADO** |
+| `docker-compose.dev.yml` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Middle Server: Mapeo de Volumen para clans.yml en Dev
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir el error `ENOENT: no such file or directory, open '/clans.yml'` que impedía el arranque del Middle Server al intentar cargar los datos del juego.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Corrección de Docker Compose**:
+   - Añadido el volumen `- ./clans.yml:/clans.yml` a la definición del `middle_server` en `docker-compose.dev.yml`.
+   - El código en `game-data-loader.js` asume que el archivo `clans.yml` se encuentra en la raíz del proyecto local (`../../../clans.yml` relativo a `src/config`), lo cual se traduce en `/clans.yml` dentro de la estructura montada en el contenedor. Al montar explícitamente el archivo, NodeJS ya puede encontrarlo y parsearlo correctamente.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose.dev.yml` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Infraestructura: Corrección de Credenciales Hardcodeadas en Dev
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Eliminar las credenciales "hardcodeadas" en `docker-compose.dev.yml` para alinear el entorno de desarrollo con las variables seguras definidas en el archivo `.env` y permitir la correcta autenticación de los servicios.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Corrección de Docker Compose (Dev)**:
+   - Modificados los servicios `db_sql`, `mongodb` y `minio` para utilizar las variables de entorno (`${POSTGRES_USER}`, `${MONGO_INITDB_ROOT_USERNAME}`, etc.) en lugar de credenciales planas ("postgres", "admin", "minioadmin").
+   - Actualizado el script de inicialización de `minio_init` y las variables de `middle_server` correspondientes a MinIO para heredar la misma configuración dinámica.
+   - Esto resuelve los bloqueos de arranque en el servidor de base de datos Java generados por conflictos de autenticación.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose.dev.yml` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Infraestructura: Corrección de Arranque Frontend (Angular CLI)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Solucionar el error `Error: Unknown argument: disable-host-check` en el contenedor del frontend al arrancar el entorno de desarrollo.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Corrección de Docker Compose**:
+   - Eliminado el argumento `--disable-host-check` del comando `ng serve` en la definición del servicio `front` dentro de `docker-compose.dev.yml`. Este parámetro es obsoleto en versiones recientes de Angular CLI y provocaba que el arranque del contenedor fallara inmediatamente.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose.dev.yml` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Infraestructura: Inyección de Variables en Docker Compose Dev
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir la falta de comunicación entre servicios y bases de datos en el entorno de desarrollo mediante la inyección de variables de entorno requeridas.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Configuración de `db_server`**:
+   - Añadida sección `environment` en `docker-compose.dev.yml` para construir la `POSTGRES_URL` y `MONGODB_URL` dinámicamente usando las variables del `.env`.
+   - Inyectadas las credenciales de base de datos y el secreto de handshake.
+2. **Configuración de `middle_server`**:
+   - Añadidas variables `DB_SERVER_URL`, `DB_HANDSHAKE_TOKEN` y `JWT_SECRET` para permitir la comunicación con el servidor Java y la emisión de tokens.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose.dev.yml` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Infraestructura: Fix de Arranque en Middle Server Dev
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir el error `ERR_MODULE_NOT_FOUND` al arrancar el Middle Server en el entorno de desarrollo de Docker Compose.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Corrección de Docker Compose**:
+   - Actualizado el servicio `middle_server` en `docker-compose.dev.yml`.
+   - Cambiado el comando de arranque para incluir `npm install` antes de iniciar la aplicación. Esto asegura que el volumen anónimo de `node_modules` se pueble correctamente al arrancar el contenedor.
+   - Cambiado el comando de ejecución a `npm run dev` para aprovechar `nodemon` y permitir el hot-reload.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose.dev.yml` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Middle Server: Corrección de Dependencias y Scripts
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Subsanar la falta de dependencias críticas y scripts de desarrollo en el `package.json` del Middle Server detectados tras una auditoría del código fuente.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Gestión de Dependencias**:
+   - Añadido `cors` a las dependencias de producción (era importado en `index.js` pero no estaba declarado).
+   - Añadido `nodemon` a las dependencias de desarrollo.
+2. **Scripts de NPM**:
+   - Implementado el script `"dev": "nodemon index.js"` para alinearlo con las instrucciones del `README.md` y facilitar el desarrollo local.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/package.json` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Infraestructura: Docker Compose Local para Bases de Datos y DB Server
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Crear un entorno de Docker Compose ligero que solo levante las bases de datos (PostgreSQL, MongoDB) y el servidor de base de datos Spring Boot, permitiendo desarrollar el Middle Server y Frontend en local (host) conectándolos a esta infraestructura.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Docker Compose Local**:
+   - Creado `docker-compose-ddbb.yml` con los servicios `db_sql`, `mongodb` y `db_server`.
+   - Expuestos los puertos 5432 (Postgres), 27017 (MongoDB) y 8080 (Spring DB Server) para permitir el acceso desde el host.
+   - Configurada una red dedicada `tfm_dev_net` y volúmenes con sufijo `_dev` para evitar colisiones con el entorno completo.
+2. **Control de Versiones**:
+   - Añadido `docker-compose-ddbb.yml` a `.gitignore` para evitar su subida accidental, ya que es una herramienta de uso puramente local para el desarrollador.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose-ddbb.yml` | **CREADO** (excluido de git) |
+| `.gitignore` | **MODIFICADO** (añadido ignore) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-03] - Proyecto: Actualización de Auditoría de Arquitectura
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Actualizar el documento `audit_incongruencias.md` reflejando el estado actual tras las últimas resoluciones y detectando nuevas divergencias estructurales frente a la documentación de arquitectura.
