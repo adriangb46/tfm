@@ -1,3 +1,129 @@
+## [2026-05-04] - Middle Server: Forzar Sobrescritura de Variables de Entorno
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver la falta de `JWT_SECRET` en el contenedor forzando a `dotenv` a sobrescribir variables que Docker pueda estar inicializando vacías.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Middle Server**:
+   - Activada la opción `override: true` en las llamadas a `dotenv.config()`.
+   - Esto asegura que si existe un archivo `.env` con el secreto, este tenga prioridad sobre variables de entorno que Docker Compose pueda estar inyectando como vacías (comportamiento común si la variable no está en el host).
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/config/index.js` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Middle Server: Validación Estricta de Configuración
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que el servidor no arranque si faltan secretos críticos y proporcionar logs de diagnóstico obligatorios para identificar problemas de entorno.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Middle Server**:
+   - Modificado `src/config/index.js` para que imprima siempre el estado de las variables críticas (`JWT_SECRET`, `DB_HANDSHAKE`) al arrancar.
+   - Implementado bloqueo de arranque si faltan variables esenciales, forzando la parada del proceso en producción.
+   - Esto facilitará la depuración de por qué `jsonwebtoken` recibe valores nulos durante el login.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/config/index.js` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Middle Server: Soporte para MIDDLE_JWT_SECRET y Diagnósticos
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver la persistencia del error `secretOrPrivateKey must have a value` asegurando la compatibilidad con el nombre de variable mencionado en la documentación y añadiendo telemetría de arranque.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Middle Server**:
+   - Actualizado `src/config/index.js` para soportar tanto `JWT_SECRET` como `MIDDLE_JWT_SECRET` (mencionado en `security.md`).
+   - Añadido bloque de diagnóstico en el arranque que imprime si las variables críticas están presentes (sin revelar sus valores), facilitando la depuración en entornos de despliegue.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/config/index.js` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Infraestructura: Inyección de JWT_SECRET en Docker Compose
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver el error `Error: secretOrPrivateKey must have a value` en el Middle Server al intentar firmar tokens JWT.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Corrección de Docker Compose**:
+   - Detectada la ausencia de `JWT_SECRET` en las secciones de `environment` del `middle-server` en `docker-compose.gh.yml` y `docker-compose.yml`.
+   - Inyectada la variable `${JWT_SECRET}` en ambos archivos para asegurar que el Middle Server pueda firmar tokens de sesión correctamente en entornos de producción y desarrollo.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `docker-compose.gh.yml` | **MODIFICADO** |
+| `docker-compose.yml` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Frontend: Uso de Rutas Relativas para el Middle Server
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Permitir que el frontend funcione correctamente tanto en local como en producción sin hardcodear URLs de servidor.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **`AppConfigService`**:
+   - Cambiado el valor por defecto de `middleServerUrl` de `http://localhost:3000` a `''` (string vacío).
+   - Esto hace que todas las peticiones (`/api/...` y `/socket.io/...`) sean relativas al dominio actual.
+   - En **desarrollo local**, el `proxy.conf.json` de Angular se encarga de redirigir estas peticiones a `localhost:3000`.
+   - En **producción**, el proxy inverso de Nginx se encarga de redirigirlas al contenedor `middle_server`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/core/config/app-config.service.ts` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
+## [2026-05-04] - Proyecto: Consistencia de DB_HANDSHAKE_SECRET entre Capas
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Unificar el nombre de la variable de entorno para el handshake entre el Middle Server y el DB Server, resolviendo fallos de conexión en el despliegue de producción (GH).
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Middle Server**:
+   - Actualizado `src/config/index.js` para usar `DB_HANDSHAKE_SECRET` como nombre principal de la variable de entorno, manteniendo `DB_HANDSHAKE_TOKEN` como fallback por compatibilidad.
+   - Implementada carga robusta de `.env` usando `path.resolve` y múltiples intentos de ubicación (cwd, root relative, src relative).
+   - Añadida validación diagnóstica al arranque para detectar variables faltantes (`JWT_SECRET`, `DB_SERVER_URL`, etc.).
+2. **Infraestructura (Docker Compose)**:
+   - **`docker-compose.dev.yml`**: Renombrado el mapeo interno de `DB_HANDSHAKE_TOKEN` a `DB_HANDSHAKE_SECRET` para alinearse con el código.
+   - **`docker-compose.yml`**: Añadida la inyección de `DB_HANDSHAKE_SECRET` y `DB_SERVER_URL` en los servicios `db_server` y `middle_server`, que estaban ausentes.
+   - **`docker-compose.gh.yml`**: Verificada la consistencia con la configuración de producción.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/config/index.js` | **MODIFICADO** |
+| `middle_server/src/connectors/db-connector.js` | **MODIFICADO** |
+| `docker-compose.dev.yml` | **MODIFICADO** |
+| `docker-compose.yml` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-04] - Middle Server: Implementación de Logout Seguro con Redis Blacklist
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar un mecanismo de cierre de sesión seguro mediante la invalidación de JWTs utilizando una lista negra en Redis, cumpliendo con los requisitos de `security.md`.

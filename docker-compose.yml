@@ -38,6 +38,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgress}
       - MONGODB_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME:-admin}:${MONGO_INITDB_ROOT_PASSWORD:-password}@mongodb:27017/vikingclanwars?authSource=admin
+      - DB_HANDSHAKE_SECRET=${DB_HANDSHAKE_SECRET}
     networks:      
       - tfm_net
     depends_on:
@@ -61,6 +62,9 @@ services:
       - MINIO_BUCKET_AVATARS=${MINIO_BUCKET_AVATARS:-avatars}
       - MINIO_PUBLIC_BASE_URL=${MINIO_PUBLIC_BASE_URL:-http://localhost:9000/avatars}
       - REDIS_URL=redis://redis:6379
+      - DB_HANDSHAKE_SECRET=${DB_HANDSHAKE_SECRET}
+      - DB_SERVER_URL=http://db_server:8080
+      - JWT_SECRET=${JWT_SECRET}
     networks:      
       - tfm_net
     depends_on:

@@ -60,6 +60,7 @@ services:
       - MINIO_BUCKET_AVATARS=${MINIO_BUCKET_AVATARS}
       - MINIO_PUBLIC_BASE_URL=${MINIO_PUBLIC_BASE_URL}
       - REDIS_URL=redis://cache-redis:6379
+      - JWT_SECRET=${JWT_SECRET}
     networks:      
       - tfm_net
     depends_on:

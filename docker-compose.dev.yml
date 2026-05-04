@@ -72,7 +72,7 @@ services:
       - MINIO_PUBLIC_BASE_URL=http://localhost:9000/avatars
       - REDIS_URL=redis://redis:6379
       - DB_SERVER_URL=http://db-server:8080
-      - DB_HANDSHAKE_TOKEN=${DB_HANDSHAKE_SECRET}
+      - DB_HANDSHAKE_SECRET=${DB_HANDSHAKE_SECRET}
       - JWT_SECRET=${JWT_SECRET}
     # Installs dependencies y arranca con nodemon para hot-reload
     command: sh -c "npm install && npm run dev"
