@@ -30,7 +30,12 @@ Este documento detalla las tareas asignadas para el desarrollo del Frontend Angu
     *   Actualización de `ui_screens.md`.
 
 ## Sprint 4: Experiencia de Juego (War)
+*   [x] **Árbol Tecnológico (FOE Style)**:
+    *   Diseño horizontal con tiers separados.
+    *   Conexiones dinámicas con SVG (ángulos rectos).
+    *   Navegación mediante arrastre (drag-to-scroll).
 *   [ ] **Feedback de Combate**:
+
     *   Animaciones de llegada de tropas.
     *   Logs de batalla dinámicos con traducciones.
 *   [ ] **Fog of War**:

@@ -32,6 +32,14 @@ jobs:
           echo "IMAGE_BASE_LOWER=$(echo ${{ env.IMAGE_BASE }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       # ---------------------------------------------------------
+      # 0. Verify Data Synchronization
+      # ---------------------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # ---------------------------------------------------------
       # 1. Pull, Re-tag and Push Custom Services from Sub-repos
       # ---------------------------------------------------------
 
