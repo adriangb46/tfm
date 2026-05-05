@@ -1,3 +1,59 @@
+## [2026-05-05] - Middle Server: Implementación de `startGame` y Timer de Preparación
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la acción `startGame` vía Socket.IO para que el host mueva la partida de `waiting` a `preparation` y programe automáticamente la transición a `war` (PHASE_TRANSITION_WAR) en el Time Wheel.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **`src/game/actions/game-actions.js`** [MODIFICADO]:
+   - Implementada la función `startGame(game, characterId, timeWheel, preparationDurationMs)`.
+   - Validaciones: fase `waiting`, jugador participante, `player.isHost === true`, mínimo 2 jugadores.
+   - Llama a `game.setPhase('preparation')` (que asigna `startedAt` y créditos iniciales).
+   - Programa el evento `PHASE_TRANSITION_WAR` en el Time Wheel con `executeAt = now + preparationDurationMs`.
+   - Retorna `{ success: true, warStartsAt }` para informar al socket handler.
+
+2. **`src/socket/socket-handler.js`** [MODIFICADO]:
+   - Añadida firma `initSocketHandler(io, timeWheel)` para recibir el motor de tiempo.
+   - Registrado el evento Socket.IO `game:start` con las siguientes validaciones de seguridad (security.md §4, §5):
+     - `gameId` válido en el payload.
+     - El socket pertenece a la sala `game_<gameId>` (hizo `join_game` previamente).
+     - La partida existe en el `GameStore`.
+     - `characterId` extraído del JWT (`socket.user`), nunca del payload del cliente.
+   - En caso de éxito: emite `game:phase-change` a **toda la sala** con `{ gameId, phase, warStartsAt }`.
+   - En caso de error: emite `game:error` solo al socket emisor.
+   - Mejorado el evento `join_game` para emitir `game:error` en vez de `error` y manejar `gameId` ausente explícitamente.
+
+3. **`src/models/player.js`** [MODIFICADO]:
+   - Añadido `isHost: boolean` (defecto `false`) al constructor y a `toJSON()` para persistencia y rehidratación.
+
+4. **`src/game/state/sync-manager.js`** [MODIFICADO]:
+   - Actualizado `_rehydratePlayer()` para restaurar `isHost` desde el JSON volcado.
+
+5. **`src/config/index.js`** [MODIFICADO]:
+   - Añadida variable `preparationDurationMs` (5 min por defecto, configurable por env `PREPARATION_DURATION_MS`).
+   - Añadidas variables `maxEconomicCredits` y `maxResearchCredits` a la configuración centralizada.
+
+6. **`index.js`** [MODIFICADO]:
+   - El `TimeWheel` se instancia **antes** de llamar a `initSocketHandler` para poder pasarle la referencia.
+   - Llamada a `initSocketHandler(io, timeWheel)`.
+
+7. **`MISSING_FEATURES.md`** [MODIFICADO]:
+   - Marcados como `[x]`: `startGame` y `Timer de Preparación`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** (añadida `startGame`) |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** (evento `game:start` + mejoras) |
+| `middle_server/src/models/player.js` | **MODIFICADO** (campo `isHost`) |
+| `middle_server/src/game/state/sync-manager.js` | **MODIFICADO** (`isHost` en rehidratación) |
+| `middle_server/src/config/index.js` | **MODIFICADO** (`preparationDurationMs`, recursos máximos) |
+| `middle_server/index.js` | **MODIFICADO** (TimeWheel antes de initSocketHandler) |
+| `MISSING_FEATURES.md` | **MODIFICADO** (tareas marcadas como `[x]`) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-04] - Proyecto: Auditoría y Actualización de Funcionalidades Pendientes
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Revisar y actualizar `MISSING_FEATURES.md` para reflejar el estado real del proyecto tras las últimas implementaciones de seguridad, infraestructura y lógica de juego.
