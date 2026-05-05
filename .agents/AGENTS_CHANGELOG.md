@@ -1,3 +1,47 @@
+## [2026-05-05] - Middle Server: Implementación de Entrenamiento de Tropas (Sprint 2)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la acción `trainTroop` para que los jugadores puedan reclutar tropas de la cola de entrenamiento validando créditos y requisitos tecnológicos, y resolver el evento asíncronamente mediante el Time Wheel.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **`src/models/player.js`** [MODIFICADO]:
+   - Añadido `this.trainingQueue = []` al constructor para gestionar la cola de entrenamiento secuencial. Cada entrada contiene `{ trainingId, troopTypeId, completesAt }`.
+   - Incluido `trainingQueue` en la serialización `toJSON()` para persistencia y sincronización con el cliente.
+
+2. **`src/game/actions/game-actions.js`** [MODIFICADO]:
+   - Añadido import de `randomUUID` desde `node:crypto`.
+   - Implementada la función `trainTroop(game, characterId, troopTypeId, timeWheel)` con todas las validaciones de negocio:
+     - Fase de partida: solo `preparation` o `war`.
+     - Jugador válido y no eliminado.
+     - Tropa accesible: primero en `initialTroops` del clan, luego en `tech.unlocks.troops` de tecnologías desbloqueadas (`player.unlockedResearches`).
+     - Créditos económicos suficientes (`player.economicCredits >= troopData.cost`).
+   - Deduce el coste de `economicCredits`.
+   - Calcula `completesAt` de forma secuencial: si ya hay ítems en cola, la nueva tropa empieza al terminar la última.
+   - Encola el ítem en `player.trainingQueue` y programa el evento `TROOP_TRAINING_COMPLETE` en el Time Wheel.
+   - Retorna `{ success: true, completesAt }` o `{ success: false, message }`.
+
+3. **`src/game/engine/time-wheel.js`** [MODIFICADO]:
+   - Añadido import de `Troop` desde `../../models/troop.js`.
+   - Actualizado `_processEvent` para despachar `TROOP_TRAINING_COMPLETE` al nuevo manejador.
+   - Implementado `_handleTroopTrainingComplete(game, payload)`:
+     - Busca al jugador y valida que no esté eliminado.
+     - Verificación de idempotencia: confirma que el `trainingId` sigue en `player.trainingQueue` (evita doble procesado).
+     - Elimina el ítem de la cola.
+     - Instancia un nuevo objeto `Troop` con `typeId`, `clanId` y `maxPoints` del payload.
+     - Añade la tropa a la capital del jugador con `player.addTroop(troop)`.
+     - Emite `player:troop-trained` por Socket.IO a toda la sala con `{ characterId, troop, trainingQueue }`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/models/player.js` | **MODIFICADO** (campo `trainingQueue`) |
+| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** (función `trainTroop` implementada) |
+| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** (manejador `_handleTroopTrainingComplete`) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-05] - Frontend: Corrección de alineación visual en Home
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Centrar correctamente el elemento `pulse-ring` y la runa dentro del contenedor visual de la sección de sistema de juego en la página principal.
