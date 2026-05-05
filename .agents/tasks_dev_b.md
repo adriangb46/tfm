@@ -15,9 +15,9 @@ Este documento detalla las tareas asignadas al **Desarrollador B** para la imple
     *   Implementar el volcado periódico (cada 15 min) del estado de memoria a la DB.
 
 ## Sprint 2: Economía y Gestión de Unidades
-*   [ ] **Generación de Recursos**:
+*   [x] **Generación de Recursos**:
     *   Lógica de "ticks" económicos: sumar créditos a los jugadores según el tiempo transcurrido.
-*   [ ] **Entrenamiento de Tropas**:
+*   [x] **Entrenamiento de Tropas**:
     *   Implementar acción en `src/game/actions/game-actions.js` para reclutar unidades.
     *   Validar que el jugador tenga créditos suficientes y los requisitos tecnológicos.
 
