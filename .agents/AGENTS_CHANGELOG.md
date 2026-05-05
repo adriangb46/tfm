@@ -1,3 +1,22 @@
+## [2026-05-05] - Frontend: Corrección de alineación visual en Home
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Centrar correctamente el elemento `pulse-ring` y la runa dentro del contenedor visual de la sección de sistema de juego en la página principal.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **`home.component.scss`** [MODIFICADO]:
+   - Añadida la clase `.placeholder-map-fx` con `display: flex` y `justify-content: center` para centrar su contenido, además de `position: relative`.
+   - Modificado `.pulse-ring` para que se posicione de forma absoluta exactamente en el centro de su contenedor padre usando `top: 50%`, `left: 50%` y márgenes negativos compensatorios para no entrar en conflicto con la animación `transform: scale()`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `front/src/app/pages/home/home.component.scss` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-05] - Middle Server: Implementación de `startGame` y Timer de Preparación
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la acción `startGame` vía Socket.IO para que el host mueva la partida de `waiting` a `preparation` y programe automáticamente la transición a `war` (PHASE_TRANSITION_WAR) en el Time Wheel.
