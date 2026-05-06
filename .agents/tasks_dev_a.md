@@ -23,10 +23,10 @@ Este documento detalla las tareas asignadas al **Desarrollador A** para la imple
     *   Asegurar que los eventos sean idempotentes.
 
 ## Sprint 3: Combate y Movimiento
-*   [ ] **Acción de Ataque**:
+*   [x] **Acción de Ataque**:
     *   Calcular tiempo de viaje entre el atacante y el objetivo.
     *   Añadir el evento `ATTACK_ARRIVAL` a la cola de la partida.
-*   [ ] **Resolución de Batallas**:
+*   [x] **Resolución de Batallas**:
     *   Crear `src/game/engine/combat-resolver.js`.
     *   Calcular daños basados en tropas, salud de capital y ventajas de clan (tipo piedra-papel-tijera).
 

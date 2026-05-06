@@ -1,3 +1,38 @@
+## [2026-05-06] - Middle Server: Implementación de Resolución de Batalla (Sprint 3 Dev A, Punto 2)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la resolución de combate real (mecánica "Guerra Total") creando `combat-resolver.js` y conectándolo al manejador `_handleTroopArrival` del Time Wheel, sustituyendo el stub seguro previo.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **`src/game/engine/combat-resolver.js`** [CREADO]:
+   - Módulo puro (sin efectos secundarios de Socket.IO ni persistencia).
+   - Exporta `resolveBattle(attacker, defender, attackingTroops, gameData)`.
+   - Implementa la mecánica de **resta simultánea** (el daño de ambos bandos se calcula sobre el estado inicial y se aplica al mismo tiempo).
+   - Calcula el `typeMultiplier` (1.5x si el arquetipo del atacante tiene ventaja sobre el defensor, 1.0x en caso contrario), consultando la `advantages[]` de `clans.yml`.
+   - Aplica bono de defensa de capital `1.1x` sobre el poder del defensor.
+   - Las tropas defensoras absorben el daño antes que la capital; el daño sobrante (overflow) reduce `capitalHealth` del defensor.
+   - Las tropas atacantes absorben el daño de retorno en el mismo tick.
+   - Calcula créditos de investigación ganados (10% del daño del atacante = `RESEARCH_CREDITS_RATE`).
+   - Marca `defender.eliminated = true` si `capitalHealth` llega a 0.
+   - Retorna `BattleResult` completo: `{ attackerSurvivors, defenderTroopsDestroyed, attackerTroopsLost, capitalDamage, researchCreditsEarned, defenderEliminated, typeMultiplier, finalAttackPower, finalDefensePower }`.
+
+2. **`src/game/engine/time-wheel.js`** [MODIFICADO]:
+   - Añadidos imports de `resolveBattle` y `gameData`.
+   - Método `_handleTroopArrival`: eliminado el stub TODO y reemplazado por la llamada real a `resolveBattle(attacker, defender, [troop], gameData)`.
+   - Aplica `researchCreditsEarned` al atacante con cap `config.maxResearchCredits`.
+   - Llama a `survivor.returnHome()` para cada tropa atacante superviviente.
+   - Emite `game:battle-result` con **Fog of War** (sin IDs de tropas ni vida exacta del defensor): `{ attackerCharacterId, targetCharacterId, capitalDamage, attackerTroopsLost (conteo), defenderTroopsDestroyed (conteo), defenderEliminated, researchCreditsEarned }`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/game/engine/combat-resolver.js` | **CREADO** |
+| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** (stub reemplazado + imports) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-06] - Middle Server: Implementación de Acción de Ataque (Sprint 3 Dev A, Punto 1)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la acción `launchAttack` para que los jugadores puedan desplegar tropas individuales (por UUID de instancia) contra la capital de un rival, calcular el tiempo de viaje fijo y encolar el evento `TROOP_ARRIVAL` en el Time Wheel para su posterior resolución por `combat-resolver` (Sprint 3 Punto 2).
