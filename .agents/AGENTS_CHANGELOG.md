@@ -1,3 +1,35 @@
+## [2026-05-06] - Middle Server: Filtrado de Datos (Fog of War) (Sprint 4 Dev B, Punto 2)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar el sistema de "Niebla de Guerra" para asegurar que los jugadores no reciban información táctica confidencial sobre sus rivales (créditos, investigaciones, colas de entrenamiento o tropas exactas).
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **`src/game/engine/fog-of-war.js`** [CREADO]:
+   - Implementada la función pura `buildGameView(game, viewerCharacterId)`.
+   - Si el jugador es el observador, recibe su estado completo.
+   - Si el jugador es un rival, se filtran datos confidenciales (`economicCredits`, `researchCredits`, `researchInProgress`, `trainingQueue`).
+   - Las tropas del rival se envían solo como un resumen (`troopCount`, `types`) de las tropas que defienden la capital; tropas desplegadas son invisibles.
+
+2. **`src/socket/socket-handler.js`** [MODIFICADO]:
+   - Añadido import de `buildGameView`.
+   - Modificado `join_game`: Ahora guarda `socket.id` en `player.connectedSocketId` para poder enviar mensajes individuales.
+   - Sustituida la emisión del estado completo `game.toJSON()` por la vista censurada de `buildGameView(game, characterId)` a través de `socket.emit('game:state-sync')`.
+
+3. **`src/game/engine/time-wheel.js`** [MODIFICADO]:
+   - Añadido import de `buildGameView`.
+   - Modificado `_handleResourceTick`: En lugar de hacer un broadcast `io.to(room).emit('game:state-update')` con todo el estado `game.toJSON()`, ahora itera sobre los jugadores conectados a la partida y les envía su versión filtrada del estado a cada uno de forma individual usando `player.connectedSocketId`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/game/engine/fog-of-war.js` | **CREADO** |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** (Manejo de `join_game`) |
+| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** (Emisión individual en tick de recursos) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-06] - Middle Server: Emisores de Estado (Sprint 4 Dev B, Punto 1)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Asegurar que cada acción de juego (reclutar, investigar, unirse) dispare el evento Socket.IO correcto al cliente, completando el ciclo de sincronización de estado del Middle Server.

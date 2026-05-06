@@ -31,7 +31,7 @@ Este documento detalla las tareas asignadas al **Desarrollador B** para la imple
 ## Sprint 4: Sincronización del Cliente (Frontend)
 *   [x] **Emisores de Estado**:
     *   Asegurar que cada acción (reclutar, atacar, investigar) dispare un evento de actualización al cliente.
-*   [ ] **Filtrado de Datos (Fog of War)**:
+*   [x] **Filtrado de Datos (Fog of War)**:
     *   Antes de emitir el estado a un socket, filtrar información que el jugador no debería ver (ej: tropas enemigas que no están en su territorio).
 
 ---
