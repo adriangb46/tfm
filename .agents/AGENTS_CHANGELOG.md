@@ -1,4 +1,58 @@
+## [2026-05-06] - Middle Server: Implementación de Acción de Ataque (Sprint 3 Dev A, Punto 1)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la acción `launchAttack` para que los jugadores puedan desplegar tropas individuales (por UUID de instancia) contra la capital de un rival, calcular el tiempo de viaje fijo y encolar el evento `TROOP_ARRIVAL` en el Time Wheel para su posterior resolución por `combat-resolver` (Sprint 3 Punto 2).
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **`src/config/index.js`** [MODIFICADO]:
+   - Añadida constante `troopTravelTimeMs` (defecto `60_000` ms = 1 minuto), configurable mediante la variable de entorno `TROOP_TRAVEL_TIME_MS`.
+
+2. **`src/game/actions/game-actions.js`** [MODIFICADO]:
+   - Añadido import de `config` para acceder a `troopTravelTimeMs`.
+   - Implementada la función exportada `launchAttack(game, characterId, targetCharacterId, troopIds, timeWheel)` con todas las validaciones de negocio:
+     - Fase de partida: solo `war`.
+     - Atacante válido y no eliminado.
+     - No puede atacarse a sí mismo.
+     - Objetivo existe en la partida y no está eliminado.
+     - `troopIds` es un array no vacío de strings válidos.
+     - Cada tropa pertenece al atacante, está en capital (`deployed === false`) y tiene `currentPoints > 0`.
+   - Calcula `arrivalAt = Date.now() + config.troopTravelTimeMs`.
+   - Llama a `troop.deploy(targetCharacterId, arrivalAt)` por cada tropa y encola un evento `TROOP_ARRIVAL` individual en el Time Wheel.
+   - Retorna `{ success: true, arrivalAt }` o `{ success: false, message }`.
+
+3. **`src/socket/socket-handler.js`** [MODIFICADO]:
+   - Importado `launchAttack` desde `game-actions.js`.
+   - Registrado el evento Socket.IO `game:attack` con validaciones de seguridad (security.md §4 y §5):
+     - `gameId`, `targetCharacterId` y `troopIds` presentes y con tipos correctos.
+     - El socket pertenece a la sala `game_<gameId>`.
+     - La partida existe en `gameStore`.
+     - `characterId` extraído del JWT, nunca del payload.
+   - En caso de éxito: emite `game:attack-launched` al atacante (`{ arrivalAt, troopCount }`) y `game:troop-deployed` a toda la sala (`{ attackerCharacterId, troopCount }`) — Fog of War básico, sin revelar objetivo ni IDs.
+   - En caso de error: emite `game:error` solo al socket emisor.
+
+4. **`src/game/engine/time-wheel.js`** [MODIFICADO]:
+   - Reemplazado el stub `TROOP_ARRIVAL` por una llamada al nuevo método privado `_handleTroopArrival(game, event.payload)`.
+   - Implementado `_handleTroopArrival` con:
+     - Búsqueda de atacante y tropa por UUID.
+     - Idempotencia: si la tropa ya no está `deployed`, se descarta sin efecto.
+     - Caso defensor eliminado: `troop.returnHome()` + emisión de `game:troop-returned`.
+     - Stub seguro para combat-resolver (Sprint 3 Punto 2): `troop.returnHome()` + emisión de `game:battle-result` con `resolved: false`.
+     - Llamada a `checkVictory` al final del flujo.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/config/index.js` | **MODIFICADO** (constante `troopTravelTimeMs`) |
+| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** (función `launchAttack`) |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** (evento `game:attack`) |
+| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** (método `_handleTroopArrival`) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-05] - Middle Server: Implementación de Entrenamiento de Tropas (Sprint 2)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la acción `trainTroop` para que los jugadores puedan reclutar tropas de la cola de entrenamiento validando créditos y requisitos tecnológicos, y resolver el evento asíncronamente mediante el Time Wheel.
 
