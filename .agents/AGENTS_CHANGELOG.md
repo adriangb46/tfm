@@ -1,3 +1,24 @@
+## [2026-05-06] - Middle Server: Emisores de Estado (Sprint 4 Dev B, Punto 1)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que cada acción de juego (reclutar, investigar, unirse) dispare el evento Socket.IO correcto al cliente, completando el ciclo de sincronización de estado del Middle Server.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **`src/socket/socket-handler.js`** [MODIFICADO]:
+   - **Import ampliado**: añadidos `trainTroop` y `startResearch` al import de `game-actions.js`.
+   - **`join_game` → `game:state-sync`**: Completado el TODO que existía en la línea 44. Tras hacer `socket.join()`, se emite `game:state-sync` con `game.toJSON()` al socket recién unido para sincronizar su estado inicial. El filtrado Fog of War queda pendiente para Sprint 4 Punto 2.
+   - **Nuevo handler `game:train`**: Recibe `{ gameId, troopTypeId }`. Sigue el patrón de seguridad estándar (validación de tipos, verificación de sala, `characterId` del JWT). Llama a `trainTroop` y emite `player:train-queued` con `{ troopTypeId, completesAt, trainingQueue, economicCredits }` solo al socket emisor.
+   - **Nuevo handler `game:research`**: Recibe `{ gameId, researchId }`. Mismo patrón de seguridad. Llama a `startResearch` y emite `player:research-started` con `{ researchId, researchInProgress, researchCredits }` solo al socket emisor.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** (4 cambios: import, state-sync, train handler, research handler) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-06] - Middle Server: Implementación de Resolución de Batalla (Sprint 3 Dev A, Punto 2)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la resolución de combate real (mecánica "Guerra Total") creando `combat-resolver.js` y conectándolo al manejador `_handleTroopArrival` del Time Wheel, sustituyendo el stub seguro previo.

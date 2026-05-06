@@ -29,7 +29,7 @@ Este documento detalla las tareas asignadas al **Desarrollador B** para la imple
     *   Lógica para que las tecnologías desbloqueadas afecten a las estadísticas (ej: +10% daño, -5% coste).
 
 ## Sprint 4: Sincronización del Cliente (Frontend)
-*   [ ] **Emisores de Estado**:
+*   [x] **Emisores de Estado**:
     *   Asegurar que cada acción (reclutar, atacar, investigar) dispare un evento de actualización al cliente.
 *   [ ] **Filtrado de Datos (Fog of War)**:
     *   Antes de emitir el estado a un socket, filtrar información que el jugador no debería ver (ej: tropas enemigas que no están en su territorio).
