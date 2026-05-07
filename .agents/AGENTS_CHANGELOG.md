@@ -3949,7 +3949,7 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 ### 📝 Resumen de Tareas Realizadas:
 
 1. **Creación de `README.md`**:
-   - Redactada la presentación del # Changelog - Viking Clan Wars Agents
+   - Redactada la presentación del # Changelog de Agentes
 
 ## [2026-04-22] - Internacionacionalización del Motor de Juego
 - **I18n**: Implementada la traducción completa de la página de juego (`GamePageComponent`) y todos sus modales.
