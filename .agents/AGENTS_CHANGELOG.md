@@ -1,3 +1,61 @@
+## [2026-05-07] - Full Stack: Implementación de Unirse a Partida (Join Game)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver el problema de que el botón de unirse se quedaba "pensando" mediante la implementación real del flujo de unión en todas las capas.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **DB Server (Spring Boot)**:
+   - ✅ Añadido método `joinGame` a `GameService` y `GameServiceImpl`.
+   - ✅ Expuesto endpoint `POST /internal/games/{id}/join` en `GameController`.
+
+2. **Middle Server (Node.js)**:
+   - ✅ Añadido método `joinGame` a `DbConnector` para comunicar con el DB Server.
+   - ✅ Actualizado `SocketHandler`: el evento `join_game` ahora soporta un `clanId`. Si el jugador no es participante, se le une automáticamente (creando personaje si es necesario) tanto en DB como en memoria.
+
+3. **Frontend (Angular)**:
+   - ✅ Actualizado `GameService.joinGame` para enviar el `clanId` en el evento de socket.
+   - ✅ Corregido `UnirsePartidaModalComponent`: ahora llama al servicio real y navega a `/game` de forma segura (invirtiendo el orden de cierre/navegación).
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `db_back/src/main/java/com/tfm/db_back/api/GameController.java` | **MODIFICADO** | Nuevo endpoint de unión. |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/GameService.java` | **MODIFICADO** | Interfaz actualizada. |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/GameServiceImpl.java` | **MODIFICADO** | Lógica de unión implementada. |
+| `middle_server/src/db/db-connector.js` | **MODIFICADO** | Cliente para el nuevo endpoint. |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Lógica de auto-join en el socket. |
+| `front/src/app/core/game/game.service.ts` | **MODIFICADO** | Payload de join_game actualizado. |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.ts` | **MODIFICADO** | Integración real y corrección de navegación. |
+
+---
+
+## [2026-05-07] - Frontend: Correcciones de Sockets y UI de Unirse a Partida
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver errores de emisión de sockets antes de conectar y mejorar la UI del modal de unirse a partida para soportar UUIDs.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **SocketService**:
+   - ✅ Corregido bug en `connect()` que permitía crear múltiples sockets si se llamaba durante el proceso de conexión.
+   - ✅ Modificado `emit()` para permitir el buffering de eventos de `socket.io` antes de que la conexión inicial se complete.
+
+2. **UI: Modal Unirse a Partida**:
+   - ✅ Aumentado `maxlength` del input de código a `36` (soporte para UUID).
+   - ✅ Reducido el tamaño de fuente del input a `0.85rem` para asegurar que el UUID sea visible sin desbordar el modal.
+   - ✅ Eliminada la conversión forzada a `toUpperCase()` para mantener la integridad de los códigos de sala (UUIDs en minúsculas).
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/core/game/socket.service.ts` | **MODIFICADO** | Lógica de conexión y emisión mejorada. |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.ts` | **MODIFICADO** | Eliminado toUpperCase(). |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.html` | **MODIFICADO** | maxlength="36". |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.scss` | **MODIFICADO** | Ajuste de font-size. |
+
+---
+
 ## [2026-05-07] - Middle Server: Corrección de ReferenceError en Rutas
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver el error `ReferenceError: getGameAvailabilityController is not defined` que impedía el correcto funcionamiento del Middle Server.
