@@ -1,4 +1,103 @@
+## [2026-05-07] - Frontend Sprint 4: Integración Real de Sockets y Feedback Visual (Sprint 4 Frontend)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Reemplazar mocks en el frontend con conexiones reales a Socket.IO, implementar feedback visual de combate dinámico y cargar estadísticas de clanes desde el Middle Server.
+
+### 📝 Resumen de Tareas Realizadas:
+
+#### 1. **Integración Real de Sockets** (`game.component.ts`):
+   - ✅ Importado `SocketService` para gestión de conexiones WebSocket.
+   - ✅ Implementado `setupGameSubscriptions()` con 8 listeners en tiempo real:
+     - `game:state-sync` → Sincroniza fase, jugadores, salud del capital
+     - `player:resources-updated` → Actualiza oro y créditos de investigación
+     - `player:train-queued` → Confirma entrenamiento y actualiza cola
+     - `player:research-started` → Confirma investigación desbloqueada
+     - `game:attack-launched` → Notifica ataques de otros jugadores
+     - `game:battle-result` → Actualiza salud tras batalla
+     - `game:phase-changed` → Sincroniza cambios de fase de juego
+     - `game:player-eliminated` → Remueve jugadores del mapa
+   - ✅ Modificadas acciones para emitir eventos al servidor:
+     - `onTrainTroop()` → Emite `game:train` con `gameId` y `troopTypeId`
+     - `onResearchTechnology()` → Emite `game:research` con `gameId` y `researchId`
+     - `onLaunchAttack()` → Emite `game:attack` con destino y tropas seleccionadas
+     - `onStartGame()` → Emite `game:start` (solo para host)
+
+#### 2. **Feedback Visual de Combate - Log Modal** (`game-log.modal.ts` + `game-log.modal.html`):
+   - ✅ Añadido sistema de filtros por tipo de evento (Todos, Ataques, Entrenamiento, Investigación)
+   - ✅ Implementado auto-scroll inteligente al final del log
+   - ✅ Añadidas animaciones de entrada para eventos nuevos
+   - ✅ Decoraciones visuales por tipo de evento (indicador de color según tipo)
+
+#### 3. **Feedback Visual de Combate - Attack Modal** (`atacar.modal.ts` + `atacar.modal.html`):
+   - ✅ Implementado cálculo hexagonal de multiplicadores de daño (1.5x con ventaja, 1.0x sin ventaja)
+   - ✅ Añadido preview de daño estimado antes de lanzar ataque
+   - ✅ Mostrada información del multiplicador en banner de ventaja táctica
+   - ✅ Añadida animación visual al lanzar ataque (400ms)
+   - ✅ Mejorada visualización de ventajas/desventajas con badge de multiplicador
+
+#### 4. **Carga Dinámica de Estadísticas de Clanes** (`characters-page.component.ts` + `characters.model.ts` + HTML):
+   - ✅ Implementado servicio HTTP para cargar estadísticas desde `/api/clans/stats`
+   - ✅ Fallback a datos estáticos si el servidor no responde
+   - ✅ Nuevo campo de estado: `isLoading` + indicador visual mientras se cargan
+   - ✅ Nuevo campo de error con mensaje descriptivo si falla la carga
+   - ✅ Campos dinámicos en `ClanDetail`:
+     - `winRate` → Tasa de victoria del clan
+     - `totalGames` → Partidas jugadas
+     - `totalPlayers` → Jugadores activos
+     - `avgHealth` → Salud media del capital
+     - `avgLevel` → Nivel promedio de tecnología
+   - ✅ UI mejorada con badges de estadísticas en cards de clan
+   - ✅ Sección de "Stats Detail" solo visible si datos disponibles
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | +9 listeners, 4 emit handlers, setupGameSubscriptions() real |
+| `front/src/app/pages/game/modals/game-log.modal.ts` | **MODIFICADO** | +filtros, +auto-scroll, +animaciones |
+| `front/src/app/pages/game/modals/game-log.modal.html` | **MODIFICADO** | +toolbar con filtros, +indicadores visuales |
+| `front/src/app/pages/game/modals/atacar.modal.ts` | **MODIFICADO** | +hexagonal multiplier, +damage preview, +animations |
+| `front/src/app/pages/game/modals/atacar.modal.html` | **MODIFICADO** | +damage preview section, +multiplier badge |
+| `front/src/app/pages/characters-page/characters-page.component.ts` | **MODIFICADO** | +HTTP loading, +fallback, +dynamic stats |
+| `front/src/app/pages/characters-page/characters.model.ts` | **MODIFICADO** | +6 campos de estadísticas dinámicas |
+| `front/src/app/pages/characters-page/characters-page.component.html` | **MODIFICADO** | +loading indicator, +error banner, +stats display |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+### ✅ Validación:
+
+- ✅ Imports correctos y compilación TypeScript válida
+- ✅ Sin breaking changes en componentes existentes
+- ✅ Compatibilidad con Angular 20 + Signals
+- ✅ Modo ChangeDetectionStrategy.OnPush mantenido en todos los componentes
+- ✅ Fallbacks implementados para falta de conectividad
+- ✅ Mensajes de error descriptivos para debugging
+
+---
+
+## [2026-05-07] - Proyecto: Actualización de Funcionalidades Pendientes
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Sincronizar el documento `MISSING_FEATURES.md` con el estado real del desarrollo tras completar el motor de juego y la seguridad backend.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Auditoría de Integración**:
+   - Confirmado que el motor backend (Time Wheel, Combate, Economía, Investigaciones) está operativo al 100%.
+   - Identificada la necesidad de una notificación específica para ataques entrantes en el Fog of War.
+   - Verificado el estado de los mocks en el Frontend (`game.component.ts`).
+2. **Actualización de Documentación**:
+   - Refinado el estado de `MISSING_FEATURES.md` para priorizar la integración real de Sockets en el Frontend.
+   - Añadida deuda técnica sobre `battleEvents` en Analytics y notificaciones de ataque.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción |
+|---------|--------|
+| `MISSING_FEATURES.md` | **MODIFICADO** |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+
+---
+
 ## [2026-05-06] - Middle Server: Filtrado de Datos (Fog of War) (Sprint 4 Dev B, Punto 2)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar el sistema de "Niebla de Guerra" para asegurar que los jugadores no reciban información táctica confidencial sobre sus rivales (créditos, investigaciones, colas de entrenamiento o tropas exactas).
 
