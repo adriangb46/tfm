@@ -1,18 +1,105 @@
-## [2026-05-07] - Full Stack: Sincronización de Partida y Corrección de Visualización
+## [2026-05-08] - Frontend: Corrección de error NG0955 en Modal de Entrenamiento
 **Agente**: Antigravity (Google DeepMind)
-**Objetivo**: Resolver la desincronización entre jugadores en el lobby y corregir la falta de iconos/estilos de clanes en el frontend.
+**Objetivo**: Resolver el error `NG0955: Duplicated keys in track expression` que ocurría al abrir el modal de entrenamiento de tropas para clanes con múltiples unidades del mismo tipo (ej: Jarls con dos tipos de "DEF").
 
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Frontend (Angular)**:
+   - ✅ **Modelo**: Añadido campo `id` a la interfaz `TrainableTroopOption` en `attack.types.ts` para permitir la identificación única de opciones de entrenamiento.
+   - ✅ **Lógica de Juego**: Actualizado el signal `trainableTroopOptions` en `game.component.ts` para mapear y propagar el `id` real de la tropa desde `CLANS_DATA`.
+   - ✅ **Acciones**: Modificado `onTrainTroop` para emitir el `id` de la tropa al servidor en lugar de su `type`, asegurando que el backend reclute la unidad correcta.
+   - ✅ **Modal**: Actualizado `EntrenarModalComponent` para manejar IDs y emitirlos en el output `train`.
+   - ✅ **Template**: Cambiado el `@for` loop en `entrenar.modal.html` para usar `track option.id` en lugar de `option.type`, eliminando la colisión de claves.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/game/modals/attack.types.ts` | **MODIFICADO** | Añadido `id` a `TrainableTroopOption`. |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Mapeo de `id` y actualización de `onTrainTroop`. |
+| `front/src/app/pages/game/modals/entrenar.modal.ts` | **MODIFICADO** | Cambio de output `train` a `string`. |
+| `front/src/app/pages/game/modals/entrenar.modal.html` | **MODIFICADO** | `track option.id`. |
+
+---
+
+## [2026-05-07] - Full Stack: El Middle Server como Fuente de Verdad del Lobby
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que la lista de partidas del lobby refleje siempre el estado en vivo de la memoria del Middle Server, incluso antes de que se persista en la base de datos.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Middle Server (Node.js)**:
+   - ✅ **SocketHandler**: Modificado el evento `game:list`. Ahora, antes de enviar la lista de partidas al cliente, el servidor comprueba si alguna de ellas está activa en su memoria (`gameStore`).
+   - ✅ **Enriquecimiento de Datos**: Si la partida está en memoria, se sobrescribe el campo `latestStateJson` con el estado actual en vivo. Esto garantiza que el frontend siempre sepa quién es el Host y qué clan tiene cada uno, eliminando la dependencia del volcado periódico (cada 15 min) para la visualización inicial.
+   - ✅ **Arquitectura**: Se refuerza el principio de que el Middle Server es el dueño del estado en tiempo real.
+
+2. **Frontend (Angular)**:
+   - ✅ **LobbyPage**: La lógica de detección de Host y Clan ahora es 100% fiable al recibir el estado en vivo desde el Middle Server.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Enriquecimiento de `game:list` con memoria. |
+
+---
+
+## [2026-05-07] - Full Stack: Corrección de Sincronización Multiplayer y Códigos de Sala
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Middle Server (Node.js)**:
+   - ✅ **GameStore**: Implementado `getGameByShortId` para permitir la búsqueda de partidas activas usando solo los primeros 6 caracteres del UUID (el código visual que ve el usuario).
+   - ✅ **SocketHandler**: Actualizados los eventos `join_game` y `game:availability` para soportar tanto UUIDs completos como códigos cortos. Esto permite que el Jugador B se una correctamente a la sala del Jugador A.
+   - ✅ **Bugfix**: Corregida la vida inicial de la capital del Host a `3000` (estándar MVP) en el evento `game:create`.
+
+2. **Frontend (Angular)**:
+   - ✅ **LobbyPage**: Mejorada la lógica de `loadGames` para parsear el `latestStateJson` y detectar si el usuario es el Host y cuál es su clan real.
+   - ✅ **LobbyPage**: Corregido `onEnterGame` para persistir el estado de Host al entrar en una partida desde la lista de partidas activas.
+   - ✅ **GamePage**: Sincronización robusta: ahora el Jugador B recibirá correctamente el estado completo de la partida al unirse, viendo al Host y a sí mismo con los roles correctos.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/game/state/game-store.js` | **MODIFICADO** | Añadido buscador por código corto. |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Soporte de códigos cortos y fix de vida. |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** | Detección de Host y Clan en el lobby. |
+
+---
+
+## [2026-05-07] - Frontend: Corrección de Visualización del Modal de Espera y Diagnóstico de Sincronización
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Frontend (Angular)**:
+   - ✅ **BUGFIX**: Modificado `game.component.ts` para que al recibir el estado sincronizado (`game:state-sync`), se aplique `.toUpperCase()` a `data.phase` antes de asignarlo a la señal `currentPhase`. Esto resuelve el fallo silencioso donde el servidor enviaba `'waiting'` y el HTML comprobaba estrictamente `@if (currentPhase() === 'WAITING')`, impidiendo que el modal se renderizara.
+
+2. **Diagnóstico de Sincronización ("Solo veo a ese")**:
+   - 🔍 **Problema identificado**: Si se prueba el juego abriendo dos pestañas en el mismo navegador (o iniciando sesión con el mismo usuario en modo incógnito), el servidor detecta el mismo `userId` en el token JWT.
+   - 🔍 **Comportamiento del Servidor**: El `socket-handler.js` está diseñado para prevenir multicuentas en la misma partida. Si detecta que el mismo `userId` intenta unirse, asume que es una reconexión (sobrescribe el socket) en lugar de crear un jugador nuevo. Por tanto, la sala solo tendrá 1 jugador real (tú mismo).
+   - 💡 **Solución para pruebas**: Es **obligatorio** iniciar sesión con dos cuentas de usuario distintas (por ejemplo, `user1` y `user2`) en navegadores separados o en perfiles diferentes para poder ver a los dos jugadores en el mapa.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Conversión de fase a mayúsculas. |
+
+---
+
+## [2026-05-07] - Full Stack: Sincronización de Partida y Corrección de Visualización
 ### 📝 Resumen de Tareas Realizadas:
 
 1. **Middle Server (Node.js)**:
    - ✅ Implementada función `syncGameStateToAll(io, game)` para enviar actualizaciones personalizadas (Fog of War) a todos los jugadores conectados.
    - ✅ Actualizados eventos `join_game` y `game:create` para emitir el estado sincronizado a toda la sala.
    - ✅ Añadido alias `clan` en `fog-of-war.js` para compatibilidad con el frontend.
+   - ✅ **BUGFIX CRÍTICO**: Corregido un `ReferenceError` (`charactersResponse` en lugar de `charsResponse`) en el auto-join del `socket-handler.js` que impedía que nuevos jugadores se unieran a la partida y silenciaba las actualizaciones de estado.
 
 2. **Frontend (Angular)**:
    - ✅ Actualizado `GameService.joinGame` para soportar el flag `isHost` y mejorar la gestión del contexto.
+   - ✅ Implementada persistencia en `sessionStorage` para el `gameContext` en `GameService` para mantener el estado (`isHost` y `code`) al refrescar la página.
+   - ✅ Corregida la computación de `isHost` en `GamePageComponent` usando la propiedad real sincronizada por el servidor en `PlayerNode`, y respaldada por el `sessionStorage`.
    - ✅ Corregida la navegación en `LobbyPageComponent`: ahora se une formalmente a la partida antes de navegar, asegurando la conexión del socket.
    - ✅ Implementada lógica de "auto-reunión" en `GamePageComponent` para manejar refrescos de página y navegación directa.
+   - ✅ Asegurada la limpieza del contexto del juego al salir de la partida o abandonar.
 
 ### 🗂️ Archivos Modificados/Creados:
 
