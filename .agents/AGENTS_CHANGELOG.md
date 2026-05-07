@@ -1,3 +1,31 @@
+## [2026-05-07] - Full Stack: Sincronización de Partida y Corrección de Visualización
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver la desincronización entre jugadores en el lobby y corregir la falta de iconos/estilos de clanes en el frontend.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Middle Server (Node.js)**:
+   - ✅ Implementada función `syncGameStateToAll(io, game)` para enviar actualizaciones personalizadas (Fog of War) a todos los jugadores conectados.
+   - ✅ Actualizados eventos `join_game` y `game:create` para emitir el estado sincronizado a toda la sala.
+   - ✅ Añadido alias `clan` en `fog-of-war.js` para compatibilidad con el frontend.
+
+2. **Frontend (Angular)**:
+   - ✅ Actualizado `GameService.joinGame` para soportar el flag `isHost` y mejorar la gestión del contexto.
+   - ✅ Corregida la navegación en `LobbyPageComponent`: ahora se une formalmente a la partida antes de navegar, asegurando la conexión del socket.
+   - ✅ Implementada lógica de "auto-reunión" en `GamePageComponent` para manejar refrescos de página y navegación directa.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/game/engine/fog-of-war.js` | **MODIFICADO** | Añadido alias `clan`. |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Nueva lógica de sincronización total. |
+| `front/src/app/core/game/game.service.ts` | **MODIFICADO** | Refinado `joinGame`. |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** | Corregida navegación `onEnterGame`. |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Añadida auto-reunión en `ngOnInit`. |
+
+---
+
 ## [2026-05-07] - Full Stack: Implementación de Unirse a Partida (Join Game)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver el problema de que el botón de unirse se quedaba "pensando" mediante la implementación real del flujo de unión en todas las capas.
