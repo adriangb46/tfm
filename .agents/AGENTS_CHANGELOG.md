@@ -1,3 +1,45 @@
+## [2026-05-07] - Middle Server: Corrección de ReferenceError en Rutas
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver el error `ReferenceError: getGameAvailabilityController is not defined` que impedía el correcto funcionamiento del Middle Server.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Middle Server: Rutas HTTP**:
+   - ✅ Importado `getGameAvailabilityController` desde `games-controller.js` en `src/http/routes.js`.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/http/routes.js` | **MODIFICADO** | Añadido import de `getGameAvailabilityController`. |
+
+---
+
+## [2026-05-07] - Frontend & Middle Server: Corrección de characterId e Interceptor de Autenticación
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver el error de compilación `characterId` en el frontend, arreglar la configuración de MinIO en el backend y solucionar el error 401 Unauthorized mediante la implementación de un interceptor de JWT.
+
+### 📝 Resumen de Tareas Realizadas:
+
+#### 1. **Middle Server: Configuración e Infraestructura**:
+   - ✅ Añadidas variables de MinIO (`MINIO_ENDPOINT`, etc.) al `config/index.js` y `.env`.
+   - ✅ Corregida la versión de `multer` en `package.json` de `2.1.1` (inválida) a `^1.4.5-lts.1`.
+   - ✅ Actualizado el modelo `Player` para incluir y sincronizar el `username`.
+   - ✅ Refactorizado `SocketHandler` para recuperar el `characterId` desde el estado de juego usando el `userId` del JWT.
+
+#### 2. **Frontend: Autenticación y Sincronización**:
+   - ✅ Implementado `authInterceptor` funcional para adjuntar automáticamente el JWT (`Bearer token`) a todas las peticiones HTTP salientes.
+   - ✅ Registrado el interceptor en `app.config.ts` mediante `withInterceptors`.
+   - ✅ Añadidas señales `userId` y `characterId` a `AuthService` para mejorar la gestión del estado de juego.
+   - ✅ Actualizada la lógica de `game:state-sync` en `game.component.ts` para mapear el objeto de jugadores y establecer el personaje local.
+   - ✅ Corregidos nombres de propiedades en el evento `game:battle-result` (`targetCharacterId`).
+
+#### 3. **Validación**:
+   - ✅ Verificada la compilación del frontend con `npx tsc --noEmit` (0 errores).
+   - ✅ Confirmada la correcta extracción del `userId` (claim `sub`) desde el JWT en el cliente.
+
+---
+
 ## [2026-05-07] - Frontend Sprint 4: Integración Real de Sockets y Feedback Visual (Sprint 4 Frontend)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Reemplazar mocks en el frontend con conexiones reales a Socket.IO, implementar feedback visual de combate dinámico y cargar estadísticas de clanes desde el Middle Server.
