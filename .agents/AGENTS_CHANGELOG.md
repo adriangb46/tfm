@@ -1,3 +1,31 @@
+## [2026-05-08] - Full Stack: Sincronización Real de Entrenamiento y Recursos
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver el fallo donde las tropas entrenadas no aparecían en la UI y sincronizar recursos (oro/sabiduría) y progreso de entrenamiento en tiempo real.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Frontend (Angular)**:
+   - ✅ **Modelo**: Actualizado `attack.types.ts` con el enum `TroopType` del servidor (`ATK`, `DEF`, `HEAL`, `SUPP`) y añadido `typeId` e `id` (trainingId) a la interfaz `Troop`.
+   - ✅ **Modelo**: Actualizada la interfaz `PlayerNode` en `game.model.ts` para incluir `troops`, `trainingQueue` y `clanId`, asegurando la compatibilidad con el estado del servidor.
+   - ✅ **Sincronización**: El signal `availableTroops` ahora es un `computed` que combina las tropas reales y la cola de entrenamiento del servidor, eliminando mocks estáticos.
+   - ✅ **Progreso en Tiempo Real**: Implementado un ticker (`setInterval`) que actualiza la señal `now` cada 500ms, permitiendo que las barras de progreso se animen suavemente basándose en el `completesAt` del servidor.
+   - ✅ **UI**: La barra de progreso sobre el botón "Ver Tropas" ahora refleja el estado real de la unidad activa en la cola.
+   - ✅ **Recursos**: El manejador de `game:state-sync` ahora sincroniza correctamente `economicCredits` (oro) y `researchCredits` (sabiduría).
+   - ✅ **i18n**: Actualizadas las traducciones de tipos de tropas para usar las nuevas categorías del servidor.
+   - ✅ **Limpieza**: Eliminados métodos de debug obsoletos y funciones de inicialización de tropas mock.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/game/modals/attack.types.ts` | **MODIFICADO** | Actualización de schemas y enums. |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Lógica de sincronización reactiva y ticker. |
+| `front/src/app/pages/game/modals/entrenar.modal.html` | **MODIFICADO** | Uso de nombres dinámicos de tropas. |
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Nuevas categorías de tropas. |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | New troop categories. |
+
+---
+
 ## [2026-05-08] - Frontend: Corrección de error NG0955 en Modal de Entrenamiento
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver el error `NG0955: Duplicated keys in track expression` que ocurría al abrir el modal de entrenamiento de tropas para clanes con múltiples unidades del mismo tipo (ej: Jarls con dos tipos de "DEF").
