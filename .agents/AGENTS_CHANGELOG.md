@@ -1,3 +1,44 @@
+## [2026-05-08] - Auditoría de Incongruencias y Sincronización Final
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Realizar una auditoría profunda del estado del proyecto frente a la arquitectura y asegurar la sincronización en tiempo real de las acciones.
+
+### 📝 Resumen de Tareas Realizadas:
+
+0. **Auditoría de Incongruencias (Proyecto Entero)**:
+   - ✅ **Análisis**: Revisión exhaustiva de `Middle Server`, `Frontend` y `DB Server` contra las reglas de `.agents`.
+   - ✅ **Documentación**: Rehecho el archivo `audit_incongruencias.md` (con fecha 2026-05-08) identificando 3 riesgos críticos y 5 inconsistencias estructurales.
+   - ✅ **Incongruencias Detectadas**: Identificada la fase "End" inalcanzable, la obsolescencia del ciclo de ventajas en la documentación y la falta de renovación automática del handshake JWT.
+
+2. **Seguridad y Observabilidad (Logger)**:
+   - ✅ **Migración**: Migración total de `console.log` a un sistema de logging estructurado en el Middle Server.
+   - ✅ **Custom Logger**: Implementado `src/utils/logger.js` que emula la API de `pino` (JSON en producción, Pretty-print en desarrollo) sin dependencias externas.
+   - ✅ **Refactor**: Reemplazados todos los logs en `index.js`, `socket-handler.js`, `time-wheel.js`, `sync-manager.js` y `config/index.js`.
+   - ✅ **Privacidad**: El logger de HTTP en `index.js` ahora sanitiza automáticamente campos sensibles como `password` y `secret`.
+
+3. **Middle Server (Node.js)**:
+   - ✅ **Sincronización**: Implementadas llamadas a `syncGameStateToAll` en todos los manejadores de acciones (`game:start`, `game:attack`, `game:train`, `game:research`). Ahora el servidor envía el estado completo filtrado por Fog of War inmediatamente después de cada acción exitosa.
+   - ✅ **Time Wheel**: Estandarizado el evento de actualización de recursos a `game:state-sync` (antes `game:state-update`) para que el frontend lo reconozca.
+   - ✅ **Time Wheel**: Añadida sincronización de estado completa tras finalizar investigaciones y entrenamientos de tropas.
+   - ✅ **Privacidad**: Optimización de tráfico; los eventos tácticos (`player:troop-trained`, `player:research-complete`) ahora se envían únicamente al jugador afectado mediante su `connectedSocketId`, reforzando la Niebla de Guerra.
+   - ✅ **Protocolo**: Corregido el nombre del evento de cambio de fase a `game:phase-changed` y ajustado el payload a `newPhase` para coincidir con el frontend.
+
+2. **Frontend (Angular)**:
+   - ✅ **Feedback Log**: Añadidos listeners para `player:troop-trained` y `player:research-complete` que insertan entradas descriptivas en el log de batalla cuando las tareas finalizan en el servidor.
+   - ✅ **Estabilidad**: Corregida la inconsistencia en el nombre de los eventos de cambio de fase y sincronización general, permitiendo que la UI reaccione en tiempo real.
+   - ✅ **i18n**: Añadidas nuevas claves de traducción para los estados de confirmación y finalización de reclutamiento e investigación.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Sincronización post-acción y corrección de eventos. |
+| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** | Sincronización en RESOURCE_TICK y finalización de tareas. |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Nuevos listeners para feedback de finalización. |
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Nuevas claves de log (complete/confirm). |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | New log keys (complete/confirm). |
+
+---
+
 ## [2026-05-08] - Full Stack: Sincronización Real de Entrenamiento y Recursos
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver el fallo donde las tropas entrenadas no aparecían en la UI y sincronizar recursos (oro/sabiduría) y progreso de entrenamiento en tiempo real.
