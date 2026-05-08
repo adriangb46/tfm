@@ -5195,3 +5195,38 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 | `front/src/app/pages/game/game.component.ts` | Modificado |
 
 \n---\n\n## [2026-05-08] Auditoría de Bugs y Deuda Técnica\n\n**Agente**: Antigravity (Google DeepMind)\n**Objetivo**: Buscar y documentar bugs, implementaciones faltantes y deuda técnica en el código actual.\n\n### 📝 Resumen de Hallazgos:\n- **HEAL no implementado**: Confirmado que la mecánica HEAL en `combat-resolver.js` no existe.\n- **Coordenadas hardcodeadas**: Encontradas en `game.component.ts` del frontend.\n- **Console.log**: Uso sobrante en `victory-checker.js` en lugar de `logger.js`.\n- **Renovación Handshake**: El JWT se renueva de forma reactiva tras un error 401, en lugar de proactivamente antes de que expire.\n- **Documentación obsoleta**: `MISSING_FEATURES.md` no reflejaba que el `DB_DUMP` ya fue migrado a eventos de `TimeWheel` en lugar de `setInterval`.\n\n### 🗂️ Archivos Creados:\n- Se creó un reporte en los artefactos locales del agente.
+
+---
+
+## [2026-05-08] Middle Server — Sanitización de Logs y Renovación Proactiva de Handshake
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Cerrar deuda técnica identificada en auditoría: eliminar `console.log` de rutas críticas e implementar renovación proactiva del JWT del Middle hacia el DB Server.
+
+### 📝 Resumen de Cambios:
+
+1. **Sanitización de Logs (`victory-checker.js`)**:
+   - Eliminados todos los usos de `console.log` y `console.error`.
+   - Reemplazados por llamadas estructuradas al servicio `logger` (`logger.info`, `logger.error`) con contexto en forma de objeto `{ gameId, winnerCharacterId, err }`.
+   - Añadido `import { logger }` al módulo.
+
+2. **Renovación Proactiva de JWT (`db-connector.js`)**:
+   - Añadida la constante `RENEWAL_MARGIN_MS` (5 minutos).
+   - Añadido `_renewalTimer` en el constructor para gestionar el timer.
+   - Nuevo método `_decodeJwtPayload(token)`: decodifica el payload del JWT sin verificar firma (seguro pues el token proviene del DB Server de confianza) para leer el claim `exp`.
+   - Nuevo método `_scheduleTokenRenewal(token)`: programa un `setTimeout` que llama a `performHandshake()` automáticamente 5 minutos antes de que expire el token. Cancela el timer previo antes de crear uno nuevo.
+   - `performHandshake()` llama a `_scheduleTokenRenewal()` tras cada handshake exitoso.
+   - La renovación reactiva ante 401 se mantiene como capa de seguridad adicional.
+
+3. **Documentación actualizada**:
+   - `MISSING_FEATURES.md`: Marcados como resueltos: DB_DUMP, Handshake Renewal, Sanitización de Logs. Corregido el estado de HEAL (comportamiento intencional).
+   - `audit_incongruencias.md`: Tachados los issues resueltos (Dumps, Handshake, Logs). Eliminados falsos positivos (coordenadas estáticas, HEAL intencional). Actualizada tabla de riesgos.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/game/engine/victory-checker.js` | Modificado |
+| `middle_server/src/db/db-connector.js` | Modificado |
+| `MISSING_FEATURES.md` | Modificado |
+| `audit_incongruencias.md` | Modificado |
