@@ -1,3 +1,39 @@
+## [2026-05-08] - Seguridad: Sanitización de Entradas en el Middle Server
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la sanitización de todas las entradas (payloads) recibidas por el `SocketHandler` desde el Frontend para cumplir con las reglas de seguridad y prevenir ataques XSS.
+
+### 📝 Resumen de Tareas Realizadas:
+1. **`sanitizer.js`**: Actualizado para exportar sus funciones utilizando sintaxis de módulos ES6 (`export { sanitizeInput }`).
+2. **`socket-handler.js`**: 
+    - Importada la función recursiva `sanitizeInput`.
+    - Inyectada la sanitización `payload = sanitizeInput(payload);` al inicio de todos los eventos de Socket.IO (`join_game`, `game:create`, `game:start`, `game:attack`, `game:send-log`, etc.). Esto asegura que cualquier cadena de texto (como `logEntry` o IDs maliciosos) pase por un escape básico de HTML antes de ser procesada por la lógica de juego o reenviada a la sala.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/utils/sanitizer.js` | **MODIFICADO** | Export ES6. |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Inyección de `sanitizeInput` en todos los listeners. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-08] - Proyecto: Actualización de Auditoría y Funcionalidades
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Rehacer los archivos de seguimiento y auditoría para reflejar el estado actual del proyecto, eliminando inconsistencias ya resueltas y precisando la deuda técnica restante.
+
+### 📝 Resumen de Tareas Realizadas:
+1. **`MISSING_FEATURES.md`**: Actualizado para marcar como completadas las fases `END`, las reglas de 2 jugadores y el `Victory Checker`. Se han precisado las tareas pendientes de notificaciones de ataque y lógica HEAL.
+2. **`audit_incongruencias.md`**: Eliminadas las incongruencias ya resueltas (fase End inalcanzable, falta de reglas de 2 jugadores). Se han mantenido y refinado los riesgos de infraestructura (Dumps, Handshake renewal) y documentación obsoleta.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `MISSING_FEATURES.md` | **MODIFICADO** | Estado real del MVP. |
+| `audit_incongruencias.md` | **MODIFICADO** | Auditoría actualizada. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
 ## [2026-05-08] - Frontend: Fix Compilación Angular (GamePhase & TranslatePipe)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Solucionar errores de compilación reportados por el compilador de Angular tras añadir el modal de ataque y el estado de fin de partida.
