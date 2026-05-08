@@ -1,3 +1,55 @@
+## [2026-05-08] - Frontend: Notificación y Reporte de Combate para Atacante
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar una notificación visual no intrusiva (Toast) en la interfaz de escritorio cuando un ataque finaliza con éxito, permitiendo ver el detalle completo del reporte de combate al hacer click.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Frontend (Angular)**:
+   - ✅ **Modelo y Estado**: Añadidos los signals `recentAttackResult` y `showAttackResultModal` a `game.component.ts`.
+   - ✅ **Socket Listener**: Modificado el evento `game:battle-result` para capturar cuando el usuario actual es el atacante. Al recibir el reporte, se establece en el estado y se auto-oculta pasados 15 segundos si no se interactúa con él.
+   - ✅ **Componente Toast**: Creado un "Toast" flotante en `game.component.html` en la esquina inferior derecha. 
+   - ✅ **Responsive Design**: Se usó la clase `.desktop-only` y `@media (min-width: 1024px)` para asegurar que esta notificación **solo aparezca en ordenadores**, respetando el diseño limpio en dispositivos móviles.
+   - ✅ **Modal de Reporte**: Creado el componente standalone `AttackResultModalComponent` (`attack-result.modal.ts`) que muestra el daño infligido a la capital, tropas perdidas, tropas destruidas, experiencia de investigación ganada, y una alerta especial si el rival ha sido eliminado de la partida.
+
+### 🗂️ Archivos Modificados/Creados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/game/modals/attack-result.modal.ts` | **CREADO** | Componente Modal de Reporte de Combate. |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Lógica de toast y modals, captura de datos. |
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Template del Toast. |
+| `front/src/app/pages/game/game.component.scss` | **MODIFICADO** | Estilos CSS, animaciones y media queries para el Toast. |
+
+---
+
+## [2026-05-08] - Full Stack: Abandono de Partida y Corrección de Fases Finales
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la mecánica de abandono de partidas y corregir la transición a las fases finales (`END` y `FINISHED`) según las especificaciones de arquitectura.
+
+### 📝 Resumen de Tareas Realizadas:
+
+1. **Backend (Node.js)**:
+   - ✅ Implementado `abandonGame` en `game-actions.js`. Al abandonar, el jugador es eliminado (`capitalHealth = 0`) y sus tropas en la capital son destruidas, pero las tropas en viaje continúan su ataque.
+   - ✅ Añadido handler para el evento socket `game:abandon` en `socket-handler.js` que procesa el abandono, re-evalúa si hay un ganador y notifica a la sala (`game:player-eliminated` con reason `abandoned`).
+   - ✅ **Corrección de Fases**: Modificado `victory-checker.js` para transicionar correctamente a `END` cuando quedan exactamente 2 jugadores, y a `FINISHED` cuando queda 1 o 0 jugadores, calculando el ganador.
+   - ✅ **Regla de 10 minutos**: En partidas de 2 jugadores, la fase de guerra durará 10 minutos antes de transicionar a la batalla final (`END`). Se programó `PHASE_TRANSITION_END` en el `time-wheel.js`.
+
+2. **Frontend (Angular)**:
+   - ✅ **Game Component**: En `onConfirmAbandon()`, ahora se emite el evento real `game:abandon` con el ID de la partida al backend antes de volver al lobby.
+   - ✅ **Fin de Partida**: Añadido soporte para recibir el evento `game:ended` desde el backend, cambiando la fase a `FINISHED` y mostrando una notificación de victoria o derrota con redirección al lobby tras 3 segundos.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** | Lógica de abandono. |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Evento `game:abandon`. |
+| `middle_server/src/game/engine/victory-checker.js` | **MODIFICADO** | Corrección de transiciones de fase. |
+| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** | Timer para END en partidas de 2 jugadores. |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Emisión de abandono y alerta de finalización. |
+
+---
+
 ## [2026-05-08] - Auditoría de Incongruencias y Sincronización Final
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Realizar una auditoría profunda del estado del proyecto frente a la arquitectura y asegurar la sincronización en tiempo real de las acciones.
