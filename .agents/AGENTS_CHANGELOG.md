@@ -1,3 +1,13 @@
+## [2026-05-08] - Frontend: Fix Compilación Angular (GamePhase & TranslatePipe)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Solucionar errores de compilación reportados por el compilador de Angular tras añadir el modal de ataque y el estado de fin de partida.
+
+### 📝 Resumen de Tareas Realizadas:
+1. Añadido el estado `'FINISHED'` al tipo `GamePhase` en `game.model.ts` para resolver el error TS2345 y permitir la asignación correcta al terminar la partida.
+2. Eliminado el importe sin usar de `TranslatePipe` en `attack-result.modal.ts` para solucionar el warning NG8113.
+
+---
+
 ## [2026-05-08] - Frontend: Notificación y Reporte de Combate para Atacante
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar una notificación visual no intrusiva (Toast) en la interfaz de escritorio cuando un ataque finaliza con éxito, permitiendo ver el detalle completo del reporte de combate al hacer click.
@@ -5061,3 +5071,28 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 | `middle_server/scripts/verify-clans-sync.js` | **CREADO** |
 | `middle_server/package.json` | Modificado |
 | `.github/workflows/main-ci.yml` | Modificado |
+
+---
+
+## [2026-05-08] Frontend & Middle Server — Log de Juego Común para la Sala
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Hacer que el log de juego sea común para toda la sala, de manera que todos los jugadores vean las acciones registradas por cualquier otro jugador, en lugar de solo las suyas propias.
+
+### 📝 Resumen de Cambios:
+
+1. **Backend (Middle Server)**:
+   - Se añadió un nuevo evento `game:send-log` en `socket-handler.js` que recibe un log generado por un cliente y lo retransmite a toda la sala mediante el evento `game:new-log`.
+2. **Frontend (Game Component)**:
+   - Se refactorizó la función `addLogEntry` en dos funciones separadas: `addLocalLogEntry` (para eventos que ya son globales y enviados por el servidor, como cambios de fase) y `broadcastLogEntry` (para acciones iniciadas localmente como entrenar o investigar).
+   - `broadcastLogEntry` añade el log localmente y lo emite al servidor.
+   - Se agregó un listener para el evento `game:new-log` que añade los logs entrantes a la lista `gameLogs` (evitando duplicados si el propio cliente lo emitió).
+   - Se actualizaron las llamadas en los listeners y acciones del usuario para usar la función adecuada y compartir las acciones de entrenamiento, investigación y ataques al resto de los jugadores de la sala de forma instantánea.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/socket/socket-handler.js` | Modificado |
+| `front/src/app/pages/game/game.component.ts` | Modificado |
+
