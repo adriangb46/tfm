@@ -1,3 +1,65 @@
+## [2026-05-08] - Proyecto: Limpieza de Código y Mocks
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Realizar el "Paso 5" del plan de limpieza de deuda técnica, purgar comentarios obsoletos y refinar los métodos de desarrollo.
+
+### 📝 Resumen de Tareas Realizadas:
+1. **Limpieza de TODOs Obsoletos**:
+   - `middle_server/src/game/engine/time-wheel.js`: Eliminados TODOs referentes a mecánicas ya implementadas (volcados y resolución de tropas).
+   - `middle_server/src/socket/socket-handler.js`: Eliminado TODO sobre el envío del estado a la sala completa (implementado en un paso anterior).
+   - `middle_server/src/game/state/sync-manager.js`: Retirado el TODO sobre el historial de battleEvents para reflejar que queda en backlog de forma oficial.
+2. **Refinamiento de Mocks (`game.component.ts`)**:
+   - **No Eliminados**: Tras revisión manual, se han conservado los métodos `debugTogglePhase` y `debugAddPlayer` para permitir probar la UI usando únicamente `ng serve`.
+   - **Corrección de Seguridad (Type-Safety)**: Se adaptaron los mocks para que cumplan con la interfaz `PlayerNode` más estricta (añadiendo arrays vacíos a `troops`, `trainingQueue` y `unlockedResearches`). Esto evita errores silenciosos si la UI intenta leer propiedades de tropas en los jugadores mockeados.
+3. **Control de Calidad**:
+   - Compilación estática de TypeScript en el FrontEnd (`npx tsc --noEmit`) superada con 0 errores.
+   - Revisión general de "orphaned imports".
+
+### 🗂️ Archivos Modificados/Creados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** | Limpieza de doc TODOs |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Limpieza de comentarios obsoletos |
+| `middle_server/src/game/state/sync-manager.js` | **MODIFICADO** | Limpieza de comentario sobre combat |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Refactorización de mocks |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-08] - Middle Server & Frontend: Resolución de Deuda Técnica y Logs
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la limpieza de logs en producción, resolver la sincronización del Handshake JWT, centralizar volcados de DB en el TimeWheel y estandarizar el casing de fases.
+
+### 📝 Resumen de Tareas Realizadas:
+1. **Limpieza de Logs (Consoles)**:
+   - Eliminados o comentados múltiples `console.log`, `console.warn` y `console.error` en `front/src/app/core/game/socket.service.ts`, `front/src/app/pages/game/game.component.ts` y `front/src/app/pages/user-config/user-config.component.ts`.
+2. **Sincronización del Handshake JWT**:
+   - `middle_server/src/db/db-connector.js`: Modificado `fetchWithAuth` para atrapar automáticamente el código HTTP `401 Unauthorized`, reintentar `performHandshake()` y volver a lanzar la petición con el nuevo token.
+3. **Centralización de Volcados de Base de Datos**:
+   - `middle_server/src/game/state/sync-manager.js`: Eliminados los temporizadores `setInterval` (`startPeriodicSync` y `startPeriodicAnalyticsSync`).
+   - `middle_server/src/game/engine/time-wheel.js`: Modificado el bucle `_processTick` para detectar nuevas partidas y programar su primer `DB_DUMP_POSTGRES` y `DB_DUMP_MONGODB` inicial.
+   - `middle_server/src/game/engine/time-wheel.js`: Implementados los handlers de volcado en `_processEvent` para ejecutar la lógica de `dbConnector` y re-encolar el siguiente volcado.
+   - `middle_server/index.js`: Eliminada la llamada obsoleta a `startPeriodicSync()`.
+4. **Estandarización de Casing en Fases de Juego**:
+   - `middle_server/src/models/game.js`: Forzado el uso de `.toUpperCase()` al devolver la fase en `toJSON()`.
+   - `middle_server/src/game/state/sync-manager.js`: Forzado el uso de `.toLowerCase()` en `_rehydrateFromStateJson` para mantener consistencia interna, y `.toUpperCase()` en la analítica.
+   - `middle_server/src/game/engine/time-wheel.js` y `socket-handler.js`: Emisión del evento `game:phase-changed` siempre en MAYÚSCULAS (`WAR`, `END`, `PREPARATION`) para estar en línea con los enums del DB Server.
+
+### 🗂️ Archivos Modificados/Creados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/core/game/socket.service.ts` | **MODIFICADO** | Limpieza de consoles |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Limpieza de consoles |
+| `front/src/app/pages/user-config/user-config.component.ts` | **MODIFICADO** | Limpieza de consoles |
+| `middle_server/src/db/db-connector.js` | **MODIFICADO** | Handshake retry en 401 |
+| `middle_server/src/game/state/sync-manager.js` | **MODIFICADO** | Eliminado setInterval |
+| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** | Volcados movidos al engine |
+| `middle_server/index.js` | **MODIFICADO** | Eliminada inicialización de syncManager |
+| `middle_server/src/models/game.js` | **MODIFICADO** | Casing toUpperCase en toJSON |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Casing de phase-changed |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
 ## [2026-05-08] - Seguridad: Sanitización de Entradas en el Middle Server
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la sanitización de todas las entradas (payloads) recibidas por el `SocketHandler` desde el Frontend para cumplir con las reglas de seguridad y prevenir ataques XSS.
