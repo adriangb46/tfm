@@ -1,3 +1,83 @@
+## [2026-05-09] - Full Stack: Fix Cambio de Email y Contraseña en Pantalla de Configuración
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Implementar la funcionalidad real para el cambio de contraseña y de email en la pantalla de configuración, sustituyendo mocks por llamadas a las tres capas de la aplicación con validación de seguridad (security.md).
+
+### 🐛 Causa Raíz:
+1. `cambiar-contrasena.modal.ts` usaba un `setTimeout` simulado que mostraba éxito automáticamente en 1.5s.
+2. `user-config.component.ts` tenía la función `onSave()` vacía y el email no se precargaba (siempre aparecía vacío).
+3. `user-config.component.html` escuchaba `(closeModal)` en lugar de `(closed)`, impidiendo que el modal de contraseña se cerrara.
+4. No existían endpoints para actualizar contraseña o email ni en DB Server ni en Middle Server.
+
+### 📝 Solución Implementada:
+
+1. **DB Server (Java)**:
+   - Creados `ChangePasswordRequestDto` (con validación de tamaño mínimo) y `UpdateEmailRequestDto` (con validación de formato).
+   - Añadidos `changePassword` y `updateEmail` en `UserService` y `UserServiceImpl` (el cambio de contraseña requiere verificar la actual con BCrypt).
+   - Expuestos los endpoints HTTP `PUT /internal/users/{id}/password` y `PUT /internal/users/{id}/email` protegidos en el `UserController`.
+
+2. **Middle Server (Node.js)**:
+   - Ampliado `db-connector.js` con las llamadas a los nuevos endpoints internos.
+   - Creado `profile-controller.js` con los manejadores para `getProfile`, `changePassword` y `updateEmail`.
+   - Modificado `routes.js` para exponer estas rutas de forma pública bajo autenticación.
+
+3. **Frontend (Angular)**:
+   - Añadidos métodos `getProfile()`, `changePassword()` y `updateEmail()` a `auth-api.service.ts`.
+   - Modificado `user-config.component.ts` para obtener el perfil mediante `ngOnInit` e implementar lógica real en `onSave()`.
+   - Modificado `cambiar-contrasena.modal.ts` para consumir el endpoint real, controlando errores 401.
+   - Solucionado el bug en `user-config.component.html` que impedía cerrar el modal de contraseña.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `db_back/src/main/java/com/tfm/db_back/api/dto/ChangePasswordRequestDto.java` | **CREADO** | |
+| `db_back/src/main/java/com/tfm/db_back/api/dto/UpdateEmailRequestDto.java` | **CREADO** | |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserService.java` | **MODIFICADO** | |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java` | **MODIFICADO** | |
+| `db_back/src/main/java/com/tfm/db_back/api/UserController.java` | **MODIFICADO** | |
+| `middle_server/src/db/db-connector.js` | **MODIFICADO** | |
+| `middle_server/src/http/profile-controller.js` | **CREADO** | |
+| `middle_server/src/http/routes.js` | **MODIFICADO** | |
+| `front/src/app/core/auth/auth-api.service.ts` | **MODIFICADO** | |
+| `front/src/app/pages/user-config/user-config.component.ts` | **MODIFICADO** | |
+| `front/src/app/pages/user-config/user-config.component.html` | **MODIFICADO** | |
+| `front/src/app/pages/user-config/modals/cambiar-contrasena.modal.ts` | **MODIFICADO** | |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-09] - Full Stack: Fix Bug Abandonar Partida desde Lobby
+**Objetivo**: Corregir el bug por el cual pulsar "Abandonar" en el lobby no tenía efecto persistente, ya que el frontend solo borraba la tarjeta del array local sin comunicarlo al servidor.
+
+### 🐛 Causa Raíz:
+`onLeaveGame()` en `lobby-page.component.ts` actualizaba únicamente el signal `activeGames` en cliente, sin emitir ningún evento socket ni llamar a ningún endpoint. Al recargar, `loadGames()` volvía a obtener la partida del servidor, que nunca recibió la orden de salida.
+
+### 📝 Solución Implementada:
+
+1. **Middle Server (Node.js) — Nuevo evento `lobby:leave`** (`socket-handler.js`):
+   - Añadido handler para el evento `lobby:leave` que permite salir de una partida en fase `waiting` sin necesitar estar en la sala socket (el jugador no hace `join_game` desde el lobby).
+   - Busca al jugador por `userId` y lo elimina del mapa `game.players`.
+   - Si la partida queda vacía, la elimina del `gameStore`.
+   - Emite `lobby:left` al cliente como confirmación, o `lobby:leave-error` si la partida ya ha comenzado.
+
+2. **Frontend (Angular) — `GameService.leaveGame()`** (`game.service.ts`):
+   - Añadido método `leaveGame(gameId)` que conecta el socket, emite `lobby:leave` y espera `lobby:left` o `lobby:leave-error` con un `race()` de RxJS.
+   - Si la partida abandonada era el `gameContext` activo, lo limpia de `sessionStorage`.
+
+3. **Frontend (Angular) — `onLeaveGame()`** (`lobby-page.component.ts`):
+   - Refactorizado para llamar a `gameService.leaveGame()` antes de modificar el array local.
+   - La tarjeta solo desaparece tras confirmación del servidor (`next`).
+   - Si hay error (ej: partida ya en curso), muestra alerta con el mensaje real.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Nuevo evento `lobby:leave` y `lobby:left` |
+| `front/src/app/core/game/game.service.ts` | **MODIFICADO** | Nuevo método `leaveGame()` + import `race` de RxJS |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** | `onLeaveGame` comunica al servidor antes de actualizar la UI |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
 ## [2026-05-09] - Frontend: Refinamiento de la Pantalla de Estadísticas (Refine UI)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Aplicar ajustes responsivos para móvil a la pantalla de estadísticas (`EstadisticasComponent`) según la iteración en el preview.
