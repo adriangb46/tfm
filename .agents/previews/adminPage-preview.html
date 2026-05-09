@@ -338,6 +338,83 @@
             border: 1px solid var(--color-error);
         }
         
+        /* ========================
+           RESPONSIVE (Mobile)
+           ======================== */
+        @media (max-width: 900px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .search-wrapper {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                overflow: auto;
+                height: auto;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--color-border-default);
+                padding: 20px;
+            }
+            .sidebar h2 {
+                margin-bottom: 20px;
+            }
+            .global-stats {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            .stat-card {
+                flex: 1 1 120px;
+                padding: 15px 10px;
+            }
+            .stat-card .stat-value {
+                font-size: 2rem;
+            }
+            .main-content {
+                padding: 20px;
+                gap: 30px;
+                overflow: visible;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .bans-container {
+                padding: 20px;
+            }
+            .bans-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+            .ban-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+            .search-wrapper {
+                width: 100%;
+            }
+            .table-responsive-wrapper {
+                overflow-x: auto;
+                width: 100%;
+                -webkit-overflow-scrolling: touch;
+            }
+            .bans-table {
+                min-width: 600px;
+            }
+            .bans-table th, .bans-table td {
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -426,40 +503,42 @@
             </div>
 
             <!-- Tabla de baneos activos sólamente -->
-            <table class="bans-table">
-                <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Motivo</th>
-                        <th>Expira en</th>
-                        <th>Estado</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Ragnar_Troll</strong></td>
-                        <td>Insultos reiterados en el chat</td>
-                        <td>48 horas</td>
-                        <td><span class="badge badge-active">Activo</span></td>
-                        <td><button class="btn">LEVANTAR BAN</button></td>
-                    </tr>
-                    <tr>
-                        <td><strong>HackerViking</strong></td>
-                        <td>Exploit de recursos</td>
-                        <td>Permanente</td>
-                        <td><span class="badge badge-active">Activo</span></td>
-                        <td><button class="btn">LEVANTAR BAN</button></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Bot123</strong></td>
-                        <td>Uso de bots</td>
-                        <td>7 días</td>
-                        <td><span class="badge badge-active">Activo</span></td>
-                        <td><button class="btn">LEVANTAR BAN</button></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive-wrapper">
+                <table class="bans-table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Motivo</th>
+                            <th>Expira en</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Ragnar_Troll</strong></td>
+                            <td>Insultos reiterados en el chat</td>
+                            <td>48 horas</td>
+                            <td><span class="badge badge-active">Activo</span></td>
+                            <td><button class="btn">LEVANTAR BAN</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>HackerViking</strong></td>
+                            <td>Exploit de recursos</td>
+                            <td>Permanente</td>
+                            <td><span class="badge badge-active">Activo</span></td>
+                            <td><button class="btn">LEVANTAR BAN</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bot123</strong></td>
+                            <td>Uso de bots</td>
+                            <td>7 días</td>
+                            <td><span class="badge badge-active">Activo</span></td>
+                            <td><button class="btn">LEVANTAR BAN</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
     </main>

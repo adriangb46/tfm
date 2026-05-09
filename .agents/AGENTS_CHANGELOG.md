@@ -1,3 +1,20 @@
+## [2026-05-09] - Frontend: Refinamiento de la Pantalla de Administración (Refine UI)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Aplicar ajustes responsivos para móvil a la pantalla de administración (`AdminPageComponent`) según la iteración en el preview.
+
+### 📝 Resumen de Tareas Realizadas:
+1. **Preview**: Ajustados los márgenes, tamaños y estructura de elementos (menú lateral, tarjetas, tablas) mediante CSS Media Queries para asegurar la correcta legibilidad y adaptabilidad en pantallas móviles (hasta 768px). La tabla de baneos ahora cuenta con un contenedor con scroll horizontal (`overflow-x: auto`) para no romper el layout.
+2. **AdminPageComponent SCSS**: Integradas las mismas reglas CSS aprobadas en el HTML preview a la hoja de estilos de producción (`admin-page.component.scss`) bajo el bloque `@include mobile` y ajustado el bloque `@include tablet`.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/admin-page/admin-page.component.scss` | **MODIFICADO** | Integración de ajustes responsivos al diseño móvil/tablet. |
+| `.agents/previews/adminPage-preview.html` | **MODIFICADO** | Adición de media queries para iteración visual móvil. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
 ## [2026-05-09] - Full Stack: Habilitación de Pantallas de Estadísticas y Administración (Oracle)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Conectar las pantallas de "Oracle" (Admin) y "Sagas" (Estadísticas) al backend real, eliminando mocks y asegurando la persistencia y seguridad de los datos.
