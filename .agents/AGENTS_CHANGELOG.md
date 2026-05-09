@@ -1,3 +1,45 @@
+## [2026-05-09] - Full Stack: Habilitación de Pantallas de Estadísticas y Administración (Oracle)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Conectar las pantallas de "Oracle" (Admin) y "Sagas" (Estadísticas) al backend real, eliminando mocks y asegurando la persistencia y seguridad de los datos.
+
+### 📝 Solución Implementada:
+
+1. **DB Server (Spring Boot)**:
+   - ✅ **Migración Flyway**: Creada `V5__add_is_banned_to_users.sql` para añadir soporte de baneo en la tabla `users`.
+   - ✅ **Entidades y DTOs**: Actualizada la entidad `User` y creados `AdminStatsResponseDto` y `UserStatsResponseDto`.
+   - ✅ **Lógica de Administración**: Implementado `AdminController` para estadísticas globales, listado de usuarios y gestión de baneos.
+   - ✅ **Lógica de Analítica**: Implementado el cálculo de estadísticas históricas (victorias, ataques, tropas, tiempo de juego) consultando MongoDB (`AnalyticsService`).
+
+2. **Middle Server (Node.js)**:
+   - ✅ **Orquestación**: Creados `admin-controller.js` y `stats-controller.js` para servir como puente hacia el DB Server.
+   - ✅ **Métricas en Vivo**: Integración de datos en tiempo real (usuarios conectados vía Socket.IO y partidas activas en `gameStore`) con los datos persistentes del DB Server.
+   - ✅ **Seguridad**: Implementado `roleMiddleware` para restringir el acceso a las rutas de administración únicamente al rol `ADMIN`.
+
+3. **Frontend (Angular)**:
+   - ✅ **Servicios API**: Creados `AdminApiService` y `StatisticsApiService` para centralizar las llamadas HTTP.
+   - ✅ **Componentes**: Refactorizados `AdminPageComponent` y `StatisticsComponent` para consumir datos reales mediante Signals de Angular.
+   - ✅ **i18n**: Internacionalización completa de ambas pantallas en español e inglés, siguiendo la temática vikinga ("Oracle" para Admin, "Sagas" para Estadísticas).
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `db_back/src/main/resources/db/migration/V5__add_is_banned_to_users.sql` | **CREADO** | SQL de migración Flyway. |
+| `db_back/src/main/java/com/tfm/db_back/domain/model/User.java` | **MODIFICADO** | Campo `isBanned` añadido. |
+| `db_back/src/main/java/com/tfm/db_back/api/AdminController.java` | **CREADO** | Endpoints de admin internos. |
+| `middle_server/src/http/admin-controller.js` | **CREADO** | Lógica de admin (vía/proxy). |
+| `middle_server/src/http/stats-controller.js` | **CREADO** | Lógica de estadísticas de usuario. |
+| `middle_server/src/http/routes.js` | **MODIFICADO** | Registro de nuevas rutas y protección por rol. |
+| `front/src/app/core/admin/admin-api.service.ts` | **CREADO** | Servicio HTTP de administración. |
+| `front/src/app/core/statistics/statistics-api.service.ts` | **CREADO** | Servicio HTTP de estadísticas. |
+| `front/src/app/pages/admin-page/admin-page.component.ts` | **MODIFICADO** | Conexión a API y lógica de señales. |
+| `front/src/app/pages/admin-page/admin-page.component.html` | **MODIFICADO** | Traducción y binding a datos reales. |
+| `front/src/app/pages/statistics/statistics.component.ts` | **MODIFICADO** | Conexión a API y lógica de señales. |
+| `front/src/app/pages/statistics/statistics.component.html` | **MODIFICADO** | Traducción y binding a datos reales. |
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Claves para Oracle (Admin) y Sagas (Stats). |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Claves para Oracle (Admin) y Sagas (Stats). |
+
+---
+
 ## [2026-05-09] - Frontend: Corrección de Internacionalización (i18n)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver los problemas donde aparecían rutas de traducción (paths) en lugar de palabras y completar la internacionalización de cadenas hardcodeadas.
