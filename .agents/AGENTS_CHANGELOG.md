@@ -1,3 +1,54 @@
+## [2026-05-09] - Frontend: Corrección de Internacionalización (i18n)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver los problemas donde aparecían rutas de traducción (paths) en lugar de palabras y completar la internacionalización de cadenas hardcodeadas.
+
+### 🐛 Causa Raíz:
+1. Los modales del Lobby (`CrearPartidaModal`, `UnirsePartidaModal`, `SalaLlenaModal`) utilizaban claves como `MODALS.CREATE.TITLE` omitiendo el prefijo `LOBBY.` requerido por el diccionario.
+2. Faltaban múltiples claves en `es.ts` y `en.ts` para logs de batalla (ataque recibido, victoria/derrota, eliminación de jugador) y para la fase de juego `FINISHED`.
+3. El modal de Reporte de Combate (`attack-result.modal.ts`) y la pantalla de Configuración de Usuario tenían textos hardcodeados en español.
+4. El modal de Reglas (`reglas.modal.html`) utilizaba rutas incorrectas (`GAME.RULES` en lugar de `GAME.MODALS.RULES`) y nombres de clanes obsoletos en su diagrama SVG.
+
+### 📝 Solución Implementada:
+
+1. **Diccionarios de Idiomas (`es.ts`, `en.ts`)**:
+   - ✅ Añadidas claves faltantes para logs de batalla con soporte para parámetros (`{{ attacker }}`, `{{ target }}`).
+   - ✅ Añadidas claves para el reporte de combate y notificaciones toast.
+   - ✅ Añadidas claves para las secciones de Seguridad e Idioma en Configuración.
+   - ✅ Estandarizada la fase `FINISHED` (antes mezclada con `END`).
+
+2. **Modales de Lobby**:
+   - ✅ Refactorizados los 3 modales de lobby para usar la ruta completa `LOBBY.MODALS.*`.
+
+3. **Interfaz de Juego**:
+   - ✅ Internacionalizado el Toast de notificación de ataque finalizado.
+   - ✅ Refactorizado el modal `AttackResultModalComponent` para usar `TranslatePipe` y claves dinámicas, eliminando el hardcoding.
+   - ✅ Corregida la lógica de logs en `game.component.ts` para asegurar que todos los eventos usen `i18n.translate()`.
+   - ✅ Internacionalizado el mensaje de `alert()` al terminar la partida.
+
+4. **Reglas y Configuración**:
+   - ✅ Corregidas todas las rutas de traducción en `reglas.modal.html`.
+   - ✅ Actualizado el diagrama de ventajas de clanes para usar los nombres actuales (`FURY`, `IRON`, `DIVINE`, `SHADOW`, `STORM`, `FROST`).
+   - ✅ Internacionalizados todos los labels y descripciones en `user-config.component.html` y `auth.component.html`.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Adición de >20 claves nuevas. |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Adición de >20 claves nuevas. |
+| `front/src/app/pages/lobby-page/modals/crear-partida-modal/crear-partida-modal.component.html` | **MODIFICADO** | Corrección de prefijos. |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.html` | **MODIFICADO** | Corrección de prefijos. |
+| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.html` | **MODIFICADO** | Corrección de prefijos. |
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Toast internacionalizado. |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Alerta final internacionalizada. |
+| `front/src/app/pages/game/modals/attack-result.modal.ts` | **MODIFICADO** | Template internacionalizado + TranslatePipe. |
+| `front/src/app/pages/game/modals/reglas.modal.html` | **MODIFICADO** | Corrección de rutas y diagrama SVG. |
+| `front/src/app/pages/user-config/user-config.component.html` | **MODIFICADO** | Eliminación de hardcoding. |
+| `front/src/app/shared/components/auth/auth.component.html` | **MODIFICADO** | Label de Email internacionalizado. |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** | Uso de `LEAVE_ERROR` traducido. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
 ## [2026-05-09] - Full Stack: Fix Cambio de Email y Contraseña en Pantalla de Configuración
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la funcionalidad real para el cambio de contraseña y de email en la pantalla de configuración, sustituyendo mocks por llamadas a las tres capas de la aplicación con validación de seguridad (security.md).
