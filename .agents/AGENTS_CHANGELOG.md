@@ -1,3 +1,20 @@
+## [2026-05-09] - Frontend: Refinamiento de la Pantalla de Estadísticas (Refine UI)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Aplicar ajustes responsivos para móvil a la pantalla de estadísticas (`EstadisticasComponent`) según la iteración en el preview.
+
+### 📝 Resumen de Tareas Realizadas:
+1. **Preview**: Ajustados los tamaños de fuente (mediante `clamp` y `@media` query) y el espaciado para que la información (etiquetas y valores) se mantenga en una sola línea en dispositivos móviles sin desbordar la pantalla, utilizando `white-space: nowrap`.
+2. **EstadisticasComponent SCSS**: Integradas las mismas reglas CSS aprobadas en el HTML preview a la hoja de estilos de producción (`@media (max-width: 600px)`) para asegurar que `.stat-item`, `.stat-icon-wrapper` y la tipografía sean fluidas en pantallas estrechas.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/statistics/statistics.component.scss` | **MODIFICADO** | Adición de `@media` para ajustar padding y forzar a una línea los textos en móvil. |
+| `.agents/previews/estadisticas-preview.html` | **MODIFICADO** | Reconstrucción visual iterativa para móvil. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
 ## [2026-05-08] - Frontend: Refinamiento de Interfaz de Juego (Refine UI)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Aplicar ajustes de UI responsivos en el `GamePageComponent` finalizando la iteración de `/refine-ui` solicitada por el usuario.
