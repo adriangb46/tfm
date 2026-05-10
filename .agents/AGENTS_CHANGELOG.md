@@ -1,3 +1,57 @@
+## [2026-05-10] - Seguridad: Implementación de Sistema de Baneos y Control de Acceso
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Garantizar que los usuarios baneados sean expulsados inmediatamente de sus sesiones activas y se les deniegue el acceso futuro, cumpliendo con los requisitos de seguridad.
+
+### 📝 Resumen de Cambios:
+1. **DB Server (Spring Boot)**:
+   - ✅ **Excepciones**: Creada `ForbiddenException` para mapear errores 403.
+   - ✅ **Global Error Handler**: Añadido soporte para capturar y devolver errores 403 consistentes.
+   - ✅ **Autenticación**: Actualizado `verifyCredentials` para lanzar una excepción si el usuario tiene el flag `isBanned` activo.
+2. **Middle Server (Node.js)**:
+   - ✅ **Middleware**: Actualizados `socketAuthMiddleware` y `httpAuthMiddleware` para verificar el estado de baneo contra un conjunto en **Redis** (`banned_users`).
+   - ✅ **Controlador de Login**: Gestión del error 403 del DB Server para informar al cliente del estado de baneo.
+   - ✅ **Controlador de Admin**: La acción de banear ahora sincroniza con Redis y emite un evento de desconexión forzosa (`user:banned`) a todos los sockets del usuario.
+3. **Frontend (Angular)**:
+   - ✅ **Traducciones**: Añadidas claves de internacionalización para mensajes de acceso denegado y expulsión en español e inglés.
+   - ✅ **Lógica de Login**: Mejorado el feedback en pantalla cuando un usuario baneado intenta entrar.
+   - ✅ **Socket Service**: Implementado listener para el evento `user:banned` que limpia la sesión local, muestra una alerta y redirige al inicio de forma inmediata.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `db_back/src/main/java/com/tfm/db_back/domain/exception/ForbiddenException.java` | **CREADO** | Nueva excepción 403. |
+| `db_back/src/main/java/com/tfm/db_back/api/GlobalExceptionHandler.java` | **MODIFICADO** | Handler para ForbiddenException. |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java` | **MODIFICADO** | Check de baneo en login. |
+| `middle_server/src/http/auth-controller.js` | **MODIFICADO** | Manejo de 403 en login. |
+| `middle_server/src/http/admin-controller.js` | **MODIFICADO** | Expulsión de sockets y Redis sync. |
+| `middle_server/src/middleware/auth.js` | **MODIFICADO** | Check de Redis en middlewares. |
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Traducciones de baneo. |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Traducciones de baneo. |
+| `front/src/app/shared/components/auth/auth.component.ts` | **MODIFICADO** | Feedback visual de baneo. |
+| `front/src/app/core/game/socket.service.ts` | **MODIFICADO** | Listener de expulsión forzosa. |
+
+---
+
+## [2026-05-10] - Full Stack: Implementación de Duración de Partida en Estadísticas
+**Agente**: Antigravity (Google Deepmind)
+**Objetivo**: Corregir el cálculo del "Tiempo Jugado" para que refleje la duración total de la partida en lugar del tiempo de conexión individual del jugador.
+
+### 📝 Resumen de Cambios:
+1. **Middle Server**:
+   - ✅ **Modelo de Juego**: Añadido campo `endedAt` a la clase `Game` para registrar el fin de la partida.
+   - ✅ **Transiciones**: La fase `FINISHED` ahora captura automáticamente el timestamp de finalización.
+   - ✅ **Estadísticas**: El `SyncManager` calcula ahora el `timePlayedMs` como la diferencia entre el inicio y el fin de la partida (o la hora actual si sigue en curso) para todos los participantes.
+   - ✅ **Persistencia**: Sincronizado el campo `endedAt` tanto en la rehidratación desde JSON como desde los DTOs de la base de datos.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/models/game.js` | **MODIFICADO** | Adición de `endedAt` y lógica en `setPhase`. |
+| `middle_server/src/game/state/sync-manager.js` | **MODIFICADO** | Cálculo de duración de partida para analíticas. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
 ## [2026-05-10] - Frontend: Internacionalización Completa de Modales y Componentes de Juego
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Realizar una auditoría final y completar la internacionalización de todas las cadenas hardcodeadas en los modales de juego, indicadores de fase, herramientas de depuración y navegación.
