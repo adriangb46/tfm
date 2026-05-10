@@ -1,3 +1,107 @@
+## [2026-05-10] - Middle Server: Volcados Forzados al Finalizar Partida
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que las estadísticas de las partidas (MongoDB) y el estado final (PostgreSQL) se capturen siempre, incluso en partidas de corta duración (< 15 min), forzando volcados inmediatos al terminar.
+
+### 📝 Resumen de Cambios:
+1. **Middle Server (Motor de Juego)**:
+   - ✅ **Volcados Forzados**: Implementada la función interna `_performFinalDumps(game)` en `victory-checker.js`.
+   - ✅ **Fase FINISHED**: Al detectar un ganador o empate, se lanzan volcados inmediatos a PostgreSQL (estado) y MongoDB (analíticas) sin esperar a los intervalos del TimeWheel.
+   - ✅ **Fase END**: Se realiza un volcado intermedio al transicionar a la fase final ( Showdown) para asegurar que el progreso hasta ese punto quede registrado.
+   - ✅ **Resiliencia**: Los volcados se intentan incluso si la notificación de fin de partida (`endGame`) al DB Server falla, garantizando la recolección de estadísticas en escenarios de error parcial.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/game/engine/victory-checker.js` | **MODIFICADO** | Import de `syncManager` y lógica de volcados forzados. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-10] - Full Stack: Corrección de Mecánicas de Guerra y Progresión
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver bugs críticos en el motor de juego relacionados con fases de ataque, puntos de investigación iniciales e inconsistencias visuales.
+
+### 📝 Resumen de Cambios:
+
+1. **Middle Server (Motor de Juego)**:
+   - ✅ **Research Credits**: Corregido el valor inicial de investigación de 10.000 a **500** en `models/game.js`. Se añadió `initialResearchCredits` a la configuración.
+   - ✅ **Acciones en Fase END**: Habilitadas las acciones de **atacar** e **investigar** durante la fase de "Showdown" (`END`), eliminando el bloqueo que solo permitía estas acciones en la fase de guerra.
+   - ✅ **Validaciones**: Actualizadas las funciones `startResearch` y `launchAttack` para incluir la fase `end` en sus listas de permitidos.
+
+2. **Frontend (Angular)**:
+   - ✅ **UI Phase Indicator**: Corregidos los selectores CSS en `game.component.scss`. Ahora el indicador de fase reconoce correctamente los estados `WAR` y `END` enviados por el servidor, aplicando los colores y sombras correspondientes (antes buscaba `GUERRA` y `FIN`).
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/config/index.js` | **MODIFICADO** | Añadido `initialResearchCredits`. |
+| `middle_server/src/models/game.js` | **MODIFICADO** | Uso de créditos iniciales (500) en preparación. |
+| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** | Permiso de ataque/investigación en fase END. |
+| `front/src/app/pages/game/game.component.scss` | **MODIFICADO** | Fix de selectores CSS para fases WAR/END. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-10] - Full Stack: Lógica de Abandono y Victoria Inmediata
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver el fallo que impedía abandonar partidas correctamente y asegurar que la victoria se evalúe inmediatamente en cualquier fase iniciada (incluyendo preparación).
+
+### 📝 Resumen de Cambios:
+
+1. **Middle Server (Motor de Juego)**:
+   - ✅ **Victory Checker**: Actualizado `checkVictory` para permitir la evaluación en la fase de **PREPARATION**. Si un jugador abandona y solo queda uno, el superviviente gana inmediatamente sin esperar a que empiece la guerra.
+   - ✅ **Socket Handlers**: Refactorizados `game:abandon` y `lobby:leave` para unificar su lógica de negocio.
+   - ✅ **Independencia de Fase**: Ahora ambos eventos soportan todas las fases (`WAITING`, `PREPARATION`, `WAR`, `END`).
+   - ✅ **Identificación**: Mejorada la detección del jugador usando el `characterId` del socket o buscando por `userId` del JWT, lo que hace el abandono mucho más robusto frente a reconexiones.
+   - ✅ **Sincronización**: Forzada la sincronización total del estado (`syncGameStateToAll`) tras cualquier abandono para que el resto de jugadores vean los cambios al instante.
+   - ✅ **Short IDs**: Añadido soporte para códigos de sala de 6 caracteres en el evento `game:abandon`.
+
+2. **Frontend (Angular)**:
+   - ✅ **Game Component**: Añadido un pequeño retardo (100ms) en `onConfirmAbandon()` antes de navegar al lobby. Esto garantiza que el evento socket de abandono se envíe correctamente antes de que se cierre la conexión por el cambio de página.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/game/engine/victory-checker.js` | **MODIFICADO** | Soporte de victoria en fase PREPARATION. |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Unificación de abandonos y soporte multi-fase. |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Delay en abandono para asegurar envío. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver fallos de sincronización en combate, reducir tiempos de viaje para mejor feedback y añadir gestión de errores en el frontend.
+
+### 📝 Resumen de Cambios:
+
+1. **Middle Server (Motor de Juego)**:
+   - ✅ **TROOP_ARRIVAL**: Agrupación de tropas en un único evento para resolución de combate conjunto.
+   - ✅ **Sincronización**: Centralizada la lógica de `game:state-sync` en `TimeWheel` para asegurar que todos los cambios de estado (recursos, tropas, batallas) se reflejen inmediatamente en los clientes con Fog of War.
+   - ✅ **Travel Time**: Reducido el tiempo de viaje de las tropas de 60s a 10s para una jugabilidad más ágil.
+   - ✅ **Battle Results**: Incluida la salud de la capital en el evento `game:battle-result` para actualización inmediata de la barra de vida.
+
+2. **Frontend (Angular)**:
+   - ✅ **Feedback de Errores**: Añadido listener para `game:error` que muestra mensajes del servidor (ej: "No puedes atacar en fase de preparación") mediante el modal de aviso.
+   - ✅ **Animaciones**: Sincronizada la duración de la animación de ataque (10s) con el tiempo real del servidor.
+   - ✅ **Filtrado de Tropas**: Corregido el signal `selectableTroops` para excluir tropas desplegadas o en entrenamiento.
+   - ✅ **Visualización**: Soporte para el estado `DEPLOYED` ("EN CAMPAÑA") en los modales de tropas.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** | Refactorización de sync y battle results. |
+| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** | Agrupación de tropas en ataque. |
+| `middle_server/src/config/index.js` | **MODIFICADO** | Reducción de travel time (10s). |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Listener `game:error` y ajuste de duración. |
+| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.ts` | **MODIFICADO** | Filtrado de tropas seleccionables. |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.ts` | **MODIFICADO** | Estado `DEPLOYED`. |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Fallback para shortIds en ataques. |
+
+---
+
+
+---
+
 ## [2026-05-09] - Frontend: Refinamiento de la Pantalla de Administración (Refine UI)
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Aplicar ajustes responsivos para móvil a la pantalla de administración (`AdminPageComponent`) según la iteración en el preview.
@@ -534,6 +638,13 @@
    - 🔍 **Problema identificado**: Si se prueba el juego abriendo dos pestañas en el mismo navegador (o iniciando sesión con el mismo usuario en modo incógnito), el servidor detecta el mismo `userId` en el token JWT.
    - 🔍 **Comportamiento del Servidor**: El `socket-handler.js` está diseñado para prevenir multicuentas en la misma partida. Si detecta que el mismo `userId` intenta unirse, asume que es una reconexión (sobrescribe el socket) en lugar de crear un jugador nuevo. Por tanto, la sala solo tendrá 1 jugador real (tú mismo).
    - 💡 **Solución para pruebas**: Es **obligatorio** iniciar sesión con dos cuentas de usuario distintas (por ejemplo, `user1` y `user2`) en navegadores separados o en perfiles diferentes para poder ver a los dos jugadores en el mapa.
+
+### Combat System & Resource Logic Refinement
+- **Research Credit Cap**: Increased `maxResearchCredits` from 500 to 10,000 to accommodate Tier 3 technologies.
+- **War Weariness Rewards**: Refactored `combat-resolver.js` to base research credit rewards on **Actual Damage Dealt** (total HP lost by defender troops and capital) rather than raw attack power, as per Architecture Rule 445.
+- **Ghost Troop Cleanup**: Ensured `cleanupDeadTroops()` is called after combat resolution to remove casualties from the game state.
+- **"Total War" Return Rule**: Implemented conditional survivor return. Attacking troops now only return home if the target capital is eliminated. If the capital survives, all attacking units are considered lost (eliminated) in the failed assault.
+- **State Synchronization**: Centralized `_syncGameStateToAll(game)` calls in the TimeWheel to ensure all players receive consistent Fog of War-filtered state updates immediately after battle resolution.
 
 ### 🗂️ Archivos Modificados/Creados:
 
