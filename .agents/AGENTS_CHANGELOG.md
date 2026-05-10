@@ -1,3 +1,41 @@
+## [2026-05-10] - Full Stack: Habilitar Ataques y Entrenamientos en Fase END
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Permitir que los jugadores puedan entrenar tropas y atacar durante la fase de "Showdown" (END), en adición al árbol tecnológico que ya estaba permitido.
+
+### 📝 Resumen de Cambios:
+1. **Middle Server**:
+   - ✅ **Acciones de Juego**: Modificada la función `trainTroop` en `middle_server/src/game/actions/game-actions.js` para incluir `'end'` en la lista de fases permitidas. Las funciones de ataque (`launchAttack`) e investigación (`startResearch`) ya permitían esta fase, por lo que el cambio unifica la disponibilidad de acciones en la batalla final.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** | Inclusión de fase `end` en `trainTroop`. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-10] - Full Stack: Sincronización de Eventos de Ataque (Front ↔ Middle)
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver el desajuste en los esquemas de eventos de ataque entre el cliente y el servidor para permitir que las animaciones y logs de ataques de terceros se muestren correctamente para todos los jugadores.
+
+### 📝 Resumen de Cambios:
+1. **Middle Server**:
+   - ✅ **Socket Handler**: Actualizados los eventos `game:attack-launched` y `game:troop-deployed` para incluir el emisor (`fromPlayer`, `fromCharacterId`) y el objetivo (`toPlayer`, `toCharacterId`).
+   - ✅ **Fog of War**: Ajustadas las reglas de visibilidad. Aunque las tropas desplegadas rivales siguen ocultas en el estado periódico, el evento de movimiento (`game:troop-deployed`) ahora revela explícitamente origen y destino al momento del asalto para posibilitar el feedback visual (animaciones) en toda la sala.
+2. **Frontend**:
+   - ✅ **Game Component**: Modificado para escuchar el evento `game:troop-deployed` que retransmite el servidor a toda la sala.
+   - ✅ **Animaciones y Logs**: La interfaz ahora procesa `game:troop-deployed` para disparar el renderizado SVG del ataque en curso y mostrar notificaciones de advertencia (log local) si el usuario es el objetivo del asalto. Se ha purgado la lógica duplicada de `game:attack-launched`.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Adición de meta-datos de origen y destino en ataques. |
+| `middle_server/src/game/engine/fog-of-war.js` | **MODIFICADO** | Actualización de documentación de Niebla de Guerra. |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Implementación del listener `game:troop-deployed` para render. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
 ## [2026-05-10] - Seguridad: Implementación de Sistema de Baneos y Control de Acceso
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Garantizar que los usuarios baneados sean expulsados inmediatamente de sus sesiones activas y se les deniegue el acceso futuro, cumpliendo con los requisitos de seguridad.
