@@ -1,3 +1,35 @@
+## [2026-05-10] - Full Stack: Persistencia y Precisión de Estadísticas de Partida
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver las inconsistencias en el registro de ataques, tropas desplegadas y tiempo jugado, además de corregir la navegación y visualización de resultados.
+
+### 📝 Resumen de Cambios:
+1. **Middle Server**:
+   - ✅ **Métricas**: Añadidos contadores de `totalTroopsDeployed` y `timePlayedMs` al modelo de jugador.
+   - ✅ **Registro**: Incremento automático de tropas desplegadas al lanzar ataques.
+   - ✅ **Sincronización**: El `SyncManager` ahora calcula el tiempo de juego real desde el inicio de la partida para los snapshots de MongoDB.
+2. **DB Server**:
+   - ✅ **PostgreSQL**: Añadida consulta para contar victorias reales por personaje.
+   - ✅ **MongoDB**: Actualizados DTOs y esquemas de documentos para persistir las nuevas métricas.
+   - ✅ **Analytics Service**: Refactorizada la lógica para que las victorias globales reflejen partidas ganadas y las de partida reflejen el resultado del encuentro.
+3. **Frontend**:
+   - ✅ **Navegación**: Corregido el enlace de "Estadísticas" en la barra de navegación que estaba roto.
+   - ✅ **Visualización**: Eliminada la métrica de victorias en la lista de partida y sustituida por un **Banner de Victoria/Derrota** premium al inicio.
+   - ✅ **i18n**: Internacionalización de los estados de victoria y derrota.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/models/player.js` | **MODIFICADO** | Nuevos campos en `stats`. |
+| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** | Tracking de tropas desplegadas. |
+| `middle_server/src/game/state/sync-manager.js` | **MODIFICADO** | Cálculo de tiempo de juego. |
+| `db_back/src/main/java/com/tfm/db_back/domain/repository/GameRepository.java` | **MODIFICADO** | Conteo de victorias. |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/AnalyticsServiceImpl.java` | **MODIFICADO** | Refactor de lógica de agregación. |
+| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** | Fix de ruta `/stats`. |
+| `front/src/app/pages/statistics/statistics.component.ts` | **MODIFICADO** | Lógica de banner y filtrado. |
+| `front/src/app/pages/statistics/statistics.component.html` | **MODIFICADO** | UI del banner de resultado. |
+
+---
+
 ## [2026-05-10] - Middle Server: Volcados Forzados al Finalizar Partida
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Asegurar que las estadísticas de las partidas (MongoDB) y el estado final (PostgreSQL) se capturen siempre, incluso en partidas de corta duración (< 15 min), forzando volcados inmediatos al terminar.
