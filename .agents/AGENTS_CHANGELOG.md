@@ -1,3 +1,40 @@
+## [2026-05-10] - Frontend: Internacionalización Completa de Modales y Componentes de Juego
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Realizar una auditoría final y completar la internacionalización de todas las cadenas hardcodeadas en los modales de juego, indicadores de fase, herramientas de depuración y navegación.
+
+### 📝 Resumen de Cambios:
+1. **Traducciones (`es.ts`, `en.ts`)**:
+   - ✅ **Claves Faltantes**: Añadidas >30 nuevas claves para modales de ataque (daño estimado, añadir tropa), árbol tecnológico (Tiers, Legendario), logs de batalla (filtros) y herramientas de debug.
+   - ✅ **Clanes**: Localización completa de los nombres de los 6 clanes (Berserkers, Valkirias, etc.) dentro del espacio de nombres `GAME.CLAN_NAMES`.
+   - ✅ **Terminología**: Estandarizada la navegación; en español "Lobby" ahora es "**CÁMARA DE GUERRA**" para mayor inmersión vikinga.
+
+2. **Refactor de Componentes**:
+   - ✅ **Atacar Modal**: Eliminada la dependencia de constantes hardcodeadas para los nombres de clanes; ahora se traducen dinámicamente según el idioma seleccionado.
+   - ✅ **Reglas Modal**: Internacionalizados los nombres de los clanes dentro del diagrama de ventajas SVG.
+   - ✅ **Logs de Batalla**: Localizados los filtros de categorías y tooltips de auto-scroll.
+   - ✅ **Debug Panel**: Internacionalización completa de todas las etiquetas y acciones del panel de herramientas de desarrollo.
+   - ✅ **Navbar**: Localizado el menú de usuario y estandarizado el enlace a la cámara de guerra.
+
+3. **Limpieza de Código**:
+   - ✅ **Deuda Técnica**: Eliminada la constante `CLAN_NAMES` de `attack.types.ts` al estar ya integrada en los diccionarios de i18n.
+   - ✅ **Plantillas**: Sustituidas todas las cadenas literales en HTML por el pipe `translate`.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Adición de claves y estandarización. |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Adición de claves y estandarización. |
+| `front/src/app/pages/game/modals/atacar.modal.ts` | **MODIFICADO** | Localización dinámica de clanes. |
+| `front/src/app/pages/game/modals/attack.types.ts` | **MODIFICADO** | Eliminación de constante hardcodeada. |
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Localización de tooltips y panel debug. |
+| `front/src/app/pages/game/modals/atacar.modal.html` | **MODIFICADO** | Localización de etiquetas de daño. |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.html` | **MODIFICADO** | Localización de Tiers. |
+| `front/src/app/pages/game/modals/game-log.modal.html` | **MODIFICADO** | Localización de filtros. |
+| `front/src/app/pages/game/modals/reglas.modal.html` | **MODIFICADO** | Localización de etiquetas SVG. |
+| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** | Localización de menús. |
+
+---
+
 ## [2026-05-10] - Full Stack: Persistencia y Precisión de Estadísticas de Partida
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver las inconsistencias en el registro de ataques, tropas desplegadas y tiempo jugado, además de corregir la navegación y visualización de resultados.
