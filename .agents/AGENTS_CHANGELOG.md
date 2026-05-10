@@ -1,3 +1,124 @@
+## [2026-05-10] - Frontend: Soporte para Unión a Partida en Curso y Fix de Sincronización
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Permitir que los jugadores que entran a una partida con ataques ya lanzados vean las animaciones en tiempo real y corregir el bloqueo por desfase de reloj.
+
+### 📝 Resumen de Cambios:
+1. **Frontend (Angular)**:
+   - ✅ **Detección de Ataques**: Se ha actualizado el manejador de `game:state-sync` para escanear todas las tropas de todos los jugadores. Si se detectan tropas en movimiento (`deployed: true`) con un tiempo de llegada futuro, se dispara automáticamente la animación de ataque. Esto soluciona el problema de los usuarios que entran a mitad de un ataque o refrescan la página.
+   - ✅ **Fix de Reloj (Lag)**: Se ha añadido una protección en el cálculo de `beginSeconds`. Si por desfase entre el reloj del cliente y el servidor el tiempo de inicio calculado resultaba ser en el futuro, la animación se quedaba estática esperando. Ahora se capa a un mínimo de 0s para que la animación empiece inmediatamente en esos casos.
+   - ✅ **Agrupación de Tropas**: Los ataques detectados en el sync se agrupan por origen, destino y tiempo de llegada para evitar duplicar líneas de ataque innecesariamente.
+
+---
+
+## [2026-05-10] - Frontend: Estabilización de Animaciones mediante Tracking de DOM
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Eliminar parpadeos, reinicios de animación y asegurar la persistencia del movimiento en todos los clientes.
+
+### 📝 Resumen de Cambios:
+1. **Frontend (Angular)**:
+   - ✅ **Estabilidad de DOM**: Se ha implementado un bucle `@for` con `track attack.pathId` envolviendo el SVG de ataque. Esto evita que Angular destruya y recree el elemento SVG cuando cambian otros datos de la partida (como recursos o posiciones de otros jugadores), permitiendo que las animaciones continúen su curso sin reiniciarse ("volver atrás").
+   - ✅ **Señales Computadas**: La trayectoria del ataque ahora se genera mediante un `computed` (`attackPathSignal`). Esto garantiza que el atributo `d` del path sea estable y solo se actualice si realmente cambian las coordenadas, evitando recalculaciones costosas y reinicios del motor de renderizado SVG.
+   - ✅ **Fix de Movimiento**: Corregida la referencia a `generateAttackPath` por la nueva señal reactiva en la plantilla.
+
+---
+
+## [2026-05-10] - Frontend: Corrección de Errores de Compilación y Sincronización SVG
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Resolver errores de compilación NG8002 y asegurar que la animación de ataque funcione para todos los jugadores.
+
+### 📝 Resumen de Cambios:
+1. **Frontend (Angular)**:
+   - ✅ **Compilación**: Restaurados los bindings `[attr.href]` y `[attr.xlink:href]` para cumplir con las reglas del compilador de Angular, que no reconoce `href` como propiedad nativa de los elementos SVG `textPath` y `mpath`.
+   - ✅ **Estructura SVG**: Se ha movido el elemento `<path>` al principio del bloque SVG. Esto garantiza que el navegador haya procesado el ID del camino antes de que los elementos de animación intenten referenciarlo, solucionando el problema de las animaciones estáticas para los defensores.
+   - ✅ **Sincronización**: Mantenido el uso de `beginSeconds` negativo para asegurar que todos los clientes visualicen el mismo progreso de la tropa.
+
+---
+
+## [2026-05-10] - Frontend: Fix de Sincronización y Referencias SVG
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que las animaciones de ataque se activen y sincronicen correctamente para todos los usuarios.
+
+### 📝 Resumen de Cambios:
+1. **Frontend (Angular)**:
+   - ✅ **SVG Binding**: Se ha cambiado el binding de `[attr.id]` y `[attr.href]` a `[id]` y `[href]` estándar. Esto mejora la detectabilidad de los elementos del DOM por parte del motor de animaciones SVG del navegador, solucionando el problema donde la flecha se quedaba quieta para los defensores.
+   - ✅ **Sincronización Temporal**: Re-habilitado el uso de `beginSeconds` negativo para que los usuarios que reciben el mensaje tarde "alcancen" el punto real de la trayectoria.
+
+---
+
+## [2026-05-10] - Frontend: Corrección de Orientación y Movimiento de Ataque
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir la trayectoria "errática" de la flecha de ataque y asegurar que las animaciones se activen correctamente para todos los jugadores.
+
+### 📝 Resumen de Cambios:
+1. **Frontend (Angular)**:
+   - ✅ **UI (SVG)**: 
+     - **Corrección de Orientación**: Se ha rediseñado el triángulo de ataque para que apunte hacia la derecha (eje X positivo) de forma predeterminada. Esto soluciona el problema donde `rotate="auto"` hacía que la flecha se moviera de lado o hacia arriba/abajo de la trayectoria.
+     - **Fix de Animación**: Se ha eliminado la animación de pulso de CSS, ya que interfería con el `transform` generado por `animateMotion`, provocando que la animación se detuviera para algunos usuarios.
+     - **Sincronización Crítica**: Se ha añadido `begin="0s"` a todos los elementos animados para forzar su inicio inmediato tras ser inyectados en el DOM por Angular.
+
+---
+
+## [2026-05-10] - Frontend: Refinamiento de Animación de Ataque y Fix de Tamaño
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir el tamaño desproporcionado del marcador de ataque y solucionar el bloqueo de la animación para el defensor/observador.
+
+### 📝 Resumen de Cambios:
+1. **Frontend (Angular)**:
+   - ✅ **UI (SVG)**: 
+     - Reducido el tamaño del "runner" (flecha) de `24x24` (24% del mapa) a `6x6` (6% del mapa) para que sea proporcional al diseño original.
+     - **Fix de Animación**: Se ha desacoplado la animación de escalado (pulse) del elemento que recibe el `animateMotion`. Al estar en el mismo elemento, el `transform` de CSS sobrescribía el movimiento del SVG, impidiendo que los jugadores que no lanzaban el ataque vieran el desplazamiento.
+     - Añadida compatibilidad extendida mediante `xlink:href` en todos los elementos de trayectoria SVG.
+
+---
+
+## [2026-05-10] - Frontend: Reversión de Estilo de Animación y Fix de Congelamiento
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Revertir el estilo visual de la animación de ataque al diseño original ("prueba ia") y solucionar el bug donde el marcador no se movía para el jugador receptor.
+
+### 📝 Resumen de Cambios:
+1. **Frontend (Angular)**:
+   - ✅ **UI (SVG)**: 
+     - Se ha eliminado la "bola" (círculo y letra) y se ha reemplazado por el icono vectorial del "runner" (triángulo) apuntando siempre hacia la dirección del movimiento (`rotate="auto"`).
+     - Restaurados los chevrons (`>>>>>>>>>>>>>`) y el efecto de resplandor rúnico (`drop-shadow`).
+     - **Bugfix Crítico**: Se ha eliminado el atributo dinámico `[attr.begin]` de las etiquetas `<animate>` y `<animateMotion>`. Este atributo (usado para sincronizar los tiempos de inicio) causaba que los motores de renderizado de los navegadores bloquearan la animación para el segundo jugador. Ahora la animación inicia instantáneamente y fluye sin problemas al recibir el evento.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Reversión de estilo de ataque y eliminación de `attr.begin`. |
+| `front/src/app/pages/game/game.component.scss` | **MODIFICADO** | Ajuste de clases CSS (`troop-runner-svg`, `attack-chevron`). |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-10] - Full Stack: Sincronización de Animaciones de Ataque
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Asegurar que las animaciones de ataque (hilo visual y movimiento de avatar) estén perfectamente sincronizadas para todos los jugadores, independientemente de cuándo reciban el evento de socket.
+
+### 📝 Resumen de Cambios:
+1. **Middle Server**:
+   - ✅ **Socket Handler**: Se ha añadido `totalTravelTimeMs` al evento `game:troop-deployed` para informar a los clientes de la duración total del viaje configurada en el servidor.
+2. **Frontend**:
+   - ✅ **Modelo**: Actualizada la interfaz `ActiveAttack` para incluir `startTime`, `arrivalAt` y `beginSeconds`.
+   - ✅ **Lógica de Juego**: 
+     - Implementada la función `triggerAttackAnimation` que utiliza los timestamps del servidor para calcular el progreso exacto (`beginSeconds`) de la animación.
+     - Mejorada la sanitización de IDs en `generatePathId` para asegurar que sean estables y válidos en SVG.
+     - Unificada la activación de animaciones: ahora el atacante y los demás jugadores usan el mismo mecanismo sincronizado.
+   - ✅ **UI (SVG)**: 
+     - Se ha utilizado el atributo `begin` con valores negativos en las etiquetas `<animate>` y `<animateMotion>` para "saltar" al punto exacto del trayecto si el mensaje llega con retraso.
+     - Añadida compatibilidad con `xlink:href` para las referencias a caminos SVG.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Inclusión de `totalTravelTimeMs` en el payload. |
+| `front/src/app/pages/game/game.model.ts` | **MODIFICADO** | Actualización de la interfaz `ActiveAttack`. |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Lógica de sincronización y sanitización de IDs. |
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Sincronización de progreso SVG vía `begin`. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
 ## [2026-05-10] - Full Stack: Habilitar Ataques y Entrenamientos en Fase END
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Permitir que los jugadores puedan entrenar tropas y atacar durante la fase de "Showdown" (END), en adición al árbol tecnológico que ya estaba permitido.
