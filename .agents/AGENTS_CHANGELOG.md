@@ -1,8 +1,34 @@
+## [2026-05-12] - DB Server: Actualización de Script de Pruebas de Endpoints
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Actualizar el script `test_db_endpoints.py` para incluir la totalidad de los endpoints REST disponibles en el DB Server (Spring Boot), asegurando una cobertura de pruebas completa para la integración con el Middle Server.
+
+### 📝 Resumen de Cambios:
+
+1. **Script de Pruebas (`test_db_endpoints.py`)**:
+   - ✅ **Nuevos Endpoints de Usuario**: Añadidos tests para `PUT /internal/users/{id}/password` (cambio de contraseña) y `PUT /internal/users/{id}/email` (actualización de correo).
+   - ✅ **Gestión de Partidas**: Añadido test para `POST /internal/games/{id}/join` para validar el registro de personajes en partidas activas.
+   - ✅ **Analíticas Expandidas**: Añadidos tests para `GET /internal/analytics/user/{userId}` y `GET /internal/analytics/game/{gameId}/user/{userId}` para verificar la recuperación de estadísticas de MongoDB.
+   - ✅ **Panel de Administración**: Creada una nueva sección de pruebas para los endpoints de `AdminController`:
+     - `GET /internal/admin/stats` (estadísticas globales).
+     - `GET /internal/admin/users` (listado completo de usuarios).
+     - `PUT /internal/admin/users/{id}/ban` / `unban` (gestión de acceso).
+
+### 🗂️ Archivos Modificados:
+
+| Archivo                | Acción         | Detalles                                         |
+| ---------------------- | -------------- | ------------------------------------------------ |
+| `test_db_endpoints.py` | **MODIFICADO** | Inclusión de tests para 9 endpoints adicionales. |
+
+---
+
 ## [2026-05-12] - Seguridad: Auditoría Completa e Implementación de Silent Refresh
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Realizar una auditoría de seguridad del proyecto y resolver las debilidades encontradas, principalmente la falta de renovación de tokens y la validación estática de roles.
 
 ### 📝 Resumen de Cambios:
+
 1. **Auditoría de Seguridad**:
    - ✅ **Global Score: 82/100**. Se evaluaron 10 categorías (Auth, Passwords, Input Validation, etc.).
    - ✅ **Identificación de Findings**: 1 Alto (Autorización JWT estática), 3 Medios (CORS, Cabeceras, MinIO) y 3 Bajos.
@@ -15,50 +41,58 @@
    - ✅ **Memoria**: Limpieza automática de temporizadores al cerrar sesión.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/http/auth-controller.js` | **MODIFICADO** | Implementación de `refreshController`. |
-| `middle_server/src/http/routes.js` | **MODIFICADO** | Registro de ruta `/auth/refresh`. |
-| `front/src/app/core/auth/auth-api.service.ts` | **MODIFICADO** | Nuevo método `refreshToken()`. |
-| `front/src/app/core/auth/auth.service.ts` | **MODIFICADO** | Lógica de temporización y auto-refresh. |
+
+| Archivo                                       | Acción         | Detalles                                |
+| --------------------------------------------- | -------------- | --------------------------------------- |
+| `middle_server/src/http/auth-controller.js`   | **MODIFICADO** | Implementación de `refreshController`.  |
+| `middle_server/src/http/routes.js`            | **MODIFICADO** | Registro de ruta `/auth/refresh`.       |
+| `front/src/app/core/auth/auth-api.service.ts` | **MODIFICADO** | Nuevo método `refreshToken()`.          |
+| `front/src/app/core/auth/auth.service.ts`     | **MODIFICADO** | Lógica de temporización y auto-refresh. |
 
 ---
 
 ## [2026-05-12] - Frontend: Refinamiento de Configuración y Subida de Avatar
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Mejorar la experiencia de usuario en la página de configuración mediante un layout de panel completo, eliminación de navegación redundante e implementación de la subida de avatares a MinIO.
 
 ### 📝 Resumen de Cambios:
+
 1. **Frontend (Angular)**:
-  - ✅ **Gestión de Avatar**: Implementado un nuevo modal de selección de avatar (`SelectorAvatarModalComponent`). Incluye una rejilla de 8 avatares predeterminados (estilo vikingo/avataaars) y la opción de subir una foto personalizada.
-  - ✅ **Sincronización**: Integrado con `AuthService` para actualizar la URL del avatar en tiempo real en toda la aplicación.
-  - ✅ **UI/UX**: Añadido botón circular de edición (estilo lápiz) sobre el avatar que ahora abre el modal de selección.
-  - ✅ **Layout Premium**: Refactorizado el área de ajustes para que ocupe todo el alto disponible dentro de un panel con estilo "glassmorphism".
+
+- ✅ **Gestión de Avatar**: Implementado un nuevo modal de selección de avatar (`SelectorAvatarModalComponent`). Incluye una rejilla de 8 avatares predeterminados (estilo vikingo/avataaars) y la opción de subir una foto personalizada.
+- ✅ **Sincronización**: Integrado con `AuthService` para actualizar la URL del avatar en tiempo real en toda la aplicación.
+- ✅ **UI/UX**: Añadido botón circular de edición (estilo lápiz) sobre el avatar que ahora abre el modal de selección.
+- ✅ **Layout Premium**: Refactorizado el área de ajustes para que ocupe todo el alto disponible dentro de un panel con estilo "glassmorphism".
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `front/src/app/core/auth/auth-api.service.ts` | **MODIFICADO** | Nuevo método `uploadAvatar`. |
-| `front/src/app/core/auth/auth.service.ts` | **MODIFICADO** | Gestión de señal `avatarUrl` y persistencia. |
-| `front/src/app/core/auth/auth.model.ts` | **MODIFICADO** | Extensión de `SessionState`. |
-| `front/src/app/pages/user-config/user-config.component.ts` | **MODIFICADO** | Lógica de subida y manejo de archivos. |
+
+| Archivo                                                      | Acción         | Detalles                                       |
+| ------------------------------------------------------------ | -------------- | ---------------------------------------------- |
+| `front/src/app/core/auth/auth-api.service.ts`                | **MODIFICADO** | Nuevo método `uploadAvatar`.                   |
+| `front/src/app/core/auth/auth.service.ts`                    | **MODIFICADO** | Gestión de señal `avatarUrl` y persistencia.   |
+| `front/src/app/core/auth/auth.model.ts`                      | **MODIFICADO** | Extensión de `SessionState`.                   |
+| `front/src/app/pages/user-config/user-config.component.ts`   | **MODIFICADO** | Lógica de subida y manejo de archivos.         |
 | `front/src/app/pages/user-config/user-config.component.html` | **MODIFICADO** | Nueva estructura de paneles y botón de avatar. |
-| `front/src/app/pages/user-config/user-config.component.scss` | **MODIFICADO** | Estilos de panel completo y botón de edición. |
+| `front/src/app/pages/user-config/user-config.component.scss` | **MODIFICADO** | Estilos de panel completo y botón de edición.  |
 
 ---
 
 ## [2026-05-12] - Frontend: Corrección de Sintaxis e I18n
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir errores de sintaxis en los archivos de traducción que bloqueaban la compilación y asegurar que los estados de las tropas se traduzcan correctamente.
 
 ### 📝 Resumen de Cambios:
+
 1. **I18n**:
    - ✅ **Relocalización de Keys**: Se han movido las claves de traducción de `GAME.MODALS.STATUS` a `GAME.STATUS` en `es.ts` y `en.ts`.
    - ✅ **Corrección de Sintaxis**: Eliminadas llaves de cierre extra (`},`) que se introdujeron accidentalmente durante la migración de las claves, resolviendo los errores de compilación ("ADMIN must be initialized").
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
+
+| Archivo                                   | Acción         | Detalles                        |
+| ----------------------------------------- | -------------- | ------------------------------- |
 | `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Reparada estructura de objetos. |
 | `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Reparada estructura de objetos. |
 
@@ -68,6 +102,7 @@
 **Objetivo**: Mejorar la información táctica en los modales mostrando los puntos de acción (AP) y los nombres de las tropas en lugar de solo el icono/tipo.
 
 ### 📝 Resumen de Cambios:
+
 1. **Frontend (Angular)**:
    - ✅ **Interfaces**: Añadida la propiedad `power` (AP) a las interfaces `Troop` y `TrainableTroopOption`.
    - ✅ **Lógica de Datos**: Poblada la propiedad `power` en las señales `availableTroops` y `trainableTroopOptions` usando los datos base de los clanes.
@@ -76,15 +111,16 @@
    - ✅ **Estilos**: Actualizados los SCSS de los modales para acomodar el nuevo texto de información de tropa.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `front/src/app/pages/game/modals/attack.types.ts` | **MODIFICADO** | Actualización de interfaces. |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Población de datos de AP. |
-| `front/src/app/pages/game/modals/entrenar.modal.html` | **MODIFICADO** | UI de entrenamiento. |
-| `front/src/app/pages/game/modals/visualizar-tropas.modal.html` | **MODIFICADO** | UI de visualización. |
-| `front/src/app/pages/game/modals/atacar.modal.html` | **MODIFICADO** | UI de ataque. |
-| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.html` | **MODIFICADO** | UI de selección de tropas. |
-| `front/src/app/pages/game/modals/*.scss` | **MODIFICADO** | Estilos de los modales. |
+
+| Archivo                                                          | Acción         | Detalles                     |
+| ---------------------------------------------------------------- | -------------- | ---------------------------- |
+| `front/src/app/pages/game/modals/attack.types.ts`                | **MODIFICADO** | Actualización de interfaces. |
+| `front/src/app/pages/game/game.component.ts`                     | **MODIFICADO** | Población de datos de AP.    |
+| `front/src/app/pages/game/modals/entrenar.modal.html`            | **MODIFICADO** | UI de entrenamiento.         |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.html`   | **MODIFICADO** | UI de visualización.         |
+| `front/src/app/pages/game/modals/atacar.modal.html`              | **MODIFICADO** | UI de ataque.                |
+| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.html` | **MODIFICADO** | UI de selección de tropas.   |
+| `front/src/app/pages/game/modals/*.scss`                         | **MODIFICADO** | Estilos de los modales.      |
 
 ---
 
@@ -92,23 +128,27 @@
 **Objetivo**: Mejorar la limpieza visual de la interfaz eliminando los decimales en los porcentajes de progreso de entrenamiento de tropas y de investigación.
 
 ### 📝 Resumen de Cambios:
+
 1. **Frontend (Angular)**:
    - ✅ **Redondeo de Progreso**: Se ha aplicado `Math.floor()` al cálculo del porcentaje de progreso en `availableTroops` y `researchProgress` dentro de `game.component.ts`.
    - ✅ **Consistencia en Modales**: Actualizado el método `getTrainingProgress` en `visualizar-tropas.modal.ts` para asegurar que siempre devuelva un número entero, evitando saturación visual con decimales (ej: "45%" en lugar de "45.23%").
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Redondeo en señales computadas de progreso. |
+
+| Archivo                                                      | Acción         | Detalles                                    |
+| ------------------------------------------------------------ | -------------- | ------------------------------------------- |
+| `front/src/app/pages/game/game.component.ts`                 | **MODIFICADO** | Redondeo en señales computadas de progreso. |
 | `front/src/app/pages/game/modals/visualizar-tropas.modal.ts` | **MODIFICADO** | Redondeo preventivo en el helper del modal. |
 
 ---
 
 ## [2026-05-11] - Frontend: Usabilidad del Árbol Tecnológico y Sincronización de Investigaciones
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Mejorar la experiencia de usuario en el árbol tecnológico añadiendo feedback visual en tiempo real de las investigaciones y corregir la sincronización que impedía que las tropas desbloqueadas aparecieran para entrenar.
 
 ### 📝 Resumen de Cambios:
+
 1. **Frontend (Angular)**:
    - ✅ **Animación de Progreso**: Implementada una barra de progreso visual en las tarjetas del Árbol Tecnológico que se actualiza en tiempo real mediante un ticker local de 100ms.
    - ✅ **Acción de Botón**: El botón de "Investigar" en el panel principal ahora muestra un anillo de progreso dinámico (CSS `--progress`) sincronizado con el servidor.
@@ -118,24 +158,27 @@
    - ✅ **Feedback en Logs**: Sincronizados los manejadores de socket `player:research-started` y `player:research-complete` para mostrar logs informativos y actualizar los créditos de investigación (`researchCredits`) correctamente.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Lógica de sincronización, señales computadas y listeners de socket. |
-| `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Inyección de variables CSS para el progreso del botón. |
-| `front/src/app/pages/game/game.model.ts` | **MODIFICADO** | Extensión de la interfaz `PlayerNode` con datos de investigación. |
-| `front/src/app/pages/game/modals/arbol-tecnologico.modal.ts` | **MODIFICADO** | Ticker de tiempo real y lógica reactiva de tarjetas. |
-| `front/src/app/pages/game/modals/arbol-tecnologico.modal.html` | **MODIFICADO** | UI de barras de progreso y actualización de leyenda. |
-| `front/src/app/pages/game/modals/arbol-tecnologico.modal.scss` | **MODIFICADO** | Animaciones (`pulse-research`, `spin`) y estilos de progreso. |
-| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Nuevas claves de i18n. |
-| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Nuevas claves de i18n. |
+
+| Archivo                                                        | Acción         | Detalles                                                            |
+| -------------------------------------------------------------- | -------------- | ------------------------------------------------------------------- |
+| `front/src/app/pages/game/game.component.ts`                   | **MODIFICADO** | Lógica de sincronización, señales computadas y listeners de socket. |
+| `front/src/app/pages/game/game.component.html`                 | **MODIFICADO** | Inyección de variables CSS para el progreso del botón.              |
+| `front/src/app/pages/game/game.model.ts`                       | **MODIFICADO** | Extensión de la interfaz `PlayerNode` con datos de investigación.   |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.ts`   | **MODIFICADO** | Ticker de tiempo real y lógica reactiva de tarjetas.                |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.html` | **MODIFICADO** | UI de barras de progreso y actualización de leyenda.                |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.scss` | **MODIFICADO** | Animaciones (`pulse-research`, `spin`) y estilos de progreso.       |
+| `front/src/app/core/i18n/languages/es.ts`                      | **MODIFICADO** | Nuevas claves de i18n.                                              |
+| `front/src/app/core/i18n/languages/en.ts`                      | **MODIFICADO** | Nuevas claves de i18n.                                              |
 
 ---
 
 ## [2026-05-11] - Full Stack: Retematización de Tropas de Ataque
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Sustituir todas las tropas de tipo 'ATK' (Ataque) por nuevas unidades inventadas con nombres y descripciones más inmersivos y temáticos para cada clan.
 
 ### 📝 Resumen de Cambios:
+
 1. **Frontend (Angular)**:
    - ✅ **Datos de Clanes**: Actualizado `front/src/app/core/game/clans.data.ts` sustituyendo los 12 identificadores, nombres y descripciones de las tropas de ataque.
    - ✅ **Consistencia**: Se han actualizado las descripciones de las tecnologías que hacían referencia a las unidades antiguas (ej: "Devastador Rúnico" por "Martillo del Abismo").
@@ -143,19 +186,22 @@
    - ✅ **Configuración**: Actualizado `middle_server/clans.yml` para reflejar exactamente los mismos cambios que en el frontend, manteniendo la sincronización de costes, poder y tiempos de entrenamiento.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
+
+| Archivo                                 | Acción         | Detalles                                               |
+| --------------------------------------- | -------------- | ------------------------------------------------------ |
 | `front/src/app/core/game/clans.data.ts` | **MODIFICADO** | Actualización de 12 unidades ATK y descripciones tech. |
-| `middle_server/clans.yml` | **MODIFICADO** | Sincronización de IDs, nombres y descripciones. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+| `middle_server/clans.yml`               | **MODIFICADO** | Sincronización de IDs, nombres y descripciones.        |
+| `.agents/AGENTS_CHANGELOG.md`           | **MODIFICADO** | (esta entrada)                                         |
 
 ---
 
 ## [2026-05-10] - Frontend: Soporte para Unión a Partida en Curso y Fix de Sincronización
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Permitir que los jugadores que entran a una partida con ataques ya lanzados vean las animaciones en tiempo real y corregir el bloqueo por desfase de reloj.
 
 ### 📝 Resumen de Cambios:
+
 1. **Frontend (Angular)**:
    - ✅ **Detección de Ataques**: Se ha actualizado el manejador de `game:state-sync` para escanear todas las tropas de todos los jugadores. Si se detectan tropas en movimiento (`deployed: true`) con un tiempo de llegada futuro, se dispara automáticamente la animación de ataque. Esto soluciona el problema de los usuarios que entran a mitad de un ataque o refrescan la página.
    - ✅ **Fix de Reloj (Lag)**: Se ha añadido una protección en el cálculo de `beginSeconds`. Si por desfase entre el reloj del cliente y el servidor el tiempo de inicio calculado resultaba ser en el futuro, la animación se quedaba estática esperando. Ahora se capa a un mínimo de 0s para que la animación empiece inmediatamente en esos casos.
@@ -164,10 +210,12 @@
 ---
 
 ## [2026-05-10] - Frontend: Estabilización de Animaciones mediante Tracking de DOM
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Eliminar parpadeos, reinicios de animación y asegurar la persistencia del movimiento en todos los clientes.
 
 ### 📝 Resumen de Cambios:
+
 1. **Frontend (Angular)**:
    - ✅ **Estabilidad de DOM**: Se ha implementado un bucle `@for` con `track attack.pathId` envolviendo el SVG de ataque. Esto evita que Angular destruya y recree el elemento SVG cuando cambian otros datos de la partida (como recursos o posiciones de otros jugadores), permitiendo que las animaciones continúen su curso sin reiniciarse ("volver atrás").
    - ✅ **Señales Computadas**: La trayectoria del ataque ahora se genera mediante un `computed` (`attackPathSignal`). Esto garantiza que el atributo `d` del path sea estable y solo se actualice si realmente cambian las coordenadas, evitando recalculaciones costosas y reinicios del motor de renderizado SVG.
@@ -176,10 +224,12 @@
 ---
 
 ## [2026-05-10] - Frontend: Corrección de Errores de Compilación y Sincronización SVG
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver errores de compilación NG8002 y asegurar que la animación de ataque funcione para todos los jugadores.
 
 ### 📝 Resumen de Cambios:
+
 1. **Frontend (Angular)**:
    - ✅ **Compilación**: Restaurados los bindings `[attr.href]` y `[attr.xlink:href]` para cumplir con las reglas del compilador de Angular, que no reconoce `href` como propiedad nativa de los elementos SVG `textPath` y `mpath`.
    - ✅ **Estructura SVG**: Se ha movido el elemento `<path>` al principio del bloque SVG. Esto garantiza que el navegador haya procesado el ID del camino antes de que los elementos de animación intenten referenciarlo, solucionando el problema de las animaciones estáticas para los defensores.
@@ -188,10 +238,12 @@
 ---
 
 ## [2026-05-10] - Frontend: Fix de Sincronización y Referencias SVG
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Asegurar que las animaciones de ataque se activen y sincronicen correctamente para todos los usuarios.
 
 ### 📝 Resumen de Cambios:
+
 1. **Frontend (Angular)**:
    - ✅ **SVG Binding**: Se ha cambiado el binding de `[attr.id]` y `[attr.href]` a `[id]` y `[href]` estándar. Esto mejora la detectabilidad de los elementos del DOM por parte del motor de animaciones SVG del navegador, solucionando el problema donde la flecha se quedaba quieta para los defensores.
    - ✅ **Sincronización Temporal**: Re-habilitado el uso de `beginSeconds` negativo para que los usuarios que reciben el mensaje tarde "alcancen" el punto real de la trayectoria.
@@ -199,12 +251,14 @@
 ---
 
 ## [2026-05-10] - Frontend: Corrección de Orientación y Movimiento de Ataque
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir la trayectoria "errática" de la flecha de ataque y asegurar que las animaciones se activen correctamente para todos los jugadores.
 
 ### 📝 Resumen de Cambios:
+
 1. **Frontend (Angular)**:
-   - ✅ **UI (SVG)**: 
+   - ✅ **UI (SVG)**:
      - **Corrección de Orientación**: Se ha rediseñado el triángulo de ataque para que apunte hacia la derecha (eje X positivo) de forma predeterminada. Esto soluciona el problema donde `rotate="auto"` hacía que la flecha se moviera de lado o hacia arriba/abajo de la trayectoria.
      - **Fix de Animación**: Se ha eliminado la animación de pulso de CSS, ya que interfería con el `transform` generado por `animateMotion`, provocando que la animación se detuviera para algunos usuarios.
      - **Sincronización Crítica**: Se ha añadido `begin="0s"` a todos los elementos animados para forzar su inicio inmediato tras ser inyectados en el DOM por Angular.
@@ -212,12 +266,14 @@
 ---
 
 ## [2026-05-10] - Frontend: Refinamiento de Animación de Ataque y Fix de Tamaño
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir el tamaño desproporcionado del marcador de ataque y solucionar el bloqueo de la animación para el defensor/observador.
 
 ### 📝 Resumen de Cambios:
+
 1. **Frontend (Angular)**:
-   - ✅ **UI (SVG)**: 
+   - ✅ **UI (SVG)**:
      - Reducido el tamaño del "runner" (flecha) de `24x24` (24% del mapa) a `6x6` (6% del mapa) para que sea proporcional al diseño original.
      - **Fix de Animación**: Se ha desacoplado la animación de escalado (pulse) del elemento que recibe el `animateMotion`. Al estar en el mismo elemento, el `transform` de CSS sobrescribía el movimiento del SVG, impidiendo que los jugadores que no lanzaban el ataque vieran el desplazamiento.
      - Añadida compatibilidad extendida mediante `xlink:href` en todos los elementos de trayectoria SVG.
@@ -225,74 +281,85 @@
 ---
 
 ## [2026-05-10] - Frontend: Reversión de Estilo de Animación y Fix de Congelamiento
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Revertir el estilo visual de la animación de ataque al diseño original ("prueba ia") y solucionar el bug donde el marcador no se movía para el jugador receptor.
 
 ### 📝 Resumen de Cambios:
+
 1. **Frontend (Angular)**:
-   - ✅ **UI (SVG)**: 
+   - ✅ **UI (SVG)**:
      - Se ha eliminado la "bola" (círculo y letra) y se ha reemplazado por el icono vectorial del "runner" (triángulo) apuntando siempre hacia la dirección del movimiento (`rotate="auto"`).
      - Restaurados los chevrons (`>>>>>>>>>>>>>`) y el efecto de resplandor rúnico (`drop-shadow`).
      - **Bugfix Crítico**: Se ha eliminado el atributo dinámico `[attr.begin]` de las etiquetas `<animate>` y `<animateMotion>`. Este atributo (usado para sincronizar los tiempos de inicio) causaba que los motores de renderizado de los navegadores bloquearan la animación para el segundo jugador. Ahora la animación inicia instantáneamente y fluye sin problemas al recibir el evento.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
+
+| Archivo                                        | Acción         | Detalles                                                     |
+| ---------------------------------------------- | -------------- | ------------------------------------------------------------ |
 | `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Reversión de estilo de ataque y eliminación de `attr.begin`. |
 | `front/src/app/pages/game/game.component.scss` | **MODIFICADO** | Ajuste de clases CSS (`troop-runner-svg`, `attack-chevron`). |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** | (esta entrada)                                               |
 
 ---
 
 ## [2026-05-10] - Full Stack: Sincronización de Animaciones de Ataque
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Asegurar que las animaciones de ataque (hilo visual y movimiento de avatar) estén perfectamente sincronizadas para todos los jugadores, independientemente de cuándo reciban el evento de socket.
 
 ### 📝 Resumen de Cambios:
+
 1. **Middle Server**:
    - ✅ **Socket Handler**: Se ha añadido `totalTravelTimeMs` al evento `game:troop-deployed` para informar a los clientes de la duración total del viaje configurada en el servidor.
 2. **Frontend**:
    - ✅ **Modelo**: Actualizada la interfaz `ActiveAttack` para incluir `startTime`, `arrivalAt` y `beginSeconds`.
-   - ✅ **Lógica de Juego**: 
+   - ✅ **Lógica de Juego**:
      - Implementada la función `triggerAttackAnimation` que utiliza los timestamps del servidor para calcular el progreso exacto (`beginSeconds`) de la animación.
      - Mejorada la sanitización de IDs en `generatePathId` para asegurar que sean estables y válidos en SVG.
      - Unificada la activación de animaciones: ahora el atacante y los demás jugadores usan el mismo mecanismo sincronizado.
-   - ✅ **UI (SVG)**: 
+   - ✅ **UI (SVG)**:
      - Se ha utilizado el atributo `begin` con valores negativos en las etiquetas `<animate>` y `<animateMotion>` para "saltar" al punto exacto del trayecto si el mensaje llega con retraso.
      - Añadida compatibilidad con `xlink:href` para las referencias a caminos SVG.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Inclusión de `totalTravelTimeMs` en el payload. |
-| `front/src/app/pages/game/game.model.ts` | **MODIFICADO** | Actualización de la interfaz `ActiveAttack`. |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Lógica de sincronización y sanitización de IDs. |
-| `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Sincronización de progreso SVG vía `begin`. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+| Archivo                                        | Acción         | Detalles                                        |
+| ---------------------------------------------- | -------------- | ----------------------------------------------- |
+| `middle_server/src/socket/socket-handler.js`   | **MODIFICADO** | Inclusión de `totalTravelTimeMs` en el payload. |
+| `front/src/app/pages/game/game.model.ts`       | **MODIFICADO** | Actualización de la interfaz `ActiveAttack`.    |
+| `front/src/app/pages/game/game.component.ts`   | **MODIFICADO** | Lógica de sincronización y sanitización de IDs. |
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Sincronización de progreso SVG vía `begin`.     |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** | (esta entrada)                                  |
 
 ---
 
 ## [2026-05-10] - Full Stack: Habilitar Ataques y Entrenamientos en Fase END
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Permitir que los jugadores puedan entrenar tropas y atacar durante la fase de "Showdown" (END), en adición al árbol tecnológico que ya estaba permitido.
 
 ### 📝 Resumen de Cambios:
+
 1. **Middle Server**:
    - ✅ **Acciones de Juego**: Modificada la función `trainTroop` en `middle_server/src/game/actions/game-actions.js` para incluir `'end'` en la lista de fases permitidas. Las funciones de ataque (`launchAttack`) e investigación (`startResearch`) ya permitían esta fase, por lo que el cambio unifica la disponibilidad de acciones en la batalla final.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
+
+| Archivo                                          | Acción         | Detalles                                 |
+| ------------------------------------------------ | -------------- | ---------------------------------------- |
 | `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** | Inclusión de fase `end` en `trainTroop`. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+| `.agents/AGENTS_CHANGELOG.md`                    | **MODIFICADO** | (esta entrada)                           |
 
 ---
 
 ## [2026-05-10] - Full Stack: Sincronización de Eventos de Ataque (Front ↔ Middle)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver el desajuste en los esquemas de eventos de ataque entre el cliente y el servidor para permitir que las animaciones y logs de ataques de terceros se muestren correctamente para todos los jugadores.
 
 ### 📝 Resumen de Cambios:
+
 1. **Middle Server**:
    - ✅ **Socket Handler**: Actualizados los eventos `game:attack-launched` y `game:troop-deployed` para incluir el emisor (`fromPlayer`, `fromCharacterId`) y el objetivo (`toPlayer`, `toCharacterId`).
    - ✅ **Fog of War**: Ajustadas las reglas de visibilidad. Aunque las tropas desplegadas rivales siguen ocultas en el estado periódico, el evento de movimiento (`game:troop-deployed`) ahora revela explícitamente origen y destino al momento del asalto para posibilitar el feedback visual (animaciones) en toda la sala.
@@ -301,20 +368,23 @@
    - ✅ **Animaciones y Logs**: La interfaz ahora procesa `game:troop-deployed` para disparar el renderizado SVG del ataque en curso y mostrar notificaciones de advertencia (log local) si el usuario es el objetivo del asalto. Se ha purgado la lógica duplicada de `game:attack-launched`.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Adición de meta-datos de origen y destino en ataques. |
-| `middle_server/src/game/engine/fog-of-war.js` | **MODIFICADO** | Actualización de documentación de Niebla de Guerra. |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Implementación del listener `game:troop-deployed` para render. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+| Archivo                                       | Acción         | Detalles                                                       |
+| --------------------------------------------- | -------------- | -------------------------------------------------------------- |
+| `middle_server/src/socket/socket-handler.js`  | **MODIFICADO** | Adición de meta-datos de origen y destino en ataques.          |
+| `middle_server/src/game/engine/fog-of-war.js` | **MODIFICADO** | Actualización de documentación de Niebla de Guerra.            |
+| `front/src/app/pages/game/game.component.ts`  | **MODIFICADO** | Implementación del listener `game:troop-deployed` para render. |
+| `.agents/AGENTS_CHANGELOG.md`                 | **MODIFICADO** | (esta entrada)                                                 |
 
 ---
 
 ## [2026-05-10] - Seguridad: Implementación de Sistema de Baneos y Control de Acceso
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Garantizar que los usuarios baneados sean expulsados inmediatamente de sus sesiones activas y se les deniegue el acceso futuro, cumpliendo con los requisitos de seguridad.
 
 ### 📝 Resumen de Cambios:
+
 1. **DB Server (Spring Boot)**:
    - ✅ **Excepciones**: Creada `ForbiddenException` para mapear errores 403.
    - ✅ **Global Error Handler**: Añadido soporte para capturar y devolver errores 403 consistentes.
@@ -329,26 +399,29 @@
    - ✅ **Socket Service**: Implementado listener para el evento `user:banned` que limpia la sesión local, muestra una alerta y redirige al inicio de forma inmediata.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `db_back/src/main/java/com/tfm/db_back/domain/exception/ForbiddenException.java` | **CREADO** | Nueva excepción 403. |
-| `db_back/src/main/java/com/tfm/db_back/api/GlobalExceptionHandler.java` | **MODIFICADO** | Handler para ForbiddenException. |
-| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java` | **MODIFICADO** | Check de baneo en login. |
-| `middle_server/src/http/auth-controller.js` | **MODIFICADO** | Manejo de 403 en login. |
-| `middle_server/src/http/admin-controller.js` | **MODIFICADO** | Expulsión de sockets y Redis sync. |
-| `middle_server/src/middleware/auth.js` | **MODIFICADO** | Check de Redis en middlewares. |
-| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Traducciones de baneo. |
-| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Traducciones de baneo. |
-| `front/src/app/shared/components/auth/auth.component.ts` | **MODIFICADO** | Feedback visual de baneo. |
-| `front/src/app/core/game/socket.service.ts` | **MODIFICADO** | Listener de expulsión forzosa. |
+
+| Archivo                                                                          | Acción         | Detalles                           |
+| -------------------------------------------------------------------------------- | -------------- | ---------------------------------- |
+| `db_back/src/main/java/com/tfm/db_back/domain/exception/ForbiddenException.java` | **CREADO**     | Nueva excepción 403.               |
+| `db_back/src/main/java/com/tfm/db_back/api/GlobalExceptionHandler.java`          | **MODIFICADO** | Handler para ForbiddenException.   |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java`      | **MODIFICADO** | Check de baneo en login.           |
+| `middle_server/src/http/auth-controller.js`                                      | **MODIFICADO** | Manejo de 403 en login.            |
+| `middle_server/src/http/admin-controller.js`                                     | **MODIFICADO** | Expulsión de sockets y Redis sync. |
+| `middle_server/src/middleware/auth.js`                                           | **MODIFICADO** | Check de Redis en middlewares.     |
+| `front/src/app/core/i18n/languages/es.ts`                                        | **MODIFICADO** | Traducciones de baneo.             |
+| `front/src/app/core/i18n/languages/en.ts`                                        | **MODIFICADO** | Traducciones de baneo.             |
+| `front/src/app/shared/components/auth/auth.component.ts`                         | **MODIFICADO** | Feedback visual de baneo.          |
+| `front/src/app/core/game/socket.service.ts`                                      | **MODIFICADO** | Listener de expulsión forzosa.     |
 
 ---
 
 ## [2026-05-10] - Full Stack: Implementación de Duración de Partida en Estadísticas
+
 **Agente**: Antigravity (Google Deepmind)
 **Objetivo**: Corregir el cálculo del "Tiempo Jugado" para que refleje la duración total de la partida en lugar del tiempo de conexión individual del jugador.
 
 ### 📝 Resumen de Cambios:
+
 1. **Middle Server**:
    - ✅ **Modelo de Juego**: Añadido campo `endedAt` a la clase `Game` para registrar el fin de la partida.
    - ✅ **Transiciones**: La fase `FINISHED` ahora captura automáticamente el timestamp de finalización.
@@ -356,19 +429,22 @@
    - ✅ **Persistencia**: Sincronizado el campo `endedAt` tanto en la rehidratación desde JSON como desde los DTOs de la base de datos.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/models/game.js` | **MODIFICADO** | Adición de `endedAt` y lógica en `setPhase`. |
+
+| Archivo                                        | Acción         | Detalles                                        |
+| ---------------------------------------------- | -------------- | ----------------------------------------------- |
+| `middle_server/src/models/game.js`             | **MODIFICADO** | Adición de `endedAt` y lógica en `setPhase`.    |
 | `middle_server/src/game/state/sync-manager.js` | **MODIFICADO** | Cálculo de duración de partida para analíticas. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** | (esta entrada)                                  |
 
 ---
 
 ## [2026-05-10] - Frontend: Internacionalización Completa de Modales y Componentes de Juego
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Realizar una auditoría final y completar la internacionalización de todas las cadenas hardcodeadas en los modales de juego, indicadores de fase, herramientas de depuración y navegación.
 
 ### 📝 Resumen de Cambios:
+
 1. **Traducciones (`es.ts`, `en.ts`)**:
    - ✅ **Claves Faltantes**: Añadidas >30 nuevas claves para modales de ataque (daño estimado, añadir tropa), árbol tecnológico (Tiers, Legendario), logs de batalla (filtros) y herramientas de debug.
    - ✅ **Clanes**: Localización completa de los nombres de los 6 clanes (Berserkers, Valkirias, etc.) dentro del espacio de nombres `GAME.CLAN_NAMES`.
@@ -386,26 +462,29 @@
    - ✅ **Plantillas**: Sustituidas todas las cadenas literales en HTML por el pipe `translate`.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Adición de claves y estandarización. |
-| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Adición de claves y estandarización. |
-| `front/src/app/pages/game/modals/atacar.modal.ts` | **MODIFICADO** | Localización dinámica de clanes. |
-| `front/src/app/pages/game/modals/attack.types.ts` | **MODIFICADO** | Eliminación de constante hardcodeada. |
-| `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Localización de tooltips y panel debug. |
-| `front/src/app/pages/game/modals/atacar.modal.html` | **MODIFICADO** | Localización de etiquetas de daño. |
-| `front/src/app/pages/game/modals/arbol-tecnologico.modal.html` | **MODIFICADO** | Localización de Tiers. |
-| `front/src/app/pages/game/modals/game-log.modal.html` | **MODIFICADO** | Localización de filtros. |
-| `front/src/app/pages/game/modals/reglas.modal.html` | **MODIFICADO** | Localización de etiquetas SVG. |
-| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** | Localización de menús. |
+
+| Archivo                                                        | Acción         | Detalles                                |
+| -------------------------------------------------------------- | -------------- | --------------------------------------- |
+| `front/src/app/core/i18n/languages/es.ts`                      | **MODIFICADO** | Adición de claves y estandarización.    |
+| `front/src/app/core/i18n/languages/en.ts`                      | **MODIFICADO** | Adición de claves y estandarización.    |
+| `front/src/app/pages/game/modals/atacar.modal.ts`              | **MODIFICADO** | Localización dinámica de clanes.        |
+| `front/src/app/pages/game/modals/attack.types.ts`              | **MODIFICADO** | Eliminación de constante hardcodeada.   |
+| `front/src/app/pages/game/game.component.html`                 | **MODIFICADO** | Localización de tooltips y panel debug. |
+| `front/src/app/pages/game/modals/atacar.modal.html`            | **MODIFICADO** | Localización de etiquetas de daño.      |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.html` | **MODIFICADO** | Localización de Tiers.                  |
+| `front/src/app/pages/game/modals/game-log.modal.html`          | **MODIFICADO** | Localización de filtros.                |
+| `front/src/app/pages/game/modals/reglas.modal.html`            | **MODIFICADO** | Localización de etiquetas SVG.          |
+| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** | Localización de menús.                  |
 
 ---
 
 ## [2026-05-10] - Full Stack: Persistencia y Precisión de Estadísticas de Partida
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver las inconsistencias en el registro de ataques, tropas desplegadas y tiempo jugado, además de corregir la navegación y visualización de resultados.
 
 ### 📝 Resumen de Cambios:
+
 1. **Middle Server**:
    - ✅ **Métricas**: Añadidos contadores de `totalTroopsDeployed` y `timePlayedMs` al modelo de jugador.
    - ✅ **Registro**: Incremento automático de tropas desplegadas al lanzar ataques.
@@ -420,24 +499,27 @@
    - ✅ **i18n**: Internacionalización de los estados de victoria y derrota.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/models/player.js` | **MODIFICADO** | Nuevos campos en `stats`. |
-| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** | Tracking de tropas desplegadas. |
-| `middle_server/src/game/state/sync-manager.js` | **MODIFICADO** | Cálculo de tiempo de juego. |
-| `db_back/src/main/java/com/tfm/db_back/domain/repository/GameRepository.java` | **MODIFICADO** | Conteo de victorias. |
+
+| Archivo                                                                          | Acción         | Detalles                          |
+| -------------------------------------------------------------------------------- | -------------- | --------------------------------- |
+| `middle_server/src/models/player.js`                                             | **MODIFICADO** | Nuevos campos en `stats`.         |
+| `middle_server/src/game/actions/game-actions.js`                                 | **MODIFICADO** | Tracking de tropas desplegadas.   |
+| `middle_server/src/game/state/sync-manager.js`                                   | **MODIFICADO** | Cálculo de tiempo de juego.       |
+| `db_back/src/main/java/com/tfm/db_back/domain/repository/GameRepository.java`    | **MODIFICADO** | Conteo de victorias.              |
 | `db_back/src/main/java/com/tfm/db_back/domain/service/AnalyticsServiceImpl.java` | **MODIFICADO** | Refactor de lógica de agregación. |
-| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** | Fix de ruta `/stats`. |
-| `front/src/app/pages/statistics/statistics.component.ts` | **MODIFICADO** | Lógica de banner y filtrado. |
-| `front/src/app/pages/statistics/statistics.component.html` | **MODIFICADO** | UI del banner de resultado. |
+| `front/src/app/shared/components/navbar/navbar.component.html`                   | **MODIFICADO** | Fix de ruta `/stats`.             |
+| `front/src/app/pages/statistics/statistics.component.ts`                         | **MODIFICADO** | Lógica de banner y filtrado.      |
+| `front/src/app/pages/statistics/statistics.component.html`                       | **MODIFICADO** | UI del banner de resultado.       |
 
 ---
 
 ## [2026-05-10] - Middle Server: Volcados Forzados al Finalizar Partida
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Asegurar que las estadísticas de las partidas (MongoDB) y el estado final (PostgreSQL) se capturen siempre, incluso en partidas de corta duración (< 15 min), forzando volcados inmediatos al terminar.
 
 ### 📝 Resumen de Cambios:
+
 1. **Middle Server (Motor de Juego)**:
    - ✅ **Volcados Forzados**: Implementada la función interna `_performFinalDumps(game)` en `victory-checker.js`.
    - ✅ **Fase FINISHED**: Al detectar un ganador o empate, se lanzan volcados inmediatos a PostgreSQL (estado) y MongoDB (analíticas) sin esperar a los intervalos del TimeWheel.
@@ -445,14 +527,16 @@
    - ✅ **Resiliencia**: Los volcados se intentan incluso si la notificación de fin de partida (`endGame`) al DB Server falla, garantizando la recolección de estadísticas en escenarios de error parcial.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
+
+| Archivo                                            | Acción         | Detalles                                               |
+| -------------------------------------------------- | -------------- | ------------------------------------------------------ |
 | `middle_server/src/game/engine/victory-checker.js` | **MODIFICADO** | Import de `syncManager` y lógica de volcados forzados. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+| `.agents/AGENTS_CHANGELOG.md`                      | **MODIFICADO** | (esta entrada)                                         |
 
 ---
 
 ## [2026-05-10] - Full Stack: Corrección de Mecánicas de Guerra y Progresión
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver bugs críticos en el motor de juego relacionados con fases de ataque, puntos de investigación iniciales e inconsistencias visuales.
 
@@ -467,17 +551,19 @@
    - ✅ **UI Phase Indicator**: Corregidos los selectores CSS en `game.component.scss`. Ahora el indicador de fase reconoce correctamente los estados `WAR` y `END` enviados por el servidor, aplicando los colores y sombras correspondientes (antes buscaba `GUERRA` y `FIN`).
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/config/index.js` | **MODIFICADO** | Añadido `initialResearchCredits`. |
-| `middle_server/src/models/game.js` | **MODIFICADO** | Uso de créditos iniciales (500) en preparación. |
-| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** | Permiso de ataque/investigación en fase END. |
-| `front/src/app/pages/game/game.component.scss` | **MODIFICADO** | Fix de selectores CSS para fases WAR/END. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+| Archivo                                          | Acción         | Detalles                                        |
+| ------------------------------------------------ | -------------- | ----------------------------------------------- |
+| `middle_server/src/config/index.js`              | **MODIFICADO** | Añadido `initialResearchCredits`.               |
+| `middle_server/src/models/game.js`               | **MODIFICADO** | Uso de créditos iniciales (500) en preparación. |
+| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** | Permiso de ataque/investigación en fase END.    |
+| `front/src/app/pages/game/game.component.scss`   | **MODIFICADO** | Fix de selectores CSS para fases WAR/END.       |
+| `.agents/AGENTS_CHANGELOG.md`                    | **MODIFICADO** | (esta entrada)                                  |
 
 ---
 
 ## [2026-05-10] - Full Stack: Lógica de Abandono y Victoria Inmediata
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver el fallo que impedía abandonar partidas correctamente y asegurar que la victoria se evalúe inmediatamente en cualquier fase iniciada (incluyendo preparación).
 
@@ -495,12 +581,13 @@
    - ✅ **Game Component**: Añadido un pequeño retardo (100ms) en `onConfirmAbandon()` antes de navegar al lobby. Esto garantiza que el evento socket de abandono se envíe correctamente antes de que se cierre la conexión por el cambio de página.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/game/engine/victory-checker.js` | **MODIFICADO** | Soporte de victoria en fase PREPARATION. |
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Unificación de abandonos y soporte multi-fase. |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Delay en abandono para asegurar envío. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+| Archivo                                            | Acción         | Detalles                                       |
+| -------------------------------------------------- | -------------- | ---------------------------------------------- |
+| `middle_server/src/game/engine/victory-checker.js` | **MODIFICADO** | Soporte de victoria en fase PREPARATION.       |
+| `middle_server/src/socket/socket-handler.js`       | **MODIFICADO** | Unificación de abandonos y soporte multi-fase. |
+| `front/src/app/pages/game/game.component.ts`       | **MODIFICADO** | Delay en abandono para asegurar envío.         |
+| `.agents/AGENTS_CHANGELOG.md`                      | **MODIFICADO** | (esta entrada)                                 |
 
 ---
 
@@ -522,39 +609,43 @@
    - ✅ **Visualización**: Soporte para el estado `DEPLOYED` ("EN CAMPAÑA") en los modales de tropas.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** | Refactorización de sync y battle results. |
-| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** | Agrupación de tropas en ataque. |
-| `middle_server/src/config/index.js` | **MODIFICADO** | Reducción de travel time (10s). |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Listener `game:error` y ajuste de duración. |
-| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.ts` | **MODIFICADO** | Filtrado de tropas seleccionables. |
-| `front/src/app/pages/game/modals/visualizar-tropas.modal.ts` | **MODIFICADO** | Estado `DEPLOYED`. |
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Fallback para shortIds en ataques. |
+
+| Archivo                                                        | Acción         | Detalles                                    |
+| -------------------------------------------------------------- | -------------- | ------------------------------------------- |
+| `middle_server/src/game/engine/time-wheel.js`                  | **MODIFICADO** | Refactorización de sync y battle results.   |
+| `middle_server/src/game/actions/game-actions.js`               | **MODIFICADO** | Agrupación de tropas en ataque.             |
+| `middle_server/src/config/index.js`                            | **MODIFICADO** | Reducción de travel time (10s).             |
+| `front/src/app/pages/game/game.component.ts`                   | **MODIFICADO** | Listener `game:error` y ajuste de duración. |
+| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.ts` | **MODIFICADO** | Filtrado de tropas seleccionables.          |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.ts`   | **MODIFICADO** | Estado `DEPLOYED`.                          |
+| `middle_server/src/socket/socket-handler.js`                   | **MODIFICADO** | Fallback para shortIds en ataques.          |
 
 ---
-
 
 ---
 
 ## [2026-05-09] - Frontend: Refinamiento de la Pantalla de Administración (Refine UI)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Aplicar ajustes responsivos para móvil a la pantalla de administración (`AdminPageComponent`) según la iteración en el preview.
 
 ### 📝 Resumen de Tareas Realizadas:
+
 1. **Preview**: Ajustados los márgenes, tamaños y estructura de elementos (menú lateral, tarjetas, tablas) mediante CSS Media Queries para asegurar la correcta legibilidad y adaptabilidad en pantallas móviles (hasta 768px). La tabla de baneos ahora cuenta con un contenedor con scroll horizontal (`overflow-x: auto`) para no romper el layout.
 2. **AdminPageComponent SCSS**: Integradas las mismas reglas CSS aprobadas en el HTML preview a la hoja de estilos de producción (`admin-page.component.scss`) bajo el bloque `@include mobile` y ajustado el bloque `@include tablet`.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
+
+| Archivo                                                    | Acción         | Detalles                                                   |
+| ---------------------------------------------------------- | -------------- | ---------------------------------------------------------- |
 | `front/src/app/pages/admin-page/admin-page.component.scss` | **MODIFICADO** | Integración de ajustes responsivos al diseño móvil/tablet. |
-| `.agents/previews/adminPage-preview.html` | **MODIFICADO** | Adición de media queries para iteración visual móvil. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+| `.agents/previews/adminPage-preview.html`                  | **MODIFICADO** | Adición de media queries para iteración visual móvil.      |
+| `.agents/AGENTS_CHANGELOG.md`                              | **MODIFICADO** | (esta entrada)                                             |
 
 ---
 
 ## [2026-05-09] - Full Stack: Habilitación de Pantallas de Estadísticas y Administración (Oracle)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Conectar las pantallas de "Oracle" (Admin) y "Sagas" (Estadísticas) al backend real, eliminando mocks y asegurando la persistencia y seguridad de los datos.
 
@@ -577,30 +668,33 @@
    - ✅ **i18n**: Internacionalización completa de ambas pantallas en español e inglés, siguiendo la temática vikinga ("Oracle" para Admin, "Sagas" para Estadísticas).
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `db_back/src/main/resources/db/migration/V5__add_is_banned_to_users.sql` | **CREADO** | SQL de migración Flyway. |
-| `db_back/src/main/java/com/tfm/db_back/domain/model/User.java` | **MODIFICADO** | Campo `isBanned` añadido. |
-| `db_back/src/main/java/com/tfm/db_back/api/AdminController.java` | **CREADO** | Endpoints de admin internos. |
-| `middle_server/src/http/admin-controller.js` | **CREADO** | Lógica de admin (vía/proxy). |
-| `middle_server/src/http/stats-controller.js` | **CREADO** | Lógica de estadísticas de usuario. |
-| `middle_server/src/http/routes.js` | **MODIFICADO** | Registro de nuevas rutas y protección por rol. |
-| `front/src/app/core/admin/admin-api.service.ts` | **CREADO** | Servicio HTTP de administración. |
-| `front/src/app/core/statistics/statistics-api.service.ts` | **CREADO** | Servicio HTTP de estadísticas. |
-| `front/src/app/pages/admin-page/admin-page.component.ts` | **MODIFICADO** | Conexión a API y lógica de señales. |
-| `front/src/app/pages/admin-page/admin-page.component.html` | **MODIFICADO** | Traducción y binding a datos reales. |
-| `front/src/app/pages/statistics/statistics.component.ts` | **MODIFICADO** | Conexión a API y lógica de señales. |
-| `front/src/app/pages/statistics/statistics.component.html` | **MODIFICADO** | Traducción y binding a datos reales. |
-| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Claves para Oracle (Admin) y Sagas (Stats). |
-| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Claves para Oracle (Admin) y Sagas (Stats). |
+
+| Archivo                                                                  | Acción         | Detalles                                       |
+| ------------------------------------------------------------------------ | -------------- | ---------------------------------------------- |
+| `db_back/src/main/resources/db/migration/V5__add_is_banned_to_users.sql` | **CREADO**     | SQL de migración Flyway.                       |
+| `db_back/src/main/java/com/tfm/db_back/domain/model/User.java`           | **MODIFICADO** | Campo `isBanned` añadido.                      |
+| `db_back/src/main/java/com/tfm/db_back/api/AdminController.java`         | **CREADO**     | Endpoints de admin internos.                   |
+| `middle_server/src/http/admin-controller.js`                             | **CREADO**     | Lógica de admin (vía/proxy).                   |
+| `middle_server/src/http/stats-controller.js`                             | **CREADO**     | Lógica de estadísticas de usuario.             |
+| `middle_server/src/http/routes.js`                                       | **MODIFICADO** | Registro de nuevas rutas y protección por rol. |
+| `front/src/app/core/admin/admin-api.service.ts`                          | **CREADO**     | Servicio HTTP de administración.               |
+| `front/src/app/core/statistics/statistics-api.service.ts`                | **CREADO**     | Servicio HTTP de estadísticas.                 |
+| `front/src/app/pages/admin-page/admin-page.component.ts`                 | **MODIFICADO** | Conexión a API y lógica de señales.            |
+| `front/src/app/pages/admin-page/admin-page.component.html`               | **MODIFICADO** | Traducción y binding a datos reales.           |
+| `front/src/app/pages/statistics/statistics.component.ts`                 | **MODIFICADO** | Conexión a API y lógica de señales.            |
+| `front/src/app/pages/statistics/statistics.component.html`               | **MODIFICADO** | Traducción y binding a datos reales.           |
+| `front/src/app/core/i18n/languages/es.ts`                                | **MODIFICADO** | Claves para Oracle (Admin) y Sagas (Stats).    |
+| `front/src/app/core/i18n/languages/en.ts`                                | **MODIFICADO** | Claves para Oracle (Admin) y Sagas (Stats).    |
 
 ---
 
 ## [2026-05-09] - Frontend: Corrección de Internacionalización (i18n)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver los problemas donde aparecían rutas de traducción (paths) en lugar de palabras y completar la internacionalización de cadenas hardcodeadas.
 
 ### 🐛 Causa Raíz:
+
 1. Los modales del Lobby (`CrearPartidaModal`, `UnirsePartidaModal`, `SalaLlenaModal`) utilizaban claves como `MODALS.CREATE.TITLE` omitiendo el prefijo `LOBBY.` requerido por el diccionario.
 2. Faltaban múltiples claves en `es.ts` y `en.ts` para logs de batalla (ataque recibido, victoria/derrota, eliminación de jugador) y para la fase de juego `FINISHED`.
 3. El modal de Reporte de Combate (`attack-result.modal.ts`) y la pantalla de Configuración de Usuario tenían textos hardcodeados en español.
@@ -629,29 +723,32 @@
    - ✅ Internacionalizados todos los labels y descripciones en `user-config.component.html` y `auth.component.html`.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Adición de >20 claves nuevas. |
-| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Adición de >20 claves nuevas. |
-| `front/src/app/pages/lobby-page/modals/crear-partida-modal/crear-partida-modal.component.html` | **MODIFICADO** | Corrección de prefijos. |
-| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.html` | **MODIFICADO** | Corrección de prefijos. |
-| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.html` | **MODIFICADO** | Corrección de prefijos. |
-| `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Toast internacionalizado. |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Alerta final internacionalizada. |
-| `front/src/app/pages/game/modals/attack-result.modal.ts` | **MODIFICADO** | Template internacionalizado + TranslatePipe. |
-| `front/src/app/pages/game/modals/reglas.modal.html` | **MODIFICADO** | Corrección de rutas y diagrama SVG. |
-| `front/src/app/pages/user-config/user-config.component.html` | **MODIFICADO** | Eliminación de hardcoding. |
-| `front/src/app/shared/components/auth/auth.component.html` | **MODIFICADO** | Label de Email internacionalizado. |
-| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** | Uso de `LEAVE_ERROR` traducido. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+| Archivo                                                                                          | Acción         | Detalles                                     |
+| ------------------------------------------------------------------------------------------------ | -------------- | -------------------------------------------- |
+| `front/src/app/core/i18n/languages/es.ts`                                                        | **MODIFICADO** | Adición de >20 claves nuevas.                |
+| `front/src/app/core/i18n/languages/en.ts`                                                        | **MODIFICADO** | Adición de >20 claves nuevas.                |
+| `front/src/app/pages/lobby-page/modals/crear-partida-modal/crear-partida-modal.component.html`   | **MODIFICADO** | Corrección de prefijos.                      |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.html` | **MODIFICADO** | Corrección de prefijos.                      |
+| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.html`         | **MODIFICADO** | Corrección de prefijos.                      |
+| `front/src/app/pages/game/game.component.html`                                                   | **MODIFICADO** | Toast internacionalizado.                    |
+| `front/src/app/pages/game/game.component.ts`                                                     | **MODIFICADO** | Alerta final internacionalizada.             |
+| `front/src/app/pages/game/modals/attack-result.modal.ts`                                         | **MODIFICADO** | Template internacionalizado + TranslatePipe. |
+| `front/src/app/pages/game/modals/reglas.modal.html`                                              | **MODIFICADO** | Corrección de rutas y diagrama SVG.          |
+| `front/src/app/pages/user-config/user-config.component.html`                                     | **MODIFICADO** | Eliminación de hardcoding.                   |
+| `front/src/app/shared/components/auth/auth.component.html`                                       | **MODIFICADO** | Label de Email internacionalizado.           |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts`                                         | **MODIFICADO** | Uso de `LEAVE_ERROR` traducido.              |
+| `.agents/AGENTS_CHANGELOG.md`                                                                    | **MODIFICADO** | (esta entrada)                               |
 
 ---
 
 ## [2026-05-09] - Full Stack: Fix Cambio de Email y Contraseña en Pantalla de Configuración
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la funcionalidad real para el cambio de contraseña y de email en la pantalla de configuración, sustituyendo mocks por llamadas a las tres capas de la aplicación con validación de seguridad (security.md).
 
 ### 🐛 Causa Raíz:
+
 1. `cambiar-contrasena.modal.ts` usaba un `setTimeout` simulado que mostraba éxito automáticamente en 1.5s.
 2. `user-config.component.ts` tenía la función `onSave()` vacía y el email no se precargaba (siempre aparecía vacío).
 3. `user-config.component.html` escuchaba `(closeModal)` en lugar de `(closed)`, impidiendo que el modal de contraseña se cerrara.
@@ -676,28 +773,31 @@
    - Solucionado el bug en `user-config.component.html` que impedía cerrar el modal de contraseña.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `db_back/src/main/java/com/tfm/db_back/api/dto/ChangePasswordRequestDto.java` | **CREADO** | |
-| `db_back/src/main/java/com/tfm/db_back/api/dto/UpdateEmailRequestDto.java` | **CREADO** | |
-| `db_back/src/main/java/com/tfm/db_back/domain/service/UserService.java` | **MODIFICADO** | |
-| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java` | **MODIFICADO** | |
-| `db_back/src/main/java/com/tfm/db_back/api/UserController.java` | **MODIFICADO** | |
-| `middle_server/src/db/db-connector.js` | **MODIFICADO** | |
-| `middle_server/src/http/profile-controller.js` | **CREADO** | |
-| `middle_server/src/http/routes.js` | **MODIFICADO** | |
-| `front/src/app/core/auth/auth-api.service.ts` | **MODIFICADO** | |
-| `front/src/app/pages/user-config/user-config.component.ts` | **MODIFICADO** | |
-| `front/src/app/pages/user-config/user-config.component.html` | **MODIFICADO** | |
-| `front/src/app/pages/user-config/modals/cambiar-contrasena.modal.ts` | **MODIFICADO** | |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+| Archivo                                                                       | Acción         | Detalles       |
+| ----------------------------------------------------------------------------- | -------------- | -------------- |
+| `db_back/src/main/java/com/tfm/db_back/api/dto/ChangePasswordRequestDto.java` | **CREADO**     |                |
+| `db_back/src/main/java/com/tfm/db_back/api/dto/UpdateEmailRequestDto.java`    | **CREADO**     |                |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserService.java`       | **MODIFICADO** |                |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java`   | **MODIFICADO** |                |
+| `db_back/src/main/java/com/tfm/db_back/api/UserController.java`               | **MODIFICADO** |                |
+| `middle_server/src/db/db-connector.js`                                        | **MODIFICADO** |                |
+| `middle_server/src/http/profile-controller.js`                                | **CREADO**     |                |
+| `middle_server/src/http/routes.js`                                            | **MODIFICADO** |                |
+| `front/src/app/core/auth/auth-api.service.ts`                                 | **MODIFICADO** |                |
+| `front/src/app/pages/user-config/user-config.component.ts`                    | **MODIFICADO** |                |
+| `front/src/app/pages/user-config/user-config.component.html`                  | **MODIFICADO** |                |
+| `front/src/app/pages/user-config/modals/cambiar-contrasena.modal.ts`          | **MODIFICADO** |                |
+| `.agents/AGENTS_CHANGELOG.md`                                                 | **MODIFICADO** | (esta entrada) |
 
 ---
 
 ## [2026-05-09] - Full Stack: Fix Bug Abandonar Partida desde Lobby
+
 **Objetivo**: Corregir el bug por el cual pulsar "Abandonar" en el lobby no tenía efecto persistente, ya que el frontend solo borraba la tarjeta del array local sin comunicarlo al servidor.
 
 ### 🐛 Causa Raíz:
+
 `onLeaveGame()` en `lobby-page.component.ts` actualizaba únicamente el signal `activeGames` en cliente, sin emitir ningún evento socket ni llamar a ningún endpoint. Al recargar, `loadGames()` volvía a obtener la partida del servidor, que nunca recibió la orden de salida.
 
 ### 📝 Solución Implementada:
@@ -718,37 +818,43 @@
    - Si hay error (ej: partida ya en curso), muestra alerta con el mensaje real.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Nuevo evento `lobby:leave` y `lobby:left` |
-| `front/src/app/core/game/game.service.ts` | **MODIFICADO** | Nuevo método `leaveGame()` + import `race` de RxJS |
+
+| Archivo                                                  | Acción         | Detalles                                                     |
+| -------------------------------------------------------- | -------------- | ------------------------------------------------------------ |
+| `middle_server/src/socket/socket-handler.js`             | **MODIFICADO** | Nuevo evento `lobby:leave` y `lobby:left`                    |
+| `front/src/app/core/game/game.service.ts`                | **MODIFICADO** | Nuevo método `leaveGame()` + import `race` de RxJS           |
 | `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** | `onLeaveGame` comunica al servidor antes de actualizar la UI |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+| `.agents/AGENTS_CHANGELOG.md`                            | **MODIFICADO** | (esta entrada)                                               |
 
 ---
 
 ## [2026-05-09] - Frontend: Refinamiento de la Pantalla de Estadísticas (Refine UI)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Aplicar ajustes responsivos para móvil a la pantalla de estadísticas (`EstadisticasComponent`) según la iteración en el preview.
 
 ### 📝 Resumen de Tareas Realizadas:
+
 1. **Preview**: Ajustados los tamaños de fuente (mediante `clamp` y `@media` query) y el espaciado para que la información (etiquetas y valores) se mantenga en una sola línea en dispositivos móviles sin desbordar la pantalla, utilizando `white-space: nowrap`.
 2. **EstadisticasComponent SCSS**: Integradas las mismas reglas CSS aprobadas en el HTML preview a la hoja de estilos de producción (`@media (max-width: 600px)`) para asegurar que `.stat-item`, `.stat-icon-wrapper` y la tipografía sean fluidas en pantallas estrechas.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
+
+| Archivo                                                    | Acción         | Detalles                                                                           |
+| ---------------------------------------------------------- | -------------- | ---------------------------------------------------------------------------------- |
 | `front/src/app/pages/statistics/statistics.component.scss` | **MODIFICADO** | Adición de `@media` para ajustar padding y forzar a una línea los textos en móvil. |
-| `.agents/previews/estadisticas-preview.html` | **MODIFICADO** | Reconstrucción visual iterativa para móvil. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+| `.agents/previews/estadisticas-preview.html`               | **MODIFICADO** | Reconstrucción visual iterativa para móvil.                                        |
+| `.agents/AGENTS_CHANGELOG.md`                              | **MODIFICADO** | (esta entrada)                                                                     |
 
 ---
 
 ## [2026-05-08] - Frontend: Refinamiento de Interfaz de Juego (Refine UI)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Aplicar ajustes de UI responsivos en el `GamePageComponent` finalizando la iteración de `/refine-ui` solicitada por el usuario.
 
 ### 📝 Resumen de Tareas Realizadas:
+
 1. **GamePageComponent HTML**:
    - Envuelto el mapa en un nuevo div contenedor `map-scroll-area` para permitir scroll horizontal nativo solo en dispositivos móviles.
    - Refactorizado el botón de "Reglas" para utilizar una estructura basada en `span.icon` y `span.text`, e inyectado un ícono SVG de información.
@@ -759,19 +865,22 @@
    - Ajustes generales de `padding` y `gap` en móvil para el `.topbar` y así evitar el solapamiento de textos en pantallas estrechas.
 
 ### 🗂️ Archivos Modificados/Creados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
+
+| Archivo                                        | Acción         | Detalles                                                 |
+| ---------------------------------------------- | -------------- | -------------------------------------------------------- |
 | `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Inclusión de `.map-scroll-area` y refactor `.btn-rules`. |
-| `front/src/app/pages/game/game.component.scss` | **MODIFICADO** | Adición de `@media` para móvil y ajustes CSS del SVG. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+| `front/src/app/pages/game/game.component.scss` | **MODIFICADO** | Adición de `@media` para móvil y ajustes CSS del SVG.    |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** | (esta entrada)                                           |
 
 ---
 
 ## [2026-05-08] - Proyecto: Limpieza de Código y Mocks
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Realizar el "Paso 5" del plan de limpieza de deuda técnica, purgar comentarios obsoletos y refinar los métodos de desarrollo.
 
 ### 📝 Resumen de Tareas Realizadas:
+
 1. **Limpieza de TODOs Obsoletos**:
    - `middle_server/src/game/engine/time-wheel.js`: Eliminados TODOs referentes a mecánicas ya implementadas (volcados y resolución de tropas).
    - `middle_server/src/socket/socket-handler.js`: Eliminado TODO sobre el envío del estado a la sala completa (implementado en un paso anterior).
@@ -784,21 +893,24 @@
    - Revisión general de "orphaned imports".
 
 ### 🗂️ Archivos Modificados/Creados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** | Limpieza de doc TODOs |
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Limpieza de comentarios obsoletos |
+
+| Archivo                                        | Acción         | Detalles                            |
+| ---------------------------------------------- | -------------- | ----------------------------------- |
+| `middle_server/src/game/engine/time-wheel.js`  | **MODIFICADO** | Limpieza de doc TODOs               |
+| `middle_server/src/socket/socket-handler.js`   | **MODIFICADO** | Limpieza de comentarios obsoletos   |
 | `middle_server/src/game/state/sync-manager.js` | **MODIFICADO** | Limpieza de comentario sobre combat |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Refactorización de mocks |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+| `front/src/app/pages/game/game.component.ts`   | **MODIFICADO** | Refactorización de mocks            |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** | (esta entrada)                      |
 
 ---
 
 ## [2026-05-08] - Middle Server & Frontend: Resolución de Deuda Técnica y Logs
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la limpieza de logs en producción, resolver la sincronización del Handshake JWT, centralizar volcados de DB en el TimeWheel y estandarizar el casing de fases.
 
 ### 📝 Resumen de Tareas Realizadas:
+
 1. **Limpieza de Logs (Consoles)**:
    - Eliminados o comentados múltiples `console.log`, `console.warn` y `console.error` en `front/src/app/core/game/socket.service.ts`, `front/src/app/pages/game/game.component.ts` y `front/src/app/pages/user-config/user-config.component.ts`.
 2. **Sincronización del Handshake JWT**:
@@ -814,68 +926,78 @@
    - `middle_server/src/game/engine/time-wheel.js` y `socket-handler.js`: Emisión del evento `game:phase-changed` siempre en MAYÚSCULAS (`WAR`, `END`, `PREPARATION`) para estar en línea con los enums del DB Server.
 
 ### 🗂️ Archivos Modificados/Creados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `front/src/app/core/game/socket.service.ts` | **MODIFICADO** | Limpieza de consoles |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Limpieza de consoles |
-| `front/src/app/pages/user-config/user-config.component.ts` | **MODIFICADO** | Limpieza de consoles |
-| `middle_server/src/db/db-connector.js` | **MODIFICADO** | Handshake retry en 401 |
-| `middle_server/src/game/state/sync-manager.js` | **MODIFICADO** | Eliminado setInterval |
-| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** | Volcados movidos al engine |
-| `middle_server/index.js` | **MODIFICADO** | Eliminada inicialización de syncManager |
-| `middle_server/src/models/game.js` | **MODIFICADO** | Casing toUpperCase en toJSON |
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Casing de phase-changed |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+| Archivo                                                    | Acción         | Detalles                                |
+| ---------------------------------------------------------- | -------------- | --------------------------------------- |
+| `front/src/app/core/game/socket.service.ts`                | **MODIFICADO** | Limpieza de consoles                    |
+| `front/src/app/pages/game/game.component.ts`               | **MODIFICADO** | Limpieza de consoles                    |
+| `front/src/app/pages/user-config/user-config.component.ts` | **MODIFICADO** | Limpieza de consoles                    |
+| `middle_server/src/db/db-connector.js`                     | **MODIFICADO** | Handshake retry en 401                  |
+| `middle_server/src/game/state/sync-manager.js`             | **MODIFICADO** | Eliminado setInterval                   |
+| `middle_server/src/game/engine/time-wheel.js`              | **MODIFICADO** | Volcados movidos al engine              |
+| `middle_server/index.js`                                   | **MODIFICADO** | Eliminada inicialización de syncManager |
+| `middle_server/src/models/game.js`                         | **MODIFICADO** | Casing toUpperCase en toJSON            |
+| `middle_server/src/socket/socket-handler.js`               | **MODIFICADO** | Casing de phase-changed                 |
+| `.agents/AGENTS_CHANGELOG.md`                              | **MODIFICADO** | (esta entrada)                          |
 
 ---
 
 ## [2026-05-08] - Seguridad: Sanitización de Entradas en el Middle Server
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la sanitización de todas las entradas (payloads) recibidas por el `SocketHandler` desde el Frontend para cumplir con las reglas de seguridad y prevenir ataques XSS.
 
 ### 📝 Resumen de Tareas Realizadas:
+
 1. **`sanitizer.js`**: Actualizado para exportar sus funciones utilizando sintaxis de módulos ES6 (`export { sanitizeInput }`).
-2. **`socket-handler.js`**: 
-    - Importada la función recursiva `sanitizeInput`.
-    - Inyectada la sanitización `payload = sanitizeInput(payload);` al inicio de todos los eventos de Socket.IO (`join_game`, `game:create`, `game:start`, `game:attack`, `game:send-log`, etc.). Esto asegura que cualquier cadena de texto (como `logEntry` o IDs maliciosos) pase por un escape básico de HTML antes de ser procesada por la lógica de juego o reenviada a la sala.
+2. **`socket-handler.js`**:
+   - Importada la función recursiva `sanitizeInput`.
+   - Inyectada la sanitización `payload = sanitizeInput(payload);` al inicio de todos los eventos de Socket.IO (`join_game`, `game:create`, `game:start`, `game:attack`, `game:send-log`, etc.). Esto asegura que cualquier cadena de texto (como `logEntry` o IDs maliciosos) pase por un escape básico de HTML antes de ser procesada por la lógica de juego o reenviada a la sala.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/utils/sanitizer.js` | **MODIFICADO** | Export ES6. |
+
+| Archivo                                      | Acción         | Detalles                                             |
+| -------------------------------------------- | -------------- | ---------------------------------------------------- |
+| `middle_server/src/utils/sanitizer.js`       | **MODIFICADO** | Export ES6.                                          |
 | `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Inyección de `sanitizeInput` en todos los listeners. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+| `.agents/AGENTS_CHANGELOG.md`                | **MODIFICADO** | (esta entrada)                                       |
 
 ---
 
 ## [2026-05-08] - Proyecto: Actualización de Auditoría y Funcionalidades
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Rehacer los archivos de seguimiento y auditoría para reflejar el estado actual del proyecto, eliminando inconsistencias ya resueltas y precisando la deuda técnica restante.
 
 ### 📝 Resumen de Tareas Realizadas:
+
 1. **`MISSING_FEATURES.md`**: Actualizado para marcar como completadas las fases `END`, las reglas de 2 jugadores y el `Victory Checker`. Se han precisado las tareas pendientes de notificaciones de ataque y lógica HEAL.
 2. **`audit_incongruencias.md`**: Eliminadas las incongruencias ya resueltas (fase End inalcanzable, falta de reglas de 2 jugadores). Se han mantenido y refinado los riesgos de infraestructura (Dumps, Handshake renewal) y documentación obsoleta.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `MISSING_FEATURES.md` | **MODIFICADO** | Estado real del MVP. |
-| `audit_incongruencias.md` | **MODIFICADO** | Auditoría actualizada. |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+| Archivo                       | Acción         | Detalles               |
+| ----------------------------- | -------------- | ---------------------- |
+| `MISSING_FEATURES.md`         | **MODIFICADO** | Estado real del MVP.   |
+| `audit_incongruencias.md`     | **MODIFICADO** | Auditoría actualizada. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada)         |
 
 ---
 
 ## [2026-05-08] - Frontend: Fix Compilación Angular (GamePhase & TranslatePipe)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Solucionar errores de compilación reportados por el compilador de Angular tras añadir el modal de ataque y el estado de fin de partida.
 
 ### 📝 Resumen de Tareas Realizadas:
+
 1. Añadido el estado `'FINISHED'` al tipo `GamePhase` en `game.model.ts` para resolver el error TS2345 y permitir la asignación correcta al terminar la partida.
 2. Eliminado el importe sin usar de `TranslatePipe` en `attack-result.modal.ts` para solucionar el warning NG8113.
 
 ---
 
 ## [2026-05-08] - Frontend: Notificación y Reporte de Combate para Atacante
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar una notificación visual no intrusiva (Toast) en la interfaz de escritorio cuando un ataque finaliza con éxito, permitiendo ver el detalle completo del reporte de combate al hacer click.
 
@@ -884,22 +1006,23 @@
 1. **Frontend (Angular)**:
    - ✅ **Modelo y Estado**: Añadidos los signals `recentAttackResult` y `showAttackResultModal` a `game.component.ts`.
    - ✅ **Socket Listener**: Modificado el evento `game:battle-result` para capturar cuando el usuario actual es el atacante. Al recibir el reporte, se establece en el estado y se auto-oculta pasados 15 segundos si no se interactúa con él.
-   - ✅ **Componente Toast**: Creado un "Toast" flotante en `game.component.html` en la esquina inferior derecha. 
+   - ✅ **Componente Toast**: Creado un "Toast" flotante en `game.component.html` en la esquina inferior derecha.
    - ✅ **Responsive Design**: Se usó la clase `.desktop-only` y `@media (min-width: 1024px)` para asegurar que esta notificación **solo aparezca en ordenadores**, respetando el diseño limpio en dispositivos móviles.
    - ✅ **Modal de Reporte**: Creado el componente standalone `AttackResultModalComponent` (`attack-result.modal.ts`) que muestra el daño infligido a la capital, tropas perdidas, tropas destruidas, experiencia de investigación ganada, y una alerta especial si el rival ha sido eliminado de la partida.
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `front/src/app/pages/game/modals/attack-result.modal.ts` | **CREADO** | Componente Modal de Reporte de Combate. |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Lógica de toast y modals, captura de datos. |
-| `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Template del Toast. |
-| `front/src/app/pages/game/game.component.scss` | **MODIFICADO** | Estilos CSS, animaciones y media queries para el Toast. |
+| Archivo                                                  | Acción         | Detalles                                                |
+| -------------------------------------------------------- | -------------- | ------------------------------------------------------- |
+| `front/src/app/pages/game/modals/attack-result.modal.ts` | **CREADO**     | Componente Modal de Reporte de Combate.                 |
+| `front/src/app/pages/game/game.component.ts`             | **MODIFICADO** | Lógica de toast y modals, captura de datos.             |
+| `front/src/app/pages/game/game.component.html`           | **MODIFICADO** | Template del Toast.                                     |
+| `front/src/app/pages/game/game.component.scss`           | **MODIFICADO** | Estilos CSS, animaciones y media queries para el Toast. |
 
 ---
 
 ## [2026-05-08] - Full Stack: Abandono de Partida y Corrección de Fases Finales
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la mecánica de abandono de partidas y corregir la transición a las fases finales (`END` y `FINISHED`) según las especificaciones de arquitectura.
 
@@ -917,17 +1040,18 @@
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** | Lógica de abandono. |
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Evento `game:abandon`. |
-| `middle_server/src/game/engine/victory-checker.js` | **MODIFICADO** | Corrección de transiciones de fase. |
-| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** | Timer para END en partidas de 2 jugadores. |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Emisión de abandono y alerta de finalización. |
+| Archivo                                            | Acción         | Detalles                                      |
+| -------------------------------------------------- | -------------- | --------------------------------------------- |
+| `middle_server/src/game/actions/game-actions.js`   | **MODIFICADO** | Lógica de abandono.                           |
+| `middle_server/src/socket/socket-handler.js`       | **MODIFICADO** | Evento `game:abandon`.                        |
+| `middle_server/src/game/engine/victory-checker.js` | **MODIFICADO** | Corrección de transiciones de fase.           |
+| `middle_server/src/game/engine/time-wheel.js`      | **MODIFICADO** | Timer para END en partidas de 2 jugadores.    |
+| `front/src/app/pages/game/game.component.ts`       | **MODIFICADO** | Emisión de abandono y alerta de finalización. |
 
 ---
 
 ## [2026-05-08] - Auditoría de Incongruencias y Sincronización Final
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Realizar una auditoría profunda del estado del proyecto frente a la arquitectura y asegurar la sincronización en tiempo real de las acciones.
 
@@ -938,37 +1062,38 @@
    - ✅ **Documentación**: Rehecho el archivo `audit_incongruencias.md` (con fecha 2026-05-08) identificando 3 riesgos críticos y 5 inconsistencias estructurales.
    - ✅ **Incongruencias Detectadas**: Identificada la fase "End" inalcanzable, la obsolescencia del ciclo de ventajas en la documentación y la falta de renovación automática del handshake JWT.
 
-2. **Seguridad y Observabilidad (Logger)**:
+1. **Seguridad y Observabilidad (Logger)**:
    - ✅ **Migración**: Migración total de `console.log` a un sistema de logging estructurado en el Middle Server.
    - ✅ **Custom Logger**: Implementado `src/utils/logger.js` que emula la API de `pino` (JSON en producción, Pretty-print en desarrollo) sin dependencias externas.
    - ✅ **Refactor**: Reemplazados todos los logs en `index.js`, `socket-handler.js`, `time-wheel.js`, `sync-manager.js` y `config/index.js`.
    - ✅ **Privacidad**: El logger de HTTP en `index.js` ahora sanitiza automáticamente campos sensibles como `password` y `secret`.
 
-3. **Middle Server (Node.js)**:
+2. **Middle Server (Node.js)**:
    - ✅ **Sincronización**: Implementadas llamadas a `syncGameStateToAll` en todos los manejadores de acciones (`game:start`, `game:attack`, `game:train`, `game:research`). Ahora el servidor envía el estado completo filtrado por Fog of War inmediatamente después de cada acción exitosa.
    - ✅ **Time Wheel**: Estandarizado el evento de actualización de recursos a `game:state-sync` (antes `game:state-update`) para que el frontend lo reconozca.
    - ✅ **Time Wheel**: Añadida sincronización de estado completa tras finalizar investigaciones y entrenamientos de tropas.
    - ✅ **Privacidad**: Optimización de tráfico; los eventos tácticos (`player:troop-trained`, `player:research-complete`) ahora se envían únicamente al jugador afectado mediante su `connectedSocketId`, reforzando la Niebla de Guerra.
    - ✅ **Protocolo**: Corregido el nombre del evento de cambio de fase a `game:phase-changed` y ajustado el payload a `newPhase` para coincidir con el frontend.
 
-2. **Frontend (Angular)**:
+3. **Frontend (Angular)**:
    - ✅ **Feedback Log**: Añadidos listeners para `player:troop-trained` y `player:research-complete` que insertan entradas descriptivas en el log de batalla cuando las tareas finalizan en el servidor.
    - ✅ **Estabilidad**: Corregida la inconsistencia en el nombre de los eventos de cambio de fase y sincronización general, permitiendo que la UI reaccione en tiempo real.
    - ✅ **i18n**: Añadidas nuevas claves de traducción para los estados de confirmación y finalización de reclutamiento e investigación.
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Sincronización post-acción y corrección de eventos. |
+| Archivo                                       | Acción         | Detalles                                                  |
+| --------------------------------------------- | -------------- | --------------------------------------------------------- |
+| `middle_server/src/socket/socket-handler.js`  | **MODIFICADO** | Sincronización post-acción y corrección de eventos.       |
 | `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** | Sincronización en RESOURCE_TICK y finalización de tareas. |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Nuevos listeners para feedback de finalización. |
-| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Nuevas claves de log (complete/confirm). |
-| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | New log keys (complete/confirm). |
+| `front/src/app/pages/game/game.component.ts`  | **MODIFICADO** | Nuevos listeners para feedback de finalización.           |
+| `front/src/app/core/i18n/languages/es.ts`     | **MODIFICADO** | Nuevas claves de log (complete/confirm).                  |
+| `front/src/app/core/i18n/languages/en.ts`     | **MODIFICADO** | New log keys (complete/confirm).                          |
 
 ---
 
 ## [2026-05-08] - Full Stack: Sincronización Real de Entrenamiento y Recursos
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver el fallo donde las tropas entrenadas no aparecían en la UI y sincronizar recursos (oro/sabiduría) y progreso de entrenamiento en tiempo real.
 
@@ -986,17 +1111,18 @@
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `front/src/app/pages/game/modals/attack.types.ts` | **MODIFICADO** | Actualización de schemas y enums. |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Lógica de sincronización reactiva y ticker. |
-| `front/src/app/pages/game/modals/entrenar.modal.html` | **MODIFICADO** | Uso de nombres dinámicos de tropas. |
-| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Nuevas categorías de tropas. |
-| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | New troop categories. |
+| Archivo                                               | Acción         | Detalles                                    |
+| ----------------------------------------------------- | -------------- | ------------------------------------------- |
+| `front/src/app/pages/game/modals/attack.types.ts`     | **MODIFICADO** | Actualización de schemas y enums.           |
+| `front/src/app/pages/game/game.component.ts`          | **MODIFICADO** | Lógica de sincronización reactiva y ticker. |
+| `front/src/app/pages/game/modals/entrenar.modal.html` | **MODIFICADO** | Uso de nombres dinámicos de tropas.         |
+| `front/src/app/core/i18n/languages/es.ts`             | **MODIFICADO** | Nuevas categorías de tropas.                |
+| `front/src/app/core/i18n/languages/en.ts`             | **MODIFICADO** | New troop categories.                       |
 
 ---
 
 ## [2026-05-08] - Frontend: Corrección de error NG0955 en Modal de Entrenamiento
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver el error `NG0955: Duplicated keys in track expression` que ocurría al abrir el modal de entrenamiento de tropas para clanes con múltiples unidades del mismo tipo (ej: Jarls con dos tipos de "DEF").
 
@@ -1011,16 +1137,17 @@
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `front/src/app/pages/game/modals/attack.types.ts` | **MODIFICADO** | Añadido `id` a `TrainableTroopOption`. |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Mapeo de `id` y actualización de `onTrainTroop`. |
-| `front/src/app/pages/game/modals/entrenar.modal.ts` | **MODIFICADO** | Cambio de output `train` a `string`. |
-| `front/src/app/pages/game/modals/entrenar.modal.html` | **MODIFICADO** | `track option.id`. |
+| Archivo                                               | Acción         | Detalles                                         |
+| ----------------------------------------------------- | -------------- | ------------------------------------------------ |
+| `front/src/app/pages/game/modals/attack.types.ts`     | **MODIFICADO** | Añadido `id` a `TrainableTroopOption`.           |
+| `front/src/app/pages/game/game.component.ts`          | **MODIFICADO** | Mapeo de `id` y actualización de `onTrainTroop`. |
+| `front/src/app/pages/game/modals/entrenar.modal.ts`   | **MODIFICADO** | Cambio de output `train` a `string`.             |
+| `front/src/app/pages/game/modals/entrenar.modal.html` | **MODIFICADO** | `track option.id`.                               |
 
 ---
 
 ## [2026-05-07] - Full Stack: El Middle Server como Fuente de Verdad del Lobby
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Asegurar que la lista de partidas del lobby refleje siempre el estado en vivo de la memoria del Middle Server, incluso antes de que se persista en la base de datos.
 
@@ -1035,13 +1162,15 @@
    - ✅ **LobbyPage**: La lógica de detección de Host y Clan ahora es 100% fiable al recibir el estado en vivo desde el Middle Server.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
+
+| Archivo                                      | Acción         | Detalles                                    |
+| -------------------------------------------- | -------------- | ------------------------------------------- |
 | `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Enriquecimiento de `game:list` con memoria. |
 
 ---
 
 ## [2026-05-07] - Full Stack: Corrección de Sincronización Multiplayer y Códigos de Sala
+
 ### 📝 Resumen de Tareas Realizadas:
 
 1. **Middle Server (Node.js)**:
@@ -1055,15 +1184,17 @@
    - ✅ **GamePage**: Sincronización robusta: ahora el Jugador B recibirá correctamente el estado completo de la partida al unirse, viendo al Host y a sí mismo con los roles correctos.
 
 ### 🗂️ Archivos Modificados:
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/game/state/game-store.js` | **MODIFICADO** | Añadido buscador por código corto. |
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Soporte de códigos cortos y fix de vida. |
-| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** | Detección de Host y Clan en el lobby. |
+
+| Archivo                                                  | Acción         | Detalles                                 |
+| -------------------------------------------------------- | -------------- | ---------------------------------------- |
+| `middle_server/src/game/state/game-store.js`             | **MODIFICADO** | Añadido buscador por código corto.       |
+| `middle_server/src/socket/socket-handler.js`             | **MODIFICADO** | Soporte de códigos cortos y fix de vida. |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** | Detección de Host y Clan en el lobby.    |
 
 ---
 
 ## [2026-05-07] - Frontend: Corrección de Visualización del Modal de Espera y Diagnóstico de Sincronización
+
 ### 📝 Resumen de Tareas Realizadas:
 
 1. **Frontend (Angular)**:
@@ -1075,6 +1206,7 @@
    - 💡 **Solución para pruebas**: Es **obligatorio** iniciar sesión con dos cuentas de usuario distintas (por ejemplo, `user1` y `user2`) en navegadores separados o en perfiles diferentes para poder ver a los dos jugadores en el mapa.
 
 ### Combat System & Resource Logic Refinement
+
 - **Research Credit Cap**: Increased `maxResearchCredits` from 500 to 10,000 to accommodate Tier 3 technologies.
 - **War Weariness Rewards**: Refactored `combat-resolver.js` to base research credit rewards on **Actual Damage Dealt** (total HP lost by defender troops and capital) rather than raw attack power, as per Architecture Rule 445.
 - **Ghost Troop Cleanup**: Ensured `cleanupDeadTroops()` is called after combat resolution to remove casualties from the game state.
@@ -1083,13 +1215,14 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
+| Archivo                                      | Acción         | Detalles                         |
+| -------------------------------------------- | -------------- | -------------------------------- |
 | `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Conversión de fase a mayúsculas. |
 
 ---
 
 ## [2026-05-07] - Full Stack: Sincronización de Partida y Corrección de Visualización
+
 ### 📝 Resumen de Tareas Realizadas:
 
 1. **Middle Server (Node.js)**:
@@ -1108,17 +1241,18 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `middle_server/src/game/engine/fog-of-war.js` | **MODIFICADO** | Añadido alias `clan`. |
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Nueva lógica de sincronización total. |
-| `front/src/app/core/game/game.service.ts` | **MODIFICADO** | Refinado `joinGame`. |
-| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** | Corregida navegación `onEnterGame`. |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Añadida auto-reunión en `ngOnInit`. |
+| Archivo                                                  | Acción         | Detalles                              |
+| -------------------------------------------------------- | -------------- | ------------------------------------- |
+| `middle_server/src/game/engine/fog-of-war.js`            | **MODIFICADO** | Añadido alias `clan`.                 |
+| `middle_server/src/socket/socket-handler.js`             | **MODIFICADO** | Nueva lógica de sincronización total. |
+| `front/src/app/core/game/game.service.ts`                | **MODIFICADO** | Refinado `joinGame`.                  |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** | Corregida navegación `onEnterGame`.   |
+| `front/src/app/pages/game/game.component.ts`             | **MODIFICADO** | Añadida auto-reunión en `ngOnInit`.   |
 
 ---
 
 ## [2026-05-07] - Full Stack: Implementación de Unirse a Partida (Join Game)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver el problema de que el botón de unirse se quedaba "pensando" mediante la implementación real del flujo de unión en todas las capas.
 
@@ -1138,19 +1272,20 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `db_back/src/main/java/com/tfm/db_back/api/GameController.java` | **MODIFICADO** | Nuevo endpoint de unión. |
-| `db_back/src/main/java/com/tfm/db_back/domain/service/GameService.java` | **MODIFICADO** | Interfaz actualizada. |
-| `db_back/src/main/java/com/tfm/db_back/domain/service/GameServiceImpl.java` | **MODIFICADO** | Lógica de unión implementada. |
-| `middle_server/src/db/db-connector.js` | **MODIFICADO** | Cliente para el nuevo endpoint. |
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Lógica de auto-join en el socket. |
-| `front/src/app/core/game/game.service.ts` | **MODIFICADO** | Payload de join_game actualizado. |
+| Archivo                                                                                        | Acción         | Detalles                                     |
+| ---------------------------------------------------------------------------------------------- | -------------- | -------------------------------------------- |
+| `db_back/src/main/java/com/tfm/db_back/api/GameController.java`                                | **MODIFICADO** | Nuevo endpoint de unión.                     |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/GameService.java`                        | **MODIFICADO** | Interfaz actualizada.                        |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/GameServiceImpl.java`                    | **MODIFICADO** | Lógica de unión implementada.                |
+| `middle_server/src/db/db-connector.js`                                                         | **MODIFICADO** | Cliente para el nuevo endpoint.              |
+| `middle_server/src/socket/socket-handler.js`                                                   | **MODIFICADO** | Lógica de auto-join en el socket.            |
+| `front/src/app/core/game/game.service.ts`                                                      | **MODIFICADO** | Payload de join_game actualizado.            |
 | `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.ts` | **MODIFICADO** | Integración real y corrección de navegación. |
 
 ---
 
 ## [2026-05-07] - Frontend: Correcciones de Sockets y UI de Unirse a Partida
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver errores de emisión de sockets antes de conectar y mejorar la UI del modal de unirse a partida para soportar UUIDs.
 
@@ -1167,16 +1302,17 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `front/src/app/core/game/socket.service.ts` | **MODIFICADO** | Lógica de conexión y emisión mejorada. |
-| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.ts` | **MODIFICADO** | Eliminado toUpperCase(). |
-| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.html` | **MODIFICADO** | maxlength="36". |
-| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.scss` | **MODIFICADO** | Ajuste de font-size. |
+| Archivo                                                                                          | Acción         | Detalles                               |
+| ------------------------------------------------------------------------------------------------ | -------------- | -------------------------------------- |
+| `front/src/app/core/game/socket.service.ts`                                                      | **MODIFICADO** | Lógica de conexión y emisión mejorada. |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.ts`   | **MODIFICADO** | Eliminado toUpperCase().               |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.html` | **MODIFICADO** | maxlength="36".                        |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.scss` | **MODIFICADO** | Ajuste de font-size.                   |
 
 ---
 
 ## [2026-05-07] - Middle Server: Corrección de ReferenceError en Rutas
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver el error `ReferenceError: getGameAvailabilityController is not defined` que impedía el correcto funcionamiento del Middle Server.
 
@@ -1187,100 +1323,109 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
+| Archivo                            | Acción         | Detalles                                           |
+| ---------------------------------- | -------------- | -------------------------------------------------- |
 | `middle_server/src/http/routes.js` | **MODIFICADO** | Añadido import de `getGameAvailabilityController`. |
 
 ---
 
 ## [2026-05-07] - Frontend & Middle Server: Corrección de characterId e Interceptor de Autenticación
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver el error de compilación `characterId` en el frontend, arreglar la configuración de MinIO en el backend y solucionar el error 401 Unauthorized mediante la implementación de un interceptor de JWT.
 
 ### 📝 Resumen de Tareas Realizadas:
 
 #### 1. **Middle Server: Configuración e Infraestructura**:
-   - ✅ Añadidas variables de MinIO (`MINIO_ENDPOINT`, etc.) al `config/index.js` y `.env`.
-   - ✅ Corregida la versión de `multer` en `package.json` de `2.1.1` (inválida) a `^1.4.5-lts.1`.
-   - ✅ Actualizado el modelo `Player` para incluir y sincronizar el `username`.
-   - ✅ Refactorizado `SocketHandler` para recuperar el `characterId` desde el estado de juego usando el `userId` del JWT.
+
+- ✅ Añadidas variables de MinIO (`MINIO_ENDPOINT`, etc.) al `config/index.js` y `.env`.
+- ✅ Corregida la versión de `multer` en `package.json` de `2.1.1` (inválida) a `^1.4.5-lts.1`.
+- ✅ Actualizado el modelo `Player` para incluir y sincronizar el `username`.
+- ✅ Refactorizado `SocketHandler` para recuperar el `characterId` desde el estado de juego usando el `userId` del JWT.
 
 #### 2. **Frontend: Autenticación y Sincronización**:
-   - ✅ Implementado `authInterceptor` funcional para adjuntar automáticamente el JWT (`Bearer token`) a todas las peticiones HTTP salientes.
-   - ✅ Registrado el interceptor en `app.config.ts` mediante `withInterceptors`.
-   - ✅ Añadidas señales `userId` y `characterId` a `AuthService` para mejorar la gestión del estado de juego.
-   - ✅ Actualizada la lógica de `game:state-sync` en `game.component.ts` para mapear el objeto de jugadores y establecer el personaje local.
-   - ✅ Corregidos nombres de propiedades en el evento `game:battle-result` (`targetCharacterId`).
+
+- ✅ Implementado `authInterceptor` funcional para adjuntar automáticamente el JWT (`Bearer token`) a todas las peticiones HTTP salientes.
+- ✅ Registrado el interceptor en `app.config.ts` mediante `withInterceptors`.
+- ✅ Añadidas señales `userId` y `characterId` a `AuthService` para mejorar la gestión del estado de juego.
+- ✅ Actualizada la lógica de `game:state-sync` en `game.component.ts` para mapear el objeto de jugadores y establecer el personaje local.
+- ✅ Corregidos nombres de propiedades en el evento `game:battle-result` (`targetCharacterId`).
 
 #### 3. **Validación**:
-   - ✅ Verificada la compilación del frontend con `npx tsc --noEmit` (0 errores).
-   - ✅ Confirmada la correcta extracción del `userId` (claim `sub`) desde el JWT en el cliente.
+
+- ✅ Verificada la compilación del frontend con `npx tsc --noEmit` (0 errores).
+- ✅ Confirmada la correcta extracción del `userId` (claim `sub`) desde el JWT en el cliente.
 
 ---
 
 ## [2026-05-07] - Frontend Sprint 4: Integración Real de Sockets y Feedback Visual (Sprint 4 Frontend)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Reemplazar mocks en el frontend con conexiones reales a Socket.IO, implementar feedback visual de combate dinámico y cargar estadísticas de clanes desde el Middle Server.
 
 ### 📝 Resumen de Tareas Realizadas:
 
 #### 1. **Integración Real de Sockets** (`game.component.ts`):
-   - ✅ Importado `SocketService` para gestión de conexiones WebSocket.
-   - ✅ Implementado `setupGameSubscriptions()` con 8 listeners en tiempo real:
-     - `game:state-sync` → Sincroniza fase, jugadores, salud del capital
-     - `player:resources-updated` → Actualiza oro y créditos de investigación
-     - `player:train-queued` → Confirma entrenamiento y actualiza cola
-     - `player:research-started` → Confirma investigación desbloqueada
-     - `game:attack-launched` → Notifica ataques de otros jugadores
-     - `game:battle-result` → Actualiza salud tras batalla
-     - `game:phase-changed` → Sincroniza cambios de fase de juego
-     - `game:player-eliminated` → Remueve jugadores del mapa
-   - ✅ Modificadas acciones para emitir eventos al servidor:
-     - `onTrainTroop()` → Emite `game:train` con `gameId` y `troopTypeId`
-     - `onResearchTechnology()` → Emite `game:research` con `gameId` y `researchId`
-     - `onLaunchAttack()` → Emite `game:attack` con destino y tropas seleccionadas
-     - `onStartGame()` → Emite `game:start` (solo para host)
+
+- ✅ Importado `SocketService` para gestión de conexiones WebSocket.
+- ✅ Implementado `setupGameSubscriptions()` con 8 listeners en tiempo real:
+  - `game:state-sync` → Sincroniza fase, jugadores, salud del capital
+  - `player:resources-updated` → Actualiza oro y créditos de investigación
+  - `player:train-queued` → Confirma entrenamiento y actualiza cola
+  - `player:research-started` → Confirma investigación desbloqueada
+  - `game:attack-launched` → Notifica ataques de otros jugadores
+  - `game:battle-result` → Actualiza salud tras batalla
+  - `game:phase-changed` → Sincroniza cambios de fase de juego
+  - `game:player-eliminated` → Remueve jugadores del mapa
+- ✅ Modificadas acciones para emitir eventos al servidor:
+  - `onTrainTroop()` → Emite `game:train` con `gameId` y `troopTypeId`
+  - `onResearchTechnology()` → Emite `game:research` con `gameId` y `researchId`
+  - `onLaunchAttack()` → Emite `game:attack` con destino y tropas seleccionadas
+  - `onStartGame()` → Emite `game:start` (solo para host)
 
 #### 2. **Feedback Visual de Combate - Log Modal** (`game-log.modal.ts` + `game-log.modal.html`):
-   - ✅ Añadido sistema de filtros por tipo de evento (Todos, Ataques, Entrenamiento, Investigación)
-   - ✅ Implementado auto-scroll inteligente al final del log
-   - ✅ Añadidas animaciones de entrada para eventos nuevos
-   - ✅ Decoraciones visuales por tipo de evento (indicador de color según tipo)
+
+- ✅ Añadido sistema de filtros por tipo de evento (Todos, Ataques, Entrenamiento, Investigación)
+- ✅ Implementado auto-scroll inteligente al final del log
+- ✅ Añadidas animaciones de entrada para eventos nuevos
+- ✅ Decoraciones visuales por tipo de evento (indicador de color según tipo)
 
 #### 3. **Feedback Visual de Combate - Attack Modal** (`atacar.modal.ts` + `atacar.modal.html`):
-   - ✅ Implementado cálculo hexagonal de multiplicadores de daño (1.5x con ventaja, 1.0x sin ventaja)
-   - ✅ Añadido preview de daño estimado antes de lanzar ataque
-   - ✅ Mostrada información del multiplicador en banner de ventaja táctica
-   - ✅ Añadida animación visual al lanzar ataque (400ms)
-   - ✅ Mejorada visualización de ventajas/desventajas con badge de multiplicador
+
+- ✅ Implementado cálculo hexagonal de multiplicadores de daño (1.5x con ventaja, 1.0x sin ventaja)
+- ✅ Añadido preview de daño estimado antes de lanzar ataque
+- ✅ Mostrada información del multiplicador en banner de ventaja táctica
+- ✅ Añadida animación visual al lanzar ataque (400ms)
+- ✅ Mejorada visualización de ventajas/desventajas con badge de multiplicador
 
 #### 4. **Carga Dinámica de Estadísticas de Clanes** (`characters-page.component.ts` + `characters.model.ts` + HTML):
-   - ✅ Implementado servicio HTTP para cargar estadísticas desde `/api/clans/stats`
-   - ✅ Fallback a datos estáticos si el servidor no responde
-   - ✅ Nuevo campo de estado: `isLoading` + indicador visual mientras se cargan
-   - ✅ Nuevo campo de error con mensaje descriptivo si falla la carga
-   - ✅ Campos dinámicos en `ClanDetail`:
-     - `winRate` → Tasa de victoria del clan
-     - `totalGames` → Partidas jugadas
-     - `totalPlayers` → Jugadores activos
-     - `avgHealth` → Salud media del capital
-     - `avgLevel` → Nivel promedio de tecnología
-   - ✅ UI mejorada con badges de estadísticas en cards de clan
-   - ✅ Sección de "Stats Detail" solo visible si datos disponibles
+
+- ✅ Implementado servicio HTTP para cargar estadísticas desde `/api/clans/stats`
+- ✅ Fallback a datos estáticos si el servidor no responde
+- ✅ Nuevo campo de estado: `isLoading` + indicador visual mientras se cargan
+- ✅ Nuevo campo de error con mensaje descriptivo si falla la carga
+- ✅ Campos dinámicos en `ClanDetail`:
+  - `winRate` → Tasa de victoria del clan
+  - `totalGames` → Partidas jugadas
+  - `totalPlayers` → Jugadores activos
+  - `avgHealth` → Salud media del capital
+  - `avgLevel` → Nivel promedio de tecnología
+- ✅ UI mejorada con badges de estadísticas en cards de clan
+- ✅ Sección de "Stats Detail" solo visible si datos disponibles
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción | Detalles |
-|---------|--------|----------|
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | +9 listeners, 4 emit handlers, setupGameSubscriptions() real |
-| `front/src/app/pages/game/modals/game-log.modal.ts` | **MODIFICADO** | +filtros, +auto-scroll, +animaciones |
-| `front/src/app/pages/game/modals/game-log.modal.html` | **MODIFICADO** | +toolbar con filtros, +indicadores visuales |
-| `front/src/app/pages/game/modals/atacar.modal.ts` | **MODIFICADO** | +hexagonal multiplier, +damage preview, +animations |
-| `front/src/app/pages/game/modals/atacar.modal.html` | **MODIFICADO** | +damage preview section, +multiplier badge |
-| `front/src/app/pages/characters-page/characters-page.component.ts` | **MODIFICADO** | +HTTP loading, +fallback, +dynamic stats |
-| `front/src/app/pages/characters-page/characters.model.ts` | **MODIFICADO** | +6 campos de estadísticas dinámicas |
-| `front/src/app/pages/characters-page/characters-page.component.html` | **MODIFICADO** | +loading indicator, +error banner, +stats display |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+| Archivo                                                              | Acción         | Detalles                                                     |
+| -------------------------------------------------------------------- | -------------- | ------------------------------------------------------------ |
+| `front/src/app/pages/game/game.component.ts`                         | **MODIFICADO** | +9 listeners, 4 emit handlers, setupGameSubscriptions() real |
+| `front/src/app/pages/game/modals/game-log.modal.ts`                  | **MODIFICADO** | +filtros, +auto-scroll, +animaciones                         |
+| `front/src/app/pages/game/modals/game-log.modal.html`                | **MODIFICADO** | +toolbar con filtros, +indicadores visuales                  |
+| `front/src/app/pages/game/modals/atacar.modal.ts`                    | **MODIFICADO** | +hexagonal multiplier, +damage preview, +animations          |
+| `front/src/app/pages/game/modals/atacar.modal.html`                  | **MODIFICADO** | +damage preview section, +multiplier badge                   |
+| `front/src/app/pages/characters-page/characters-page.component.ts`   | **MODIFICADO** | +HTTP loading, +fallback, +dynamic stats                     |
+| `front/src/app/pages/characters-page/characters.model.ts`            | **MODIFICADO** | +6 campos de estadísticas dinámicas                          |
+| `front/src/app/pages/characters-page/characters-page.component.html` | **MODIFICADO** | +loading indicator, +error banner, +stats display            |
+| `.agents/AGENTS_CHANGELOG.md`                                        | **MODIFICADO** | (esta entrada)                                               |
 
 ### ✅ Validación:
 
@@ -1294,6 +1439,7 @@
 ---
 
 ## [2026-05-07] - Proyecto: Actualización de Funcionalidades Pendientes
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Sincronizar el documento `MISSING_FEATURES.md` con el estado real del desarrollo tras completar el motor de juego y la seguridad backend.
 
@@ -1309,9 +1455,9 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `MISSING_FEATURES.md` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `MISSING_FEATURES.md`         | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
@@ -1340,16 +1486,17 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/game/engine/fog-of-war.js` | **CREADO** |
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** (Manejo de `join_game`) |
+| Archivo                                       | Acción                                                  |
+| --------------------------------------------- | ------------------------------------------------------- |
+| `middle_server/src/game/engine/fog-of-war.js` | **CREADO**                                              |
+| `middle_server/src/socket/socket-handler.js`  | **MODIFICADO** (Manejo de `join_game`)                  |
 | `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** (Emisión individual en tick de recursos) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| `.agents/AGENTS_CHANGELOG.md`                 | **MODIFICADO** (esta entrada)                           |
 
 ---
 
 ## [2026-05-06] - Middle Server: Emisores de Estado (Sprint 4 Dev B, Punto 1)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Asegurar que cada acción de juego (reclutar, investigar, unirse) dispare el evento Socket.IO correcto al cliente, completando el ciclo de sincronización de estado del Middle Server.
 
@@ -1363,14 +1510,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo                                      | Acción                                                                          |
+| -------------------------------------------- | ------------------------------------------------------------------------------- |
 | `middle_server/src/socket/socket-handler.js` | **MODIFICADO** (4 cambios: import, state-sync, train handler, research handler) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| `.agents/AGENTS_CHANGELOG.md`                | **MODIFICADO** (esta entrada)                                                   |
 
 ---
 
 ## [2026-05-06] - Middle Server: Implementación de Resolución de Batalla (Sprint 3 Dev A, Punto 2)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la resolución de combate real (mecánica "Guerra Total") creando `combat-resolver.js` y conectándolo al manejador `_handleTroopArrival` del Time Wheel, sustituyendo el stub seguro previo.
 
@@ -1397,15 +1545,16 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/game/engine/combat-resolver.js` | **CREADO** |
-| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** (stub reemplazado + imports) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                            | Acción                                      |
+| -------------------------------------------------- | ------------------------------------------- |
+| `middle_server/src/game/engine/combat-resolver.js` | **CREADO**                                  |
+| `middle_server/src/game/engine/time-wheel.js`      | **MODIFICADO** (stub reemplazado + imports) |
+| `.agents/AGENTS_CHANGELOG.md`                      | **MODIFICADO** (esta entrada)               |
 
 ---
 
 ## [2026-05-06] - Middle Server: Implementación de Acción de Ataque (Sprint 3 Dev A, Punto 1)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la acción `launchAttack` para que los jugadores puedan desplegar tropas individuales (por UUID de instancia) contra la capital de un rival, calcular el tiempo de viaje fijo y encolar el evento `TROOP_ARRIVAL` en el Time Wheel para su posterior resolución por `combat-resolver` (Sprint 3 Punto 2).
 
@@ -1448,13 +1597,13 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/config/index.js` | **MODIFICADO** (constante `troopTravelTimeMs`) |
-| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** (función `launchAttack`) |
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** (evento `game:attack`) |
-| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** (método `_handleTroopArrival`) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                          | Acción                                         |
+| ------------------------------------------------ | ---------------------------------------------- |
+| `middle_server/src/config/index.js`              | **MODIFICADO** (constante `troopTravelTimeMs`) |
+| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** (función `launchAttack`)        |
+| `middle_server/src/socket/socket-handler.js`     | **MODIFICADO** (evento `game:attack`)          |
+| `middle_server/src/game/engine/time-wheel.js`    | **MODIFICADO** (método `_handleTroopArrival`)  |
+| `.agents/AGENTS_CHANGELOG.md`                    | **MODIFICADO** (esta entrada)                  |
 
 ---
 
@@ -1494,16 +1643,17 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/models/player.js` | **MODIFICADO** (campo `trainingQueue`) |
-| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** (función `trainTroop` implementada) |
-| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** (manejador `_handleTroopTrainingComplete`) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                          | Acción                                                    |
+| ------------------------------------------------ | --------------------------------------------------------- |
+| `middle_server/src/models/player.js`             | **MODIFICADO** (campo `trainingQueue`)                    |
+| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** (función `trainTroop` implementada)        |
+| `middle_server/src/game/engine/time-wheel.js`    | **MODIFICADO** (manejador `_handleTroopTrainingComplete`) |
+| `.agents/AGENTS_CHANGELOG.md`                    | **MODIFICADO** (esta entrada)                             |
 
 ---
 
 ## [2026-05-05] - Frontend: Corrección de alineación visual en Home
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Centrar correctamente el elemento `pulse-ring` y la runa dentro del contenedor visual de la sección de sistema de juego en la página principal.
 
@@ -1515,14 +1665,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/home/home.component.scss` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                        | Acción                        |
+| ---------------------------------------------- | ----------------------------- |
+| `front/src/app/pages/home/home.component.scss` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-05] - Middle Server: Implementación de `startGame` y Timer de Preparación
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la acción `startGame` vía Socket.IO para que el host mueva la partida de `waiting` a `preparation` y programe automáticamente la transición a `war` (PHASE_TRANSITION_WAR) en el Time Wheel.
 
@@ -1565,20 +1716,21 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** (añadida `startGame`) |
-| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** (evento `game:start` + mejoras) |
-| `middle_server/src/models/player.js` | **MODIFICADO** (campo `isHost`) |
-| `middle_server/src/game/state/sync-manager.js` | **MODIFICADO** (`isHost` en rehidratación) |
-| `middle_server/src/config/index.js` | **MODIFICADO** (`preparationDurationMs`, recursos máximos) |
-| `middle_server/index.js` | **MODIFICADO** (TimeWheel antes de initSocketHandler) |
-| `MISSING_FEATURES.md` | **MODIFICADO** (tareas marcadas como `[x]`) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                          | Acción                                                     |
+| ------------------------------------------------ | ---------------------------------------------------------- |
+| `middle_server/src/game/actions/game-actions.js` | **MODIFICADO** (añadida `startGame`)                       |
+| `middle_server/src/socket/socket-handler.js`     | **MODIFICADO** (evento `game:start` + mejoras)             |
+| `middle_server/src/models/player.js`             | **MODIFICADO** (campo `isHost`)                            |
+| `middle_server/src/game/state/sync-manager.js`   | **MODIFICADO** (`isHost` en rehidratación)                 |
+| `middle_server/src/config/index.js`              | **MODIFICADO** (`preparationDurationMs`, recursos máximos) |
+| `middle_server/index.js`                         | **MODIFICADO** (TimeWheel antes de initSocketHandler)      |
+| `MISSING_FEATURES.md`                            | **MODIFICADO** (tareas marcadas como `[x]`)                |
+| `.agents/AGENTS_CHANGELOG.md`                    | **MODIFICADO** (esta entrada)                              |
 
 ---
 
 ## [2026-05-04] - Proyecto: Auditoría y Actualización de Funcionalidades Pendientes
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Revisar y actualizar `MISSING_FEATURES.md` para reflejar el estado real del proyecto tras las últimas implementaciones de seguridad, infraestructura y lógica de juego.
 
@@ -1598,14 +1750,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `MISSING_FEATURES.md` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `MISSING_FEATURES.md`         | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Proyecto: Alineación Arquitectónica y Sanitización de Logs
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Completar las tareas pendientes del `MISSING_FEATURES.md` relacionadas con la arquitectura, estructura de carpetas del Middle Server y logs en producción.
 
@@ -1627,15 +1780,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `MISSING_FEATURES.md` | **MODIFICADO** |
-| `.agents/proyect_arquitecture.md` | **MODIFICADO** |
-| `middle_server/index.js` | **MODIFICADO** |
-| `db_back/src/main/java/com/tfm/db_back/config/RequestLoggingConfig.java` | **CREADO** |
-| `middle_server/src/connectors/*` | **MOVIDOS** a `db/` y `socket/` |
-| Varios archivos `.js` en Middle Server | **MODIFICADOS** (rutas de import) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                                  | Acción                            |
+| ------------------------------------------------------------------------ | --------------------------------- |
+| `MISSING_FEATURES.md`                                                    | **MODIFICADO**                    |
+| `.agents/proyect_arquitecture.md`                                        | **MODIFICADO**                    |
+| `middle_server/index.js`                                                 | **MODIFICADO**                    |
+| `db_back/src/main/java/com/tfm/db_back/config/RequestLoggingConfig.java` | **CREADO**                        |
+| `middle_server/src/connectors/*`                                         | **MOVIDOS** a `db/` y `socket/`   |
+| Varios archivos `.js` en Middle Server                                   | **MODIFICADOS** (rutas de import) |
+| `.agents/AGENTS_CHANGELOG.md`                                            | **MODIFICADO** (esta entrada)     |
 
 ---
 
@@ -1649,14 +1802,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/config/index.js` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                             | Acción                        |
+| ----------------------------------- | ----------------------------- |
+| `middle_server/src/config/index.js` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`       | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Middle Server: Validación Estricta de Configuración
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Asegurar que el servidor no arranque si faltan secretos críticos y proporcionar logs de diagnóstico obligatorios para identificar problemas de entorno.
 
@@ -1669,14 +1823,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/config/index.js` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                             | Acción                        |
+| ----------------------------------- | ----------------------------- |
+| `middle_server/src/config/index.js` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`       | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Middle Server: Soporte para MIDDLE_JWT_SECRET y Diagnósticos
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver la persistencia del error `secretOrPrivateKey must have a value` asegurando la compatibilidad con el nombre de variable mencionado en la documentación y añadiendo telemetría de arranque.
 
@@ -1688,14 +1843,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/config/index.js` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                             | Acción                        |
+| ----------------------------------- | ----------------------------- |
+| `middle_server/src/config/index.js` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`       | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Infraestructura: Inyección de JWT_SECRET en Docker Compose
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver el error `Error: secretOrPrivateKey must have a value` en el Middle Server al intentar firmar tokens JWT.
 
@@ -1707,15 +1863,16 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `docker-compose.gh.yml` | **MODIFICADO** |
-| `docker-compose.yml` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `docker-compose.gh.yml`       | **MODIFICADO**                |
+| `docker-compose.yml`          | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Frontend: Uso de Rutas Relativas para el Middle Server
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Permitir que el frontend funcione correctamente tanto en local como en producción sin hardcodear URLs de servidor.
 
@@ -1729,14 +1886,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/core/config/app-config.service.ts` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                           | Acción                        |
+| ------------------------------------------------- | ----------------------------- |
+| `front/src/app/core/config/app-config.service.ts` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                     | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Proyecto: Consistencia de DB_HANDSHAKE_SECRET entre Capas
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Unificar el nombre de la variable de entorno para el handshake entre el Middle Server y el DB Server, resolviendo fallos de conexión en el despliegue de producción (GH).
 
@@ -1753,17 +1911,18 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/config/index.js` | **MODIFICADO** |
-| `middle_server/src/connectors/db-connector.js` | **MODIFICADO** |
-| `docker-compose.dev.yml` | **MODIFICADO** |
-| `docker-compose.yml` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                        | Acción                        |
+| ---------------------------------------------- | ----------------------------- |
+| `middle_server/src/config/index.js`            | **MODIFICADO**                |
+| `middle_server/src/connectors/db-connector.js` | **MODIFICADO**                |
+| `docker-compose.dev.yml`                       | **MODIFICADO**                |
+| `docker-compose.yml`                           | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Middle Server: Implementación de Logout Seguro con Redis Blacklist
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar un mecanismo de cierre de sesión seguro mediante la invalidación de JWTs utilizando una lista negra en Redis, cumpliendo con los requisitos de `security.md`.
 
@@ -1785,20 +1944,21 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/package.json` | **MODIFICADO** |
-| `middle_server/src/config/index.js` | **MODIFICADO** |
-| `middle_server/src/connectors/redis-connector.js` | **CREADO** |
-| `middle_server/src/middleware/auth.js` | **MODIFICADO** |
-| `middle_server/src/http/auth-controller.js` | **MODIFICADO** |
-| `middle_server/src/http/routes.js` | **MODIFICADO** |
-| `middle_server/scratch/test-redis-logout.js` | **CREADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                           | Acción                        |
+| ------------------------------------------------- | ----------------------------- |
+| `middle_server/package.json`                      | **MODIFICADO**                |
+| `middle_server/src/config/index.js`               | **MODIFICADO**                |
+| `middle_server/src/connectors/redis-connector.js` | **CREADO**                    |
+| `middle_server/src/middleware/auth.js`            | **MODIFICADO**                |
+| `middle_server/src/http/auth-controller.js`       | **MODIFICADO**                |
+| `middle_server/src/http/routes.js`                | **MODIFICADO**                |
+| `middle_server/scratch/test-redis-logout.js`      | **CREADO**                    |
+| `.agents/AGENTS_CHANGELOG.md`                     | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Infraestructura: Renombrado de Servicios Docker para Compatibilidad con Tomcat 11
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir el error `IllegalArgumentException: The character [_] is never valid in a domain name` de Tomcat 11, que rechazaba todas las peticiones del Middle Server al DB Server porque el nombre de host `db_server` contiene un guión bajo.
 
@@ -1812,14 +1972,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `docker-compose.dev.yml` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `docker-compose.dev.yml`      | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Middle Server: Reintentos con Backoff en Handshake
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Evitar el crash del Middle Server cuando el DB Server todavía está arrancando (Maven puede tardar varios minutos en compilar).
 
@@ -1833,14 +1994,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/connectors/db-connector.js` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                        | Acción                        |
+| ---------------------------------------------- | ----------------------------- |
+| `middle_server/src/connectors/db-connector.js` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Proyecto: Actualización a Node 22
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Subir la versión base de Node a la 22 para cumplir con los requisitos del proyecto (como advertía la librería `tablesort`).
 
@@ -1853,16 +2015,17 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `docker-compose.dev.yml` | **MODIFICADO** |
-| `middle_server/Dockerfile` | **MODIFICADO** |
-| `front/Dockerfile` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `docker-compose.dev.yml`      | **MODIFICADO**                |
+| `middle_server/Dockerfile`    | **MODIFICADO**                |
+| `front/Dockerfile`            | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Middle Server: Corrección Definitiva del Path de clans.yml
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir el error `EISDIR` y la resolución de ruta para el archivo `clans.yml` en el entorno de desarrollo.
 
@@ -1877,16 +2040,17 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `clans.yml` (raíz) | **ELIMINADO** (directorio vacío) |
-| `middle_server/src/config/game-data-loader.js` | **MODIFICADO** |
-| `docker-compose.dev.yml` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                        | Acción                           |
+| ---------------------------------------------- | -------------------------------- |
+| `clans.yml` (raíz)                             | **ELIMINADO** (directorio vacío) |
+| `middle_server/src/config/game-data-loader.js` | **MODIFICADO**                   |
+| `docker-compose.dev.yml`                       | **MODIFICADO**                   |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** (esta entrada)    |
 
 ---
 
 ## [2026-05-04] - Middle Server: Mapeo de Volumen para clans.yml en Dev
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir el error `ENOENT: no such file or directory, open '/clans.yml'` que impedía el arranque del Middle Server al intentar cargar los datos del juego.
 
@@ -1898,14 +2062,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `docker-compose.dev.yml` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `docker-compose.dev.yml`      | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Infraestructura: Corrección de Credenciales Hardcodeadas en Dev
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Eliminar las credenciales "hardcodeadas" en `docker-compose.dev.yml` para alinear el entorno de desarrollo con las variables seguras definidas en el archivo `.env` y permitir la correcta autenticación de los servicios.
 
@@ -1918,14 +2083,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `docker-compose.dev.yml` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `docker-compose.dev.yml`      | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Infraestructura: Corrección de Arranque Frontend (Angular CLI)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Solucionar el error `Error: Unknown argument: disable-host-check` en el contenedor del frontend al arrancar el entorno de desarrollo.
 
@@ -1936,14 +2102,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `docker-compose.dev.yml` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `docker-compose.dev.yml`      | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Infraestructura: Inyección de Variables en Docker Compose Dev
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir la falta de comunicación entre servicios y bases de datos en el entorno de desarrollo mediante la inyección de variables de entorno requeridas.
 
@@ -1957,14 +2124,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `docker-compose.dev.yml` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `docker-compose.dev.yml`      | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Infraestructura: Fix de Arranque en Middle Server Dev
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir el error `ERR_MODULE_NOT_FOUND` al arrancar el Middle Server en el entorno de desarrollo de Docker Compose.
 
@@ -1977,14 +2145,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `docker-compose.dev.yml` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `docker-compose.dev.yml`      | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Middle Server: Corrección de Dependencias y Scripts
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Subsanar la falta de dependencias críticas y scripts de desarrollo en el `package.json` del Middle Server detectados tras una auditoría del código fuente.
 
@@ -1998,14 +2167,15 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/package.json` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `middle_server/package.json`  | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-04] - Infraestructura: Docker Compose Local para Bases de Datos y DB Server
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Crear un entorno de Docker Compose ligero que solo levante las bases de datos (PostgreSQL, MongoDB) y el servidor de base de datos Spring Boot, permitiendo desarrollar el Middle Server y Frontend en local (host) conectándolos a esta infraestructura.
 
@@ -2020,15 +2190,16 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `docker-compose-ddbb.yml` | **CREADO** (excluido de git) |
-| `.gitignore` | **MODIFICADO** (añadido ignore) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                       | Acción                          |
+| ----------------------------- | ------------------------------- |
+| `docker-compose-ddbb.yml`     | **CREADO** (excluido de git)    |
+| `.gitignore`                  | **MODIFICADO** (añadido ignore) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada)   |
 
 ---
 
 ## [2026-05-03] - Proyecto: Actualización de Auditoría de Arquitectura
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Actualizar el documento `audit_incongruencias.md` reflejando el estado actual tras las últimas resoluciones y detectando nuevas divergencias estructurales frente a la documentación de arquitectura.
 
@@ -2045,18 +2216,20 @@
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `audit_incongruencias.md` | **MODIFICADO** (Actualizado con resultados de la nueva auditoría) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                       | Acción                                                            |
+| ----------------------------- | ----------------------------------------------------------------- |
+| `audit_incongruencias.md`     | **MODIFICADO** (Actualizado con resultados de la nueva auditoría) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada)                                     |
 
 ---
 
 ## [2026-05-03] - Middle Server: Fix Crítico de Rehidratación de Estado de Partida (SyncManager)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir el mecanismo de rehidratación del Middle Server tras un reinicio, resolviendo la desalineación total entre el `GameResponseDto` del DB Server y la lógica de lectura de `SyncManager.js`.
 
 ### 📝 Resumen del Problema:
+
 El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`, `eventQueue` directamente del `GameResponseDto`, cuando en realidad esos campos NO existen en ese DTO. El DB Server devuelve el estado completo de la partida dentro del campo `latestStateJson` (String JSON opaco), que era completamente ignorado. Resultado: cada reinicio del Middle Server generaba partidas vacías en memoria.
 
 ### ✅ Solución Implementada:
@@ -2072,14 +2245,15 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo                                        | Acción                                                               |
+| ---------------------------------------------- | -------------------------------------------------------------------- |
 | `middle_server/src/game/state/sync-manager.js` | **MODIFICADO** (reescritura completa del mecanismo de rehidratación) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** (esta entrada)                                        |
 
 ---
 
 ## [2026-05-03] - Seguridad: Gestión de Roles y JTI en JWT
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la correcta gestión de roles y la inclusión del campo `jti` en los JWT generados por el Middle Server, actualizando la base de datos para soportar la persistencia de los roles de usuario.
 
@@ -2097,20 +2271,21 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/src/main/resources/db/migration/V3__add_role_to_users.sql` | **CREADO** |
-| `db_back/src/main/java/com/tfm/db_back/domain/model/User.java` | **MODIFICADO** |
-| `db_back/src/main/java/com/tfm/db_back/api/dto/UserResponseDto.java` | **MODIFICADO** |
-| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java` | **MODIFICADO** |
-| `db_back/src/test/java/com/tfm/db_back/domain/service/UserServiceImplTest.java` | **MODIFICADO** |
-| `db_back/src/test/java/com/tfm/db_back/api/UserControllerTest.java` | **MODIFICADO** |
-| `middle_server/src/http/auth-controller.js` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                                         | Acción                        |
+| ------------------------------------------------------------------------------- | ----------------------------- |
+| `db_back/src/main/resources/db/migration/V3__add_role_to_users.sql`             | **CREADO**                    |
+| `db_back/src/main/java/com/tfm/db_back/domain/model/User.java`                  | **MODIFICADO**                |
+| `db_back/src/main/java/com/tfm/db_back/api/dto/UserResponseDto.java`            | **MODIFICADO**                |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java`     | **MODIFICADO**                |
+| `db_back/src/test/java/com/tfm/db_back/domain/service/UserServiceImplTest.java` | **MODIFICADO**                |
+| `db_back/src/test/java/com/tfm/db_back/api/UserControllerTest.java`             | **MODIFICADO**                |
+| `middle_server/src/http/auth-controller.js`                                     | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                                                   | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-03] - Proyecto: Auditoría de Incongruencias entre Capas
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Realizar una auditoría profunda de los contratos de datos y comunicación entre el Frontend, Middle Server y DB Server para identificar discrepancias técnicas y riesgos de seguridad.
 
@@ -2127,15 +2302,16 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `audit_incongruencias.md` | **CREADO** (excluido de git) |
-| `.gitignore` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `audit_incongruencias.md`     | **CREADO** (excluido de git)  |
+| `.gitignore`                  | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-03] - DB Server: Actualización de script de prueba de endpoints
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Actualizar `test_db_endpoints.py` para reflejar los cambios recientes en la API del servidor de base de datos, incluyendo nuevos endpoints de verificación y cambios en las rutas de volcado de estado.
 
@@ -2149,14 +2325,15 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `test_db_endpoints.py` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `test_db_endpoints.py`        | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-03] - DB Server Sprint 6: Hardening, Auditorías e Integración Docker
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Realizar las auditorías `/arch-audit` y `/security-audit` para validar la integridad arquitectónica y de seguridad del `db_server`, así como subsanar hallazgos y finalizar el Sprint 6.
 
@@ -2175,17 +2352,18 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/src/main/resources/application.yml` | **MODIFICADO** (Eliminados fallbacks de contraseña) |
-| `arch_audit_report.md` | **CREADO** |
-| `security_audit_report.md` | **CREADO** |
-| `.agents/db_server_sprints/db_server_sprints.md` | **MODIFICADO** (Sprint 6 marcado como DONE) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                          | Acción                                              |
+| ------------------------------------------------ | --------------------------------------------------- |
+| `db_back/src/main/resources/application.yml`     | **MODIFICADO** (Eliminados fallbacks de contraseña) |
+| `arch_audit_report.md`                           | **CREADO**                                          |
+| `security_audit_report.md`                       | **CREADO**                                          |
+| `.agents/db_server_sprints/db_server_sprints.md` | **MODIFICADO** (Sprint 6 marcado como DONE)         |
+| `.agents/AGENTS_CHANGELOG.md`                    | **MODIFICADO** (esta entrada)                       |
 
 ---
 
 ## [2026-05-03] - DB Server Sprint 5: Revisión y Cierre
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Revisar, validar y dar por completado el Sprint 5 del DB Server (MongoDB y Analytics), que ya había sido implementado previamente pero no documentado como completado.
 
@@ -2202,11 +2380,11 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/src/main/resources/application.yml` | **MODIFICADO** |
-| `.agents/db_server_sprints/db_server_sprints.md` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                          | Acción                        |
+| ------------------------------------------------ | ----------------------------- |
+| `db_back/src/main/resources/application.yml`     | **MODIFICADO**                |
+| `.agents/db_server_sprints/db_server_sprints.md` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                    | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -2223,14 +2401,15 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/src/test/java/com/tfm/db_back/api/AuthControllerTest.java` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                             | Acción                        |
+| ------------------------------------------------------------------- | ----------------------------- |
+| `db_back/src/test/java/com/tfm/db_back/api/AuthControllerTest.java` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                                       | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-03] - DB Server: Usuario Administrador por Defecto
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Añadir un usuario administrador por defecto (`agb445`) en la base de datos utilizando scripts de migración de Flyway.
 
@@ -2242,14 +2421,15 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/src/main/resources/db/migration/V2__insert_admin_user.sql` | **CREADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                             | Acción                        |
+| ------------------------------------------------------------------- | ----------------------------- |
+| `db_back/src/main/resources/db/migration/V2__insert_admin_user.sql` | **CREADO**                    |
+| `.agents/AGENTS_CHANGELOG.md`                                       | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-03] - Middle-DB Server: Sincronización de Contratos y Autenticación Real
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Resolver inconsistencias arquitectónicas entre el Middle Server y el DB Server, migrando los mocks de "La Taquilla" a llamadas reales de validación y corrigiendo los endpoints de volcado de estado.
 
@@ -2269,23 +2449,24 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/connectors/db-connector.js` | **MODIFICADO** |
-| `middle_server/src/http/auth-controller.js` | **MODIFICADO** |
-| `middle_server/src/config/index.js` | **MODIFICADO** |
-| `db_back/src/main/java/com/tfm/db_back/api/dto/VerifyCredentialsRequestDto.java` | **CREADO** |
-| `db_back/src/main/java/com/tfm/db_back/domain/exception/UnauthorizedException.java` | **CREADO** |
-| `db_back/src/main/java/com/tfm/db_back/api/GlobalExceptionHandler.java` | **MODIFICADO** |
-| `db_back/src/main/java/com/tfm/db_back/domain/service/UserService.java` | **MODIFICADO** |
-| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java` | **MODIFICADO** |
-| `db_back/src/main/java/com/tfm/db_back/api/AuthController.java` | **MODIFICADO** |
-| `db_back/src/main/java/com/tfm/db_back/api/GameController.java` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                                             | Acción                        |
+| ----------------------------------------------------------------------------------- | ----------------------------- |
+| `middle_server/src/connectors/db-connector.js`                                      | **MODIFICADO**                |
+| `middle_server/src/http/auth-controller.js`                                         | **MODIFICADO**                |
+| `middle_server/src/config/index.js`                                                 | **MODIFICADO**                |
+| `db_back/src/main/java/com/tfm/db_back/api/dto/VerifyCredentialsRequestDto.java`    | **CREADO**                    |
+| `db_back/src/main/java/com/tfm/db_back/domain/exception/UnauthorizedException.java` | **CREADO**                    |
+| `db_back/src/main/java/com/tfm/db_back/api/GlobalExceptionHandler.java`             | **MODIFICADO**                |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserService.java`             | **MODIFICADO**                |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java`         | **MODIFICADO**                |
+| `db_back/src/main/java/com/tfm/db_back/api/AuthController.java`                     | **MODIFICADO**                |
+| `db_back/src/main/java/com/tfm/db_back/api/GameController.java`                     | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                                                       | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-03] - Proyecto: Sincronización de Tareas y Seguimiento Frontend
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Sincronizar los archivos de tareas (`tasks_dev_a.md`, `tasks_dev_b.md`) con los desarrollos recientes de los compañeros y crear un seguimiento específico para el Frontend.
 
@@ -2302,15 +2483,16 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `.agents/tasks_dev_b.md` | **MODIFICADO** (Sprint 1 → `[x]`) |
-| `.agents/tasks_front.md` | **CREADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                       | Acción                            |
+| ----------------------------- | --------------------------------- |
+| `.agents/tasks_dev_b.md`      | **MODIFICADO** (Sprint 1 → `[x]`) |
+| `.agents/tasks_front.md`      | **CREADO**                        |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada)     |
 
 ---
 
 ## [2026-05-03] - Frontend: Refactorización Premium de la Pantalla de Reglas
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Rediseñar la pantalla de reglas (`RulesPageComponent`) para cumplir con la arquitectura del proyecto, resolver problemas de desbordamiento en móviles y actualizar el contenido a la versión actual de los clanes y mecánicas.
 
@@ -2328,13 +2510,13 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/rules-page/rules-page.component.ts` | **MODIFICADO** (Integración i18n) |
-| `front/src/app/pages/rules-page/rules-page.component.html` | **MODIFICADO** (Nuevo layout traducido) |
+| Archivo                                                    | Acción                                           |
+| ---------------------------------------------------------- | ------------------------------------------------ |
+| `front/src/app/pages/rules-page/rules-page.component.ts`   | **MODIFICADO** (Integración i18n)                |
+| `front/src/app/pages/rules-page/rules-page.component.html` | **MODIFICADO** (Nuevo layout traducido)          |
 | `front/src/app/pages/rules-page/rules-page.component.scss` | **MODIFICADO** (Estilos premium + responsividad) |
-| `.agents/ui_screens.md` | **MODIFICADO** (Mapa de componentes) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| `.agents/ui_screens.md`                                    | **MODIFICADO** (Mapa de componentes)             |
+| `.agents/AGENTS_CHANGELOG.md`                              | **MODIFICADO** (esta entrada)                    |
 
 ---
 
@@ -2368,16 +2550,17 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/game/engine/victory-checker.js` | **CREADO** |
-| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** (import + TROOP_ARRIVAL handler) |
-| `.agents/tasks_dev_a.md` | **MODIFICADO** (Sprint 4 → `[x]`) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                            | Acción                                          |
+| -------------------------------------------------- | ----------------------------------------------- |
+| `middle_server/src/game/engine/victory-checker.js` | **CREADO**                                      |
+| `middle_server/src/game/engine/time-wheel.js`      | **MODIFICADO** (import + TROOP_ARRIVAL handler) |
+| `.agents/tasks_dev_a.md`                           | **MODIFICADO** (Sprint 4 → `[x]`)               |
+| `.agents/AGENTS_CHANGELOG.md`                      | **MODIFICADO** (esta entrada)                   |
 
 ---
 
 ## [2026-05-03] - Middle Server Sprint 3 Dev B: Árbol Tecnológico + Actualización Frontend
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar el sistema completo de investigaciones tecnológicas del Middle Server (Sprint 3 Dev B), cargando los datos de juego desde `clans.yml` y actualizando las páginas de información del frontend para reflejar los 6 clanes reales definidos en el YAML.
 
@@ -2416,24 +2599,25 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/package.json` | **MODIFICADO** (js-yaml) |
-| `middle_server/src/config/game-data-loader.js` | **CREADO** |
-| `middle_server/index.js` | **MODIFICADO** |
-| `middle_server/src/game/actions/game-actions.js` | **IMPLEMENTADO** (antes vacío) |
-| `middle_server/src/game/engine/time-wheel.js` | **MODIFICADO** |
-| `middle_server/src/game/engine/research-buffs.js` | **CREADO** |
-| `front/src/app/pages/home/home.component.ts` | **MODIFICADO** |
-| `front/src/app/pages/lobby-page/modals/crear-partida-modal/crear-partida-modal.component.ts` | **MODIFICADO** |
-| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** |
-| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** |
-| `.agents/tasks_dev_b.md` | **MODIFICADO** (Sprint 3 → `[x]`) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                                                      | Acción                            |
+| -------------------------------------------------------------------------------------------- | --------------------------------- |
+| `middle_server/package.json`                                                                 | **MODIFICADO** (js-yaml)          |
+| `middle_server/src/config/game-data-loader.js`                                               | **CREADO**                        |
+| `middle_server/index.js`                                                                     | **MODIFICADO**                    |
+| `middle_server/src/game/actions/game-actions.js`                                             | **IMPLEMENTADO** (antes vacío)    |
+| `middle_server/src/game/engine/time-wheel.js`                                                | **MODIFICADO**                    |
+| `middle_server/src/game/engine/research-buffs.js`                                            | **CREADO**                        |
+| `front/src/app/pages/home/home.component.ts`                                                 | **MODIFICADO**                    |
+| `front/src/app/pages/lobby-page/modals/crear-partida-modal/crear-partida-modal.component.ts` | **MODIFICADO**                    |
+| `front/src/app/core/i18n/languages/es.ts`                                                    | **MODIFICADO**                    |
+| `front/src/app/core/i18n/languages/en.ts`                                                    | **MODIFICADO**                    |
+| `.agents/tasks_dev_b.md`                                                                     | **MODIFICADO** (Sprint 3 → `[x]`) |
+| `.agents/AGENTS_CHANGELOG.md`                                                                | **MODIFICADO** (esta entrada)     |
 
 ---
 
 ## [2026-05-03] - Middle Server: Implementación de Handshake de Seguridad Estático
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la solicitud del token de handshake estático al arrancar el Middle Server para la comunicación inicial con el DB Server.
 
@@ -2443,18 +2627,19 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
    - Modificado `index.js` envolviendo el inicio del servidor en una función asíncrona `startServer()`.
    - Añadida llamada a `await dbConnector.performHandshake()` garantizando que el token de seguridad se obtiene antes de levantar el servidor HTTP y el Time Wheel.
 
-*Nota: Por indicaciones explícitas, el token de handshake no se renueva automáticamente tras su expiración, sino que será un token estático con renovación manual vinculada al login.*
+_Nota: Por indicaciones explícitas, el token de handshake no se renueva automáticamente tras su expiración, sino que será un token estático con renovación manual vinculada al login._
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/index.js` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `middle_server/index.js`      | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-05-03] - Middle Server: Implementación de DbConnector (Cliente REST interno)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar el cliente REST `db-connector.js` para permitir que el Middle Server se comunique de forma segura con el DB Server usando `fetch` nativo y autenticación JWT interna.
 
@@ -2470,14 +2655,15 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/connectors/db-connector.js` | **CREADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                        | Acción                        |
+| ---------------------------------------------- | ----------------------------- |
+| `middle_server/src/connectors/db-connector.js` | **CREADO**                    |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-04-28] - Integración Registro: Frontend → Middle Server (Taquilla)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la "Puerta" de registro en el Middle Server (Dev A) y conectarla con el Frontend Angular, dejando el mock preparado a la espera del DB Connector (Dev B).
 
@@ -2493,17 +2679,18 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/http/auth-controller.js` | **MODIFICADO** |
-| `middle_server/src/http/routes.js` | **MODIFICADO** |
-| `front/src/app/core/auth/auth-api.service.ts` | **MODIFICADO** |
-| `front/src/app/core/auth/auth.service.ts` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                       | Acción                        |
+| --------------------------------------------- | ----------------------------- |
+| `middle_server/src/http/auth-controller.js`   | **MODIFICADO**                |
+| `middle_server/src/http/routes.js`            | **MODIFICADO**                |
+| `front/src/app/core/auth/auth-api.service.ts` | **MODIFICADO**                |
+| `front/src/app/core/auth/auth.service.ts`     | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                 | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-04-28] - DB Back: Script completo de pruebas de endpoints
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Crear y extender un script en Python para probar exhaustivamente todos los endpoints REST internos del `db_back` comprobando el ciclo completo de vida de datos.
 
@@ -2516,21 +2703,21 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
    - Personajes (`/internal/characters`): Creación de personajes para los usuarios con distintos clanes (`FURY`, `SONG`), y comprobación de consultas cruzadas.
    - Partidas (`/internal/games`): Inicia una partida con los personajes creados, prueba la obtención de partidas activas, el volcado de estado opaco (StateDumpRequestDto), y finaliza la partida enviando el UUID del ganador.
    - Analíticas (`/internal/analytics`): Genera y envía un snapshot simulado con formato correcto hacia MongoDB.
-   
 2. **Control de Versiones**:
    - Añadido `test_db_endpoints.py` a `.gitignore` para prevenir subidas accidentales al repositorio.
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `test_db_endpoints.py` | **CREADO / EXTENDIDO** |
-| `.gitignore` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `test_db_endpoints.py`        | **CREADO / EXTENDIDO**        |
+| `.gitignore`                  | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-04-28] - Implementación de Comunicación Socket.IO (Middle Server a Frontend)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Establecer la comunicación en tiempo real entre el Frontend y el Middle Server mediante Socket.IO, cumpliendo las tareas del Sprint 1 del Desarrollador A.
 
@@ -2550,19 +2737,20 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/package.json` | **MODIFICADO** (Dependencia) |
-| `front/src/app/core/game/socket.service.ts` | **CREADO** |
-| `front/src/app/core/game/game.service.ts` | **MODIFICADO** |
-| `middle_server/src/connectors/socket-handler.js` | **MODIFICADO** |
-| `middle_server/index.js` | **MODIFICADO** |
-| `.agents/tasks_dev_a.md` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                          | Acción                        |
+| ------------------------------------------------ | ----------------------------- |
+| `front/package.json`                             | **MODIFICADO** (Dependencia)  |
+| `front/src/app/core/game/socket.service.ts`      | **CREADO**                    |
+| `front/src/app/core/game/game.service.ts`        | **MODIFICADO**                |
+| `middle_server/src/connectors/socket-handler.js` | **MODIFICADO**                |
+| `middle_server/index.js`                         | **MODIFICADO**                |
+| `.agents/tasks_dev_a.md`                         | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                    | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-04-28] - Integración Login: Frontend → Middle Server
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Conectar el flujo de login del Frontend Angular al endpoint real `POST /api/login` del Middle Server, alineando el contrato JWT y adoptando el patrón `APP_INITIALIZER` + JSON externo para la configuración de entorno.
 
@@ -2587,26 +2775,28 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/http/auth-controller.js` | **MODIFICADO** |
-| `middle_server/src/middleware/auth.js` | **MODIFICADO** |
-| `front/src/assets/config.json` | **CREADO** |
-| `front/src/app/core/config/app-config.model.ts` | **CREADO** |
-| `front/src/app/core/config/app-config.service.ts` | **CREADO** |
-| `front/src/app/app.config.ts` | **MODIFICADO** |
-| `front/src/app/core/auth/auth.model.ts` | **MODIFICADO** |
-| `front/src/app/core/auth/auth-api.service.ts` | **CREADO** |
-| `front/src/app/core/auth/auth.service.ts` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                           | Acción                        |
+| ------------------------------------------------- | ----------------------------- |
+| `middle_server/src/http/auth-controller.js`       | **MODIFICADO**                |
+| `middle_server/src/middleware/auth.js`            | **MODIFICADO**                |
+| `front/src/assets/config.json`                    | **CREADO**                    |
+| `front/src/app/core/config/app-config.model.ts`   | **CREADO**                    |
+| `front/src/app/core/config/app-config.service.ts` | **CREADO**                    |
+| `front/src/app/app.config.ts`                     | **MODIFICADO**                |
+| `front/src/app/core/auth/auth.model.ts`           | **MODIFICADO**                |
+| `front/src/app/core/auth/auth-api.service.ts`     | **CREADO**                    |
+| `front/src/app/core/auth/auth.service.ts`         | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                     | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-04-28] - Middle Server: Arquitectura Base y Taquilla HTTP
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Establecer el núcleo del servidor con Express y Socket.IO, además de implementar el controlador HTTP para el Login.
 
 ### 📝 Resumen de Tareas Realizadas:
+
 1. **Inicialización del Servidor (`index.js`)**:
    - Montado servidor Express para exponer la API REST (`/api`).
    - Montado servidor Socket.IO compartiendo el mismo puerto HTTP.
@@ -2621,13 +2811,15 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 ---
 
 ## [2026-04-28] - Middle Server: Implementación de Seguridad Base (Auth)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar el middleware de autenticación por WebSockets y la configuración centralizada de variables de entorno para el Middle Server.
 
 ### 📝 Resumen de Tareas Realizadas:
+
 1. **Configuración Centralizada**:
    - Creado `src/config/index.js` usando `dotenv` y `Object.freeze()` para cargar el `.env` raíz y evitar fugas de `process.env`.
-   - Se añadió el patrón *Fail-Fast* para el `JWT_SECRET`.
+   - Se añadió el patrón _Fail-Fast_ para el `JWT_SECRET`.
 2. **Middleware Auth (Sockets)**:
    - Implementado `socketAuthMiddleware` en `src/middleware/auth.js`.
    - Incluye extracción segura del token (header o auth), validación criptográfica con `jsonwebtoken` y mapeo del `userId`/`characterId` al objeto `socket.user`.
@@ -2635,10 +2827,12 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 ---
 
 ## [2026-04-28] - Middle Server Sprint Planning
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Organizar el desarrollo en paralelo del Middle Server mediante la creación de planes de sprint específicos para dos desarrolladores (Dev A y Dev B).
 
 ### 📝 Resumen de Tareas Realizadas:
+
 1. **Creación de Planes de Sprint**:
    - **`.agents/tasks_dev_a.md`**: Tareas de infraestructura, Sockets, Time Wheel y Motor de Combate.
    - **`.agents/tasks_dev_b.md`**: Tareas de Persistencia (DB Client), Economía, Árbol Tecnológico y Sincronización de Estado.
@@ -2647,6 +2841,7 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 ---
 
 ## [2026-04-28] Arquitectura: Consolidación de Comunicación vía Sockets (Front ↔ Middle)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Refactorizar la estrategia de comunicación entre el Frontend y el Middle Server para usar WebSockets (Socket.io) de forma exclusiva para todas las acciones de juego, dejando HTTP REST únicamente para el flujo inicial de Login/Registro.
 
@@ -2667,15 +2862,16 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `GEMINI.md` | **MODIFICADO** |
-| `.agents/proyect_arquitecture.md` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                           | Acción                        |
+| --------------------------------- | ----------------------------- |
+| `GEMINI.md`                       | **MODIFICADO**                |
+| `.agents/proyect_arquitecture.md` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`     | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-04-26] Docker: Parametrización Completa de Secretos (Entornos y Portainer)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Eliminar todos los secretos e información sensible de los archivos de Docker Compose para maximizar la seguridad, permitiendo inyectarlos como variables de entorno a través de Portainer o archivos `.env`.
 
@@ -2690,15 +2886,16 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `docker-compose.yml` | **MODIFICADO** |
-| `docker-compose.gh.yml` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `docker-compose.yml`          | **MODIFICADO**                |
+| `docker-compose.gh.yml`       | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-04-25] Docker: Integración de Nginx Reverse Proxy (HTTPS)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Añadir un contenedor de Nginx para actuar como proxy inverso y exponer el frontend a través de HTTPS, preparando la integración con Let's Encrypt.
 
@@ -2719,16 +2916,17 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `nginx/conf.d/default.conf` | **CREADO** |
-| `docker-compose.yml` | **MODIFICADO** |
-| `docker-compose.gh.yml` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `nginx/conf.d/default.conf`   | **CREADO**                    |
+| `docker-compose.yml`          | **MODIFICADO**                |
+| `docker-compose.gh.yml`       | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-04-23] Frontend: Integración de Documentación (Compodoc)
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar un sistema de documentación técnica automatizado similar a Javadoc para el frontend de Angular.
 
@@ -2748,17 +2946,18 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/package.json` | **MODIFICADO** (Scripts y Deps) |
-| `front/tsconfig.doc.json` | **CREADO** |
-| `front/.gitignore` | **MODIFICADO** |
-| `front/.github/workflows/deploy-docs.yml` | **CREADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                   | Acción                          |
+| ----------------------------------------- | ------------------------------- |
+| `front/package.json`                      | **MODIFICADO** (Scripts y Deps) |
+| `front/tsconfig.doc.json`                 | **CREADO**                      |
+| `front/.gitignore`                        | **MODIFICADO**                  |
+| `front/.github/workflows/deploy-docs.yml` | **CREADO**                      |
+| `.agents/AGENTS_CHANGELOG.md`             | **MODIFICADO** (esta entrada)   |
 
 ---
 
 ## [2026-04-23] Frontend: Refactorización y Estandarización de SCSS
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Organizar y documentar el código SCSS de toda la aplicación, consolidando las `@media queries` al final de los archivos y añadiendo comentarios descriptivos en español para mejorar la mantenibilidad.
 
@@ -2781,15 +2980,16 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/**/*.scss` | **REFACTORIZADO** (Múltiples archivos) |
-| `front/src/styles/*.scss` | **REFACTORIZADO** (Variables y Tokens) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                       | Acción                                 |
+| ----------------------------- | -------------------------------------- |
+| `front/src/app/**/*.scss`     | **REFACTORIZADO** (Múltiples archivos) |
+| `front/src/styles/*.scss`     | **REFACTORIZADO** (Variables y Tokens) |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada)          |
 
 ---
 
 ## [2026-04-22] Docker: Hardening de Infraestructura y Seguridad
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Asegurar la infraestructura de contenedores limitando la exposición de puertos y configurando usuarios no-root.
 
@@ -2812,17 +3012,18 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/Dockerfile` | **MODIFICADO** |
-| `docker-compose.yml` | **MODIFICADO** |
-| `docker-compose.dev.yml` | **MODIFICADO** |
-| `docker-compose.gh.yml` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `middle_server/Dockerfile`    | **MODIFICADO**                |
+| `docker-compose.yml`          | **MODIFICADO**                |
+| `docker-compose.dev.yml`      | **MODIFICADO**                |
+| `docker-compose.gh.yml`       | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-04-22] Frontend: Fix de Importación en SalaLlenaModal
+
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Corregir el fallo de compilación causado por una ruta relativa incorrecta en la importación de variables de estilo.
 
@@ -2835,35 +3036,36 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.scss` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                                                  | Acción                        |
+| ---------------------------------------------------------------------------------------- | ----------------------------- |
+| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.scss` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                                                            | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-04-22] Frontend: Tests Unitarios del Modal de Ataque
-1: 
+
+1:
 2: **Agente**: Antigravity (Google DeepMind)
 3: **Objetivo**: Implementar pruebas unitarias exhaustivas para el componente `AtacarModalComponent`, asegurando la correcta lógica de ventajas tácticas y gestión de tropas.
-4: 
+4:
 5: ### 📝 Resumen de Tareas Realizadas:
-6: 
+6:
 7: 1. **Creación de Test Suite (Jasmine)**:
-8:    - Creado `atacar.modal.spec.ts` con cobertura para todas las funciones públicas y estados reactivos (Signals).
-9:    - **Mocks**: Implementado mock de `I18nService` para aislar las pruebas de traducción.
-10:    - **Pruebas de Lógica Táctica**: Validado el cálculo de ventajas y desventajas entre clanes (ej: Fury vs Song).
-11:    - **Pruebas de Estado**: Verificada la actualización de la grilla de tropas al añadir/eliminar unidades y la emisión de eventos de ataque.
-12: 
+8: - Creado `atacar.modal.spec.ts` con cobertura para todas las funciones públicas y estados reactivos (Signals).
+9: - **Mocks**: Implementado mock de `I18nService` para aislar las pruebas de traducción.
+10: - **Pruebas de Lógica Táctica**: Validado el cálculo de ventajas y desventajas entre clanes (ej: Fury vs Song).
+11: - **Pruebas de Estado**: Verificada la actualización de la grilla de tropas al añadir/eliminar unidades y la emisión de eventos de ataque.
+12:
 13: ### 🗂️ Archivos Creados:
-14: 
+14:
 15: | Archivo | Acción |
 16: |---------|--------|
 17: | `front/src/app/pages/game/modals/atacar.modal.spec.ts` | **CREADO** |
 18: | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
-19: 
+19:
 20: ---
-21: 
+21:
 22: ## [2026-04-22] Game Page: Eliminación de Espacio Vacío (Sin Navbar)
 
 **Agente**: Antigravity (Google DeepMind)
@@ -2872,7 +3074,7 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 ### 📝 Resumen de Tareas Realizadas:
 
 1. **Layout Dinámico (HTML)**:
-   - Añadida la clase condicional `[class.no-navbar]="!showNavbar()"` al elemento `<main>` en `app.html`. 
+   - Añadida la clase condicional `[class.no-navbar]="!showNavbar()"` al elemento `<main>` en `app.html`.
    - Esto permite detectar programáticamente cuándo la Navbar está ausente.
 
 2. **Refactorización de Estilos Globales (SCSS)**:
@@ -2881,10 +3083,10 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/app.html` | **MODIFICADO** |
-| `front/src/styles.scss` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `front/src/app/app.html`      | **MODIFICADO**                |
+| `front/src/styles.scss`       | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
@@ -2914,12 +3116,12 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/game/game.component.*` | **MODIFICADOS** (Integración core i18n) |
-| `front/src/app/pages/game/modals/*.ts` | **MODIFICADOS** (8 modales localizados) |
-| `front/src/app/pages/game/modals/*.html` | **MODIFICADOS** (Templates traducidos) |
-| `front/src/app/core/i18n/languages/*.ts` | **MODIFICADOS** (Expansión de diccionarios) |
+| Archivo                                     | Acción                                      |
+| ------------------------------------------- | ------------------------------------------- |
+| `front/src/app/pages/game/game.component.*` | **MODIFICADOS** (Integración core i18n)     |
+| `front/src/app/pages/game/modals/*.ts`      | **MODIFICADOS** (8 modales localizados)     |
+| `front/src/app/pages/game/modals/*.html`    | **MODIFICADOS** (Templates traducidos)      |
+| `front/src/app/core/i18n/languages/*.ts`    | **MODIFICADOS** (Expansión de diccionarios) |
 
 ---
 
@@ -2950,16 +3152,16 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/core/i18n/*` | **CREADOS** (Service, Pipe, Dictionaries) |
-| `front/src/app/shared/components/navbar/*` | **MODIFICADO** (Selector + I18n) |
-| `front/src/app/pages/home/*` | **MODIFICADO** (I18n) |
-| `front/src/app/pages/lobby-page/*` | **MODIFICADO** (I18n + Modales) |
-| `front/src/app/pages/user-config/*` | **MODIFICADO** (I18n sync) |
-| `front/src/app/shared/components/auth/*` | **MODIFICADO** (I18n) |
-| `front/src/app/app.ts` | **MODIFICADO** (Init global) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                    | Acción                                    |
+| ------------------------------------------ | ----------------------------------------- |
+| `front/src/app/core/i18n/*`                | **CREADOS** (Service, Pipe, Dictionaries) |
+| `front/src/app/shared/components/navbar/*` | **MODIFICADO** (Selector + I18n)          |
+| `front/src/app/pages/home/*`               | **MODIFICADO** (I18n)                     |
+| `front/src/app/pages/lobby-page/*`         | **MODIFICADO** (I18n + Modales)           |
+| `front/src/app/pages/user-config/*`        | **MODIFICADO** (I18n sync)                |
+| `front/src/app/shared/components/auth/*`   | **MODIFICADO** (I18n)                     |
+| `front/src/app/app.ts`                     | **MODIFICADO** (Init global)              |
+| `.agents/AGENTS_CHANGELOG.md`              | **MODIFICADO** (esta entrada)             |
 
 ---
 
@@ -2978,10 +3180,10 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/home/home.component.scss` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                        | Acción                        |
+| ---------------------------------------------- | ----------------------------- |
+| `front/src/app/pages/home/home.component.scss` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3000,10 +3202,10 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                        | Acción                        |
+| -------------------------------------------------------------- | ----------------------------- |
+| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                                  | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3029,12 +3231,12 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** |
-| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO** |
-| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                    | Acción                        |
+| ---------------------------------------------------------- | ----------------------------- |
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO**                |
+| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO**                |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts`   | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                              | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3055,12 +3257,12 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
-| `front/src/styles.scss` | **MODIFICADO** |
-| `front/src/app/app.html` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                        | Acción                        |
+| -------------------------------------------------------------- | ----------------------------- |
+| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO**                |
+| `front/src/styles.scss`                                        | **MODIFICADO**                |
+| `front/src/app/app.html`                                       | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                                  | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3078,10 +3280,10 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                        | Acción                        |
+| -------------------------------------------------------------- | ----------------------------- |
+| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                                  | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3102,12 +3304,12 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** |
-| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
-| `front/src/app/shared/components/navbar/navbar.component.ts` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                        | Acción                        |
+| -------------------------------------------------------------- | ----------------------------- |
+| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO**                |
+| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO**                |
+| `front/src/app/shared/components/navbar/navbar.component.ts`   | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                                  | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3129,11 +3331,11 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** |
-| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                        | Acción                        |
+| -------------------------------------------------------------- | ----------------------------- |
+| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO**                |
+| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                                  | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3160,12 +3362,12 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** |
-| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
-| `front/src/app/shared/components/navbar/navbar.component.ts` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                        | Acción                        |
+| -------------------------------------------------------------- | ----------------------------- |
+| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO**                |
+| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO**                |
+| `front/src/app/shared/components/navbar/navbar.component.ts`   | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                                  | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3194,10 +3396,10 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/home/home.component.scss` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                        | Acción                        |
+| ---------------------------------------------- | ----------------------------- |
+| `front/src/app/pages/home/home.component.scss` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3220,11 +3422,11 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** |
-| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                    | Acción                        |
+| ---------------------------------------------------------- | ----------------------------- |
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO**                |
+| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                              | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3236,7 +3438,7 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 ### 📝 Resumen de Tareas Realizadas:
 
 1. **Auditoría Global**: Identificación de colores hardcodeados en componentes, modales y estilos compartidos.
-2. **Refactorización de Modales**: 
+2. **Refactorización de Modales**:
    - Actualizados todos los modales del lobby (`sala-llena`, `crear-partida`, `unirse-partida`).
    - Actualizados los modales del juego (`atacar`, `aviso`, `lobby`, `confirm-abandon`, `cambiar-contrasena`).
 3. **Refactorización de Componentes Core**:
@@ -3249,39 +3451,40 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO** |
-| `front/src/app/pages/lobby-page/modals/*` | **MODIFICADOS** (3 modales) |
-| `front/src/app/pages/game/game.component.scss/html` | **MODIFICADOS** |
-| `front/src/app/pages/game/modals/*` | **MODIFICADOS** (4 modales) |
-| `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
-| `front/src/app/shared/components/auth/auth.component.scss` | **MODIFICADO** |
-| `front/src/app/pages/user-config/user-config.component.scss` | **MODIFICADO** |
-| `front/src/app/shared/components/logo/logo.component.ts` | **MODIFICADO** |
-| `front/src/app/shared/components/debug/global-debug.component.scss` | **MODIFICADO** |
+| Archivo                                                             | Acción                      |
+| ------------------------------------------------------------------- | --------------------------- |
+| `front/src/app/pages/lobby-page/lobby-page.component.scss`          | **MODIFICADO**              |
+| `front/src/app/pages/lobby-page/modals/*`                           | **MODIFICADOS** (3 modales) |
+| `front/src/app/pages/game/game.component.scss/html`                 | **MODIFICADOS**             |
+| `front/src/app/pages/game/modals/*`                                 | **MODIFICADOS** (4 modales) |
+| `front/src/app/shared/components/navbar/navbar.component.scss`      | **MODIFICADO**              |
+| `front/src/app/shared/components/auth/auth.component.scss`          | **MODIFICADO**              |
+| `front/src/app/pages/user-config/user-config.component.scss`        | **MODIFICADO**              |
+| `front/src/app/shared/components/logo/logo.component.ts`            | **MODIFICADO**              |
+| `front/src/app/shared/components/debug/global-debug.component.scss` | **MODIFICADO**              |
 
 ---
 
 ## [2026-04-22] Ajuste de Responsividad: Navbar
-2: 
+
+2:
 3: **Agente**: Antigravity (Google DeepMind)
 4: **Objetivo**: Modificar el punto de ruptura (breakpoint) de la barra de navegación para que cambie al modo móvil a los 950px, mejorando la usabilidad en pantallas medianas.
-5: 
+5:
 6: ### 📝 Resumen de Tareas Realizadas:
-7: 
+7:
 8: 1. **Ajuste de Breakpoint**:
-9:    - Se ha sustituido el uso del mixin global `@include mobile` (600px) por un media query específico `@media (max-width: 950px)` en el componente de la navbar.
-10:    - Esto asegura que el menú de hamburguesa aparezca antes, evitando colisiones de elementos en el modo escritorio en resoluciones intermedias.
-11: 
+9: - Se ha sustituido el uso del mixin global `@include mobile` (600px) por un media query específico `@media (max-width: 950px)` en el componente de la navbar.
+10: - Esto asegura que el menú de hamburguesa aparezca antes, evitando colisiones de elementos en el modo escritorio en resoluciones intermedias.
+11:
 12: ### 🗂️ Archivos Modificados:
-13: 
+13:
 14: | Archivo | Acción |
 15: |---------|--------|
 16: | `front/src/app/shared/components/navbar/navbar.component.scss` | **MODIFICADO** |
-17: 
+17:
 18: ---
-19: 
+19:
 20: ## [2026-04-22] - Optimización de Combate y UX
 
 **Agente**: Antigravity (Google DeepMind)
@@ -3298,21 +3501,21 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
    - Añadido `ConfirmAbandonModalComponent` con temática vikinga para evitar salidas accidentales de la partida.
    - Implementado `CambiarContrasenaModalComponent` con validación de formularios en la sección de configuración.
 
-3. **Infraestructura Preparada (Frontend-Only)**: 
+3. **Infraestructura Preparada (Frontend-Only)**:
    - **Sockets**: Estructura de suscripciones `setupGameSubscriptions()` lista para recibir el estado autoritativo del Middle Server.
    - **Avatares**: Preparada la captura de archivos para envío al Middle Server (quien se encargará del redimensionado y persistencia).
    - **Persistencia**: Preparada la delegación de peticiones de configuración al Middle Server.
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** (Navegación + Sockets prep) |
-| `front/src/app/pages/game/modals/atacar.modal.*` | **MODIFICADO** (Ventajas Tácticas) |
-| `front/src/app/pages/game/modals/confirm-abandon.modal.ts` | **CREADO** |
-| `front/src/app/pages/user-config/modals/cambiar-contrasena.modal.ts` | **CREADO** |
-| `front/src/app/pages/user-config/user-config.component.ts` | **MODIFICADO** (Avatar prep + Pass) |
-| `front/src/app/pages/game/modals/attack.types.ts` | **MODIFICADO** (Constantes de Ventaja) |
+| Archivo                                                              | Acción                                     |
+| -------------------------------------------------------------------- | ------------------------------------------ |
+| `front/src/app/pages/game/game.component.ts`                         | **MODIFICADO** (Navegación + Sockets prep) |
+| `front/src/app/pages/game/modals/atacar.modal.*`                     | **MODIFICADO** (Ventajas Tácticas)         |
+| `front/src/app/pages/game/modals/confirm-abandon.modal.ts`           | **CREADO**                                 |
+| `front/src/app/pages/user-config/modals/cambiar-contrasena.modal.ts` | **CREADO**                                 |
+| `front/src/app/pages/user-config/user-config.component.ts`           | **MODIFICADO** (Avatar prep + Pass)        |
+| `front/src/app/pages/game/modals/attack.types.ts`                    | **MODIFICADO** (Constantes de Ventaja)     |
 
 ---
 
@@ -3343,18 +3546,17 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/core/game/game.service.ts` | **CREADO** |
-| `front/src/app/pages/lobby-page/modals/crear-partida-modal/...` | **MODIFICADO** |
-| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/...` | **MODIFICADO** |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                          | Acción                        |
+| ---------------------------------------------------------------- | ----------------------------- |
+| `front/src/app/core/game/game.service.ts`                        | **CREADO**                    |
+| `front/src/app/pages/lobby-page/modals/crear-partida-modal/...`  | **MODIFICADO**                |
+| `front/src/app/pages/lobby-page/modals/unirse-partida-modal/...` | **MODIFICADO**                |
+| `front/src/app/pages/game/game.component.ts`                     | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                                    | **MODIFICADO** (esta entrada) |
 
 ---
 
 ## [2026-04-22] Implementación del Modal de Inicio de Partida (Lobby de Juego)
-
 
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Crear e integrar el modal de inicio de partida que se muestra sobre el juego en estado de espera (WAITING), permitiendo al anfitrión iniciar la partida tras validar el número de jugadores.
@@ -3378,19 +3580,18 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `.agents/previews/lobby-modal-preview.html` | **CREADO** |
-| `front/src/app/pages/game/game.model.ts` | **MODIFICADO** (Añadido WAITING) |
-| `front/src/app/pages/game/modals/lobby.modal.*` | **CREADOS** (.ts, .html, .scss) |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** (Integración y Debug) |
-| `front/src/app/pages/game/game.component.html` | **MODIFICADO** (Template y Debug) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                         | Acción                               |
+| ----------------------------------------------- | ------------------------------------ |
+| `.agents/previews/lobby-modal-preview.html`     | **CREADO**                           |
+| `front/src/app/pages/game/game.model.ts`        | **MODIFICADO** (Añadido WAITING)     |
+| `front/src/app/pages/game/modals/lobby.modal.*` | **CREADOS** (.ts, .html, .scss)      |
+| `front/src/app/pages/game/game.component.ts`    | **MODIFICADO** (Integración y Debug) |
+| `front/src/app/pages/game/game.component.html`  | **MODIFICADO** (Template y Debug)    |
+| `.agents/AGENTS_CHANGELOG.md`                   | **MODIFICADO** (esta entrada)        |
 
 ---
 
 ## [2026-04-22] Persistencia de Tema y Detección de Preferencias del Sistema
-
 
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Implementar la persistencia del tema elegido por el usuario (oscuro/claro) en `localStorage` y asegurar que, por defecto, se respete la preferencia configurada en el sistema operativo del usuario.
@@ -3410,11 +3611,11 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/app.ts` | **MODIFICADO** (Inyección global de ThemeService) |
-| `front/src/app/pages/user-config/user-config.component.html` | **MODIFICADO** (Fix de toggle event) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                      | Acción                                            |
+| ------------------------------------------------------------ | ------------------------------------------------- |
+| `front/src/app/app.ts`                                       | **MODIFICADO** (Inyección global de ThemeService) |
+| `front/src/app/pages/user-config/user-config.component.html` | **MODIFICADO** (Fix de toggle event)              |
+| `.agents/AGENTS_CHANGELOG.md`                                | **MODIFICADO** (esta entrada)                     |
 
 ---
 
@@ -3435,11 +3636,11 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `.agents/previews/userConfig-preview.html` | **CREADO** |
-| `front/src/app/pages/user-config/user-config.component.html` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                      | Acción                        |
+| ------------------------------------------------------------ | ----------------------------- |
+| `.agents/previews/userConfig-preview.html`                   | **CREADO**                    |
+| `front/src/app/pages/user-config/user-config.component.html` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                                | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3456,10 +3657,10 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/core/auth/auth.service.ts` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                   | Acción                        |
+| ----------------------------------------- | ----------------------------- |
+| `front/src/app/core/auth/auth.service.ts` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`             | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3480,13 +3681,13 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/app.ts` | **MODIFICADO** |
-| `front/src/app/app.html` | **MODIFICADO** |
-| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** |
-| `front/src/app/pages/game/game.component.html` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                        | Acción                        |
+| ---------------------------------------------- | ----------------------------- |
+| `front/src/app/app.ts`                         | **MODIFICADO**                |
+| `front/src/app/app.html`                       | **MODIFICADO**                |
+| `front/src/app/pages/game/game.component.ts`   | **MODIFICADO**                |
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3511,12 +3712,12 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/core/auth/auth.guard.ts` | **CREADO** |
-| `front/src/app/shared/components/navbar/navbar.component.ts` | **MODIFICADO** |
-| `front/src/app/app.routes.ts` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                      | Acción                        |
+| ------------------------------------------------------------ | ----------------------------- |
+| `front/src/app/core/auth/auth.guard.ts`                      | **CREADO**                    |
+| `front/src/app/shared/components/navbar/navbar.component.ts` | **MODIFICADO**                |
+| `front/src/app/app.routes.ts`                                | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                                | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3539,12 +3740,12 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `.agents/rules/security.md` | **MODIFICADO** |
-| `middle_server/src/utils/sanitizer.js` | **CREADO** |
-| `middle_server/src/middleware/sanitizer-middleware.js` | **CREADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                | Acción                        |
+| ------------------------------------------------------ | ----------------------------- |
+| `.agents/rules/security.md`                            | **MODIFICADO**                |
+| `middle_server/src/utils/sanitizer.js`                 | **CREADO**                    |
+| `middle_server/src/middleware/sanitizer-middleware.js` | **CREADO**                    |
+| `.agents/AGENTS_CHANGELOG.md`                          | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3567,14 +3768,14 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/README.md` | **CREADO** |
-| `middle_server/LICENSE` | **CREADO** |
-| `db_back/README.md` | **CREADO** |
-| `db_back/LICENSE` | **CREADO** |
-| `front/LICENSE` | **CREADO** |
-| `front/README.md` | **MODIFICADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `middle_server/README.md`     | **CREADO**                    |
+| `middle_server/LICENSE`       | **CREADO**                    |
+| `db_back/README.md`           | **CREADO**                    |
+| `db_back/LICENSE`             | **CREADO**                    |
+| `front/LICENSE`               | **CREADO**                    |
+| `front/README.md`             | **MODIFICADO**                |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
 
 ---
@@ -3598,22 +3799,20 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 3. **Actualización de Tests Unitarios**:
    - Alineados `AuthControllerTest.java` y `HandshakeServiceTest.java` con el nuevo secreto unificado.
 
-3. **Mantenimiento de Configuración**:
+4. **Mantenimiento de Configuración**:
    - Actualizado `.env.example` con el valor de ejemplo unificado.
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/src/test/resources/application.properties` | **MODIFICADO** (Limpieza de literales) |
-| `db_back/src/test/java/com/tfm/db_back/api/AuthControllerTest.java` | **MODIFICADO** (Secreto unificado) |
-| `db_back/src/test/java/com/tfm/db_back/domain/service/HandshakeServiceTest.java` | **MODIFICADO** (Secreto unificado) |
-| `db_back/.env.example` | **MODIFICADO** (Ejemplo actualizado) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                                          | Acción                                 |
+| -------------------------------------------------------------------------------- | -------------------------------------- |
+| `db_back/src/test/resources/application.properties`                              | **MODIFICADO** (Limpieza de literales) |
+| `db_back/src/test/java/com/tfm/db_back/api/AuthControllerTest.java`              | **MODIFICADO** (Secreto unificado)     |
+| `db_back/src/test/java/com/tfm/db_back/domain/service/HandshakeServiceTest.java` | **MODIFICADO** (Secreto unificado)     |
+| `db_back/.env.example`                                                           | **MODIFICADO** (Ejemplo actualizado)   |
+| `.agents/AGENTS_CHANGELOG.md`                                                    | **MODIFICADO** (esta entrada)          |
 
 ---
-
-
 
 ## [2026-04-22] Estabilización de Tests y Restauración de Flyway (DB Server)
 
@@ -3636,13 +3835,13 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/src/main/resources/application.yml` | **MODIFICADO** (Estructura y Baseline) |
-| `db_back/src/main/java/com/tfm/db_back/DbBackApplication.java` | **MODIFICADO** (Limpieza de Bean manual) |
-| `db_back/src/test/java/com/tfm/db_back/AbstractIntegrationTest.java` | **MODIFICADO** (Propiedades Mongo) |
-| `db_back/src/main/java/com/tfm/db_back/config/MongoConfig.java` | **MODIFICADO** (Alineación @Value) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                              | Acción                                   |
+| -------------------------------------------------------------------- | ---------------------------------------- |
+| `db_back/src/main/resources/application.yml`                         | **MODIFICADO** (Estructura y Baseline)   |
+| `db_back/src/main/java/com/tfm/db_back/DbBackApplication.java`       | **MODIFICADO** (Limpieza de Bean manual) |
+| `db_back/src/test/java/com/tfm/db_back/AbstractIntegrationTest.java` | **MODIFICADO** (Propiedades Mongo)       |
+| `db_back/src/main/java/com/tfm/db_back/config/MongoConfig.java`      | **MODIFICADO** (Alineación @Value)       |
+| `.agents/AGENTS_CHANGELOG.md`                                        | **MODIFICADO** (esta entrada)            |
 
 ---
 
@@ -3660,11 +3859,10 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `docker-compose.gh.yml` | **CREADO** |
+| Archivo                       | Acción                        |
+| ----------------------------- | ----------------------------- |
+| `docker-compose.gh.yml`       | **CREADO**                    |
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
-
 
 ## [2026-04-22] Actualización de Workflows de GitHub — DB Server
 
@@ -3684,12 +3882,11 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/.github/workflows/db-back-ci.yml` | **MODIFICADO** |
-| `.agents/reports/setup_github_secrets.md` | **CREADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
-
+| Archivo                                    | Acción                        |
+| ------------------------------------------ | ----------------------------- |
+| `db_back/.github/workflows/db-back-ci.yml` | **MODIFICADO**                |
+| `.agents/reports/setup_github_secrets.md`  | **CREADO**                    |
+| `.agents/AGENTS_CHANGELOG.md`              | **MODIFICADO** (esta entrada) |
 
 ## [2026-04-22] Mejora de Cobertura de Tests Unitarios — DB Server
 
@@ -3714,12 +3911,11 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/src/test/java/com/tfm/db_back/api/CharacterControllerTest.java` | **CREADO** |
-| `db_back/src/test/java/com/tfm/db_back/security/HandshakeJwtFilterTest.java` | **CREADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
-
+| Archivo                                                                      | Acción                        |
+| ---------------------------------------------------------------------------- | ----------------------------- |
+| `db_back/src/test/java/com/tfm/db_back/api/CharacterControllerTest.java`     | **CREADO**                    |
+| `db_back/src/test/java/com/tfm/db_back/security/HandshakeJwtFilterTest.java` | **CREADO**                    |
+| `.agents/AGENTS_CHANGELOG.md`                                                | **MODIFICADO** (esta entrada) |
 
 ## [2026-04-22] Finalización del Sprint 6 — DB Server (Hardening & IT)
 
@@ -3749,15 +3945,15 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/src/test/java/com/tfm/db_back/AbstractIntegrationTest.java` | **CREADO/REFACTOR** |
-| `db_back/src/test/java/com/tfm/db_back/api/*IntegrationTest.java` | **CREADOS** (5 archivos) |
-| `db_back/Dockerfile` | **CREADO** |
-| `db_back/src/main/java/com/tfm/db_back/api/CharacterController.java` | **MODIFICADO** |
-| `db_back/pom.xml` | **MODIFICADO** (Testcontainers deps) |
-| `.agents/reports/db_server_audit_report_s6.md` | **CREADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                              | Acción                               |
+| -------------------------------------------------------------------- | ------------------------------------ |
+| `db_back/src/test/java/com/tfm/db_back/AbstractIntegrationTest.java` | **CREADO/REFACTOR**                  |
+| `db_back/src/test/java/com/tfm/db_back/api/*IntegrationTest.java`    | **CREADOS** (5 archivos)             |
+| `db_back/Dockerfile`                                                 | **CREADO**                           |
+| `db_back/src/main/java/com/tfm/db_back/api/CharacterController.java` | **MODIFICADO**                       |
+| `db_back/pom.xml`                                                    | **MODIFICADO** (Testcontainers deps) |
+| `.agents/reports/db_server_audit_report_s6.md`                       | **CREADO**                           |
+| `.agents/AGENTS_CHANGELOG.md`                                        | **MODIFICADO** (esta entrada)        |
 
 ---
 
@@ -3776,10 +3972,10 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `.agents/db_server_sprint6_detail.md` | **CREADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                               | Acción                        |
+| ------------------------------------- | ----------------------------- |
+| `.agents/db_server_sprint6_detail.md` | **CREADO**                    |
+| `.agents/AGENTS_CHANGELOG.md`         | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3800,12 +3996,12 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo                                                        | Acción                          |
+| -------------------------------------------------------------- | ------------------------------- |
 | `front/src/app/pages/lobby-page/modals/unirse-partida-modal/*` | **CREADOS** (.ts, .html, .scss) |
-| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** |
-| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts`       | **MODIFICADO**                  |
+| `front/src/app/pages/lobby-page/lobby-page.component.html`     | **MODIFICADO**                  |
+| `.agents/AGENTS_CHANGELOG.md`                                  | **MODIFICADO** (esta entrada)   |
 
 ---
 
@@ -3820,10 +4016,10 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                    | Acción                        |
+| ---------------------------------------------------------- | ----------------------------- |
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                              | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3840,12 +4036,12 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `.agents/previews/crearPartida-preview.html` | **CREADO** |
-| `front/src/index.html` | **MODIFICADO** (Añadida fuente Cinzel) |
-| `front/src/app/pages/lobby-page/modals/crear-partida-modal/crear-partida-modal.component.ts` | **MODIFICADO** (Iconos actualizados) |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                                                      | Acción                                 |
+| -------------------------------------------------------------------------------------------- | -------------------------------------- |
+| `.agents/previews/crearPartida-preview.html`                                                 | **CREADO**                             |
+| `front/src/index.html`                                                                       | **MODIFICADO** (Añadida fuente Cinzel) |
+| `front/src/app/pages/lobby-page/modals/crear-partida-modal/crear-partida-modal.component.ts` | **MODIFICADO** (Iconos actualizados)   |
+| `.agents/AGENTS_CHANGELOG.md`                                                                | **MODIFICADO** (esta entrada)          |
 
 ---
 
@@ -3862,12 +4058,12 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** |
-| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** |
-| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                    | Acción                        |
+| ---------------------------------------------------------- | ----------------------------- |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts`   | **MODIFICADO**                |
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO**                |
+| `front/src/app/pages/lobby-page/lobby-page.component.scss` | **MODIFICADO**                |
+| `.agents/AGENTS_CHANGELOG.md`                              | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3877,16 +4073,17 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 **Objetivo**: Ejecución del `/audit-db-server` workflow y verificación de todos los bloques del checklist (A-L).
 
 ### 📝 Resumen de Tareas Realizadas:
+
 1. **Evaluación de checklist**: Revisado el cumplimiento de los estándares de arquitectura y seguridad del servidor de base de datos.
 2. **Generación de Reporte**: Guardado el reporte de auditoría estructurado en `.agents/workflows/db_server_audit_report.txt`.
 3. **Resultados**: SCORE 45 / 100. Encontrados fallos en .gitignore, políticas CORS, uso de enums y despliegue de puertos en Docker.
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `.agents/workflows/db_server_audit_report.txt` | **CREADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                        | Acción                        |
+| ---------------------------------------------- | ----------------------------- |
+| `.agents/workflows/db_server_audit_report.txt` | **CREADO**                    |
+| `.agents/AGENTS_CHANGELOG.md`                  | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3907,10 +4104,10 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `.agents/db_server_sprint5_detail.md` | **CREADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                               | Acción                        |
+| ------------------------------------- | ----------------------------- |
+| `.agents/db_server_sprint5_detail.md` | **CREADO**                    |
+| `.agents/AGENTS_CHANGELOG.md`         | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -3961,29 +4158,29 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/src/main/java/.../domain/model/Game.java` | **CREADO** |
-| `db_back/src/main/java/.../domain/model/GameParticipant.java` | **CREADO** |
-| `db_back/src/main/java/.../domain/model/GameStateDump.java` | **CREADO** |
-| `db_back/src/main/java/.../domain/repository/GameRepository.java` | **CREADO** |
-| `db_back/src/main/java/.../domain/repository/GameParticipantRepository.java` | **CREADO** |
-| `db_back/src/main/java/.../domain/repository/GameStateDumpRepository.java` | **CREADO** |
-| `db_back/src/main/java/.../domain/service/GameService.java` | **CREADO** |
-| `db_back/src/main/java/.../domain/service/GameServiceImpl.java` | **CREADO** |
-| `db_back/src/main/java/.../domain/service/GameDumpService.java` | **CREADO** |
-| `db_back/src/main/java/.../domain/service/GameDumpServiceImpl.java` | **CREADO** |
-| `db_back/src/main/java/.../api/dto/CreateGameRequestDto.java` | **CREADO** |
-| `db_back/src/main/java/.../api/dto/GameResponseDto.java` | **CREADO** |
-| `db_back/src/main/java/.../api/dto/StateDumpRequestDto.java` | **CREADO** |
-| `db_back/src/main/java/.../api/dto/EndGameRequestDto.java` | **CREADO** |
-| `db_back/src/main/java/.../api/GameController.java` | **CREADO** |
-| `db_back/src/test/java/.../domain/service/GameServiceTest.java` | **CREADO** |
-| `db_back/src/test/java/.../domain/service/GameDumpServiceTest.java` | **CREADO** |
-| `db_back/src/test/java/.../api/GameControllerTest.java` | **CREADO** |
-| `.agents/db_server_sprint4_detail.md` | **CREADO** (sprint anterior) |
-| `.agents/db_server_sprints.md` | **MODIFICADO** — Sprint 3 y 4 → `status: DONE` |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                                                                      | Acción                                         |
+| ---------------------------------------------------------------------------- | ---------------------------------------------- |
+| `db_back/src/main/java/.../domain/model/Game.java`                           | **CREADO**                                     |
+| `db_back/src/main/java/.../domain/model/GameParticipant.java`                | **CREADO**                                     |
+| `db_back/src/main/java/.../domain/model/GameStateDump.java`                  | **CREADO**                                     |
+| `db_back/src/main/java/.../domain/repository/GameRepository.java`            | **CREADO**                                     |
+| `db_back/src/main/java/.../domain/repository/GameParticipantRepository.java` | **CREADO**                                     |
+| `db_back/src/main/java/.../domain/repository/GameStateDumpRepository.java`   | **CREADO**                                     |
+| `db_back/src/main/java/.../domain/service/GameService.java`                  | **CREADO**                                     |
+| `db_back/src/main/java/.../domain/service/GameServiceImpl.java`              | **CREADO**                                     |
+| `db_back/src/main/java/.../domain/service/GameDumpService.java`              | **CREADO**                                     |
+| `db_back/src/main/java/.../domain/service/GameDumpServiceImpl.java`          | **CREADO**                                     |
+| `db_back/src/main/java/.../api/dto/CreateGameRequestDto.java`                | **CREADO**                                     |
+| `db_back/src/main/java/.../api/dto/GameResponseDto.java`                     | **CREADO**                                     |
+| `db_back/src/main/java/.../api/dto/StateDumpRequestDto.java`                 | **CREADO**                                     |
+| `db_back/src/main/java/.../api/dto/EndGameRequestDto.java`                   | **CREADO**                                     |
+| `db_back/src/main/java/.../api/GameController.java`                          | **CREADO**                                     |
+| `db_back/src/test/java/.../domain/service/GameServiceTest.java`              | **CREADO**                                     |
+| `db_back/src/test/java/.../domain/service/GameDumpServiceTest.java`          | **CREADO**                                     |
+| `db_back/src/test/java/.../api/GameControllerTest.java`                      | **CREADO**                                     |
+| `.agents/db_server_sprint4_detail.md`                                        | **CREADO** (sprint anterior)                   |
+| `.agents/db_server_sprints.md`                                               | **MODIFICADO** — Sprint 3 y 4 → `status: DONE` |
+| `.agents/AGENTS_CHANGELOG.md`                                                | **MODIFICADO** (esta entrada)                  |
 
 ---
 
@@ -3996,21 +4193,21 @@ El `SyncManager.loadActiveGames()` intentaba leer campos como `phase`, `players`
 
 Revisión archivo por archivo de todos los entregables definidos en `db_server_sprint1_detail.md`:
 
-| Artefacto | Status |
-|-----------|--------|
-| `V1__initial_schema.sql` (5 tablas + índice) | ✅ Correcto |
-| `application.properties` (todas las vars de entorno, ddl-auto=validate) | ✅ Correcto |
-| `test/resources/application.properties` (excluye DataSource/JPA/MongoDB) | ✅ Correcto |
-| `SecurityConfig.java` (CSRF off, stateless, filtro registrado, headers) | ✅ Correcto |
-| `HandshakeJwtFilter.java` (OncePerRequestFilter, shouldNotFilter, 401 con body) | ✅ Correcto |
-| `HandshakeService.java` (generateToken + validateToken con JJWT) | ✅ Correcto |
-| `AuthController.java` (tiempo constante MessageDigest.isEqual, log seguro) | ✅ Correcto |
-| `GlobalExceptionHandler.java` (404/409/400/500 sin stack trace) | ✅ Correcto |
-| `ApiResponse.java` / `ErrorResponse.java` / todos los DTOs | ✅ Correctos |
-| `EntityNotFoundException.java` / `ConflictException.java` | ✅ Correctos |
-| `HandshakeServiceTest.java` (5 tests, sin contexto Spring) | ✅ Correcto |
-| `AuthControllerTest.java` (4 tests, standaloneSetup) | ✅ Correcto |
-| `GlobalExceptionHandlerTest.java` (4 tests, cubre todos los handlers) | ✅ Correcto |
+| Artefacto                                                                       | Status       |
+| ------------------------------------------------------------------------------- | ------------ |
+| `V1__initial_schema.sql` (5 tablas + índice)                                    | ✅ Correcto  |
+| `application.properties` (todas las vars de entorno, ddl-auto=validate)         | ✅ Correcto  |
+| `test/resources/application.properties` (excluye DataSource/JPA/MongoDB)        | ✅ Correcto  |
+| `SecurityConfig.java` (CSRF off, stateless, filtro registrado, headers)         | ✅ Correcto  |
+| `HandshakeJwtFilter.java` (OncePerRequestFilter, shouldNotFilter, 401 con body) | ✅ Correcto  |
+| `HandshakeService.java` (generateToken + validateToken con JJWT)                | ✅ Correcto  |
+| `AuthController.java` (tiempo constante MessageDigest.isEqual, log seguro)      | ✅ Correcto  |
+| `GlobalExceptionHandler.java` (404/409/400/500 sin stack trace)                 | ✅ Correcto  |
+| `ApiResponse.java` / `ErrorResponse.java` / todos los DTOs                      | ✅ Correctos |
+| `EntityNotFoundException.java` / `ConflictException.java`                       | ✅ Correctos |
+| `HandshakeServiceTest.java` (5 tests, sin contexto Spring)                      | ✅ Correcto  |
+| `AuthControllerTest.java` (4 tests, standaloneSetup)                            | ✅ Correcto  |
+| `GlobalExceptionHandlerTest.java` (4 tests, cubre todos los handlers)           | ✅ Correcto  |
 
 ### 🔒 Checklist de Seguridad (security.md §12):
 
@@ -4023,14 +4220,12 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo                        | Acción                                                       |
+| ------------------------------ | ------------------------------------------------------------ |
 | `.agents/db_server_sprints.md` | **MODIFICADO** — Sprint 1 `status: PENDING` → `status: DONE` |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| `.agents/AGENTS_CHANGELOG.md`  | **MODIFICADO** (esta entrada)                                |
 
 ---
-
-
 
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Integrar la ejecución de pruebas unitarias en el pipeline oficial de CI el frontend para garantizar la estabilidad del código en cada push/pull request.
@@ -4046,13 +4241,12 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados/Eliminados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo                                | Acción         |
+| -------------------------------------- | -------------- |
 | `front/.github/workflows/front_ci.yml` | **MODIFICADO** |
-| `.agents/workflows/run-front-tests.md` | **ELIMINADO** |
+| `.agents/workflows/run-front-tests.md` | **ELIMINADO**  |
 
 ---
-
 
 ## [2026-04-21] Nuevo Workflow: Ejecución de Tests del Frontend
 
@@ -4068,12 +4262,11 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Creados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo                                | Acción     |
+| -------------------------------------- | ---------- |
 | `.agents/workflows/run-front-tests.md` | **CREADO** |
 
 ---
-
 
 ## [2026-04-21] Implementación de Tests Unitarios en el Frontend
 
@@ -4096,14 +4289,13 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/core/auth/auth.service.spec.ts` | **CREADO** |
-| `front/src/app/core/theme/theme.service.spec.ts` | **CREADO** |
+| Archivo                                                       | Acción     |
+| ------------------------------------------------------------- | ---------- |
+| `front/src/app/core/auth/auth.service.spec.ts`                | **CREADO** |
+| `front/src/app/core/theme/theme.service.spec.ts`              | **CREADO** |
 | `front/src/app/shared/components/logo/logo.component.spec.ts` | **CREADO** |
 
 ---
-
 
 ## [2026-04-21] Implementación Completa Sprint 1 — DB Server (Foundation & Security)
 
@@ -4133,21 +4325,21 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/src/main/resources/application.properties` | Modificado |
-| `db_back/src/test/resources/application.properties` | **CREADO** |
-| `db_back/src/main/resources/db/migration/V1__initial_schema.sql` | **CREADO** |
-| `db_back/src/main/java/com/tfm/db_back/api/dto/*` | **CREADO** (4 DTOs) |
-| `db_back/src/main/java/com/tfm/db_back/domain/exception/*` | **CREADO** (2 Excepciones) |
-| `db_back/src/main/java/com/tfm/db_back/api/*` | **CREADO** (Controller & ExceptionHandler) |
-| `db_back/src/main/java/com/tfm/db_back/domain/service/HandshakeService.java` | **CREADO** |
-| `db_back/src/main/java/com/tfm/db_back/security/HandshakeJwtFilter.java` | **CREADO** |
-| `db_back/src/main/java/com/tfm/db_back/config/SecurityConfig.java` | **CREADO** |
-| `db_back/src/test/java/com/tfm/db_back/api/*` | **CREADO** (2 Test Classes) |
-| `db_back/src/test/java/com/tfm/db_back/domain/service/HandshakeServiceTest.java` | **CREADO** |
-| `db_back/src/test/java/com/tfm/db_back/DbBackApplicationTests.java` | **ELIMINADO** |
-| `.agents/AGENTS_CHANGELOG.md` | Modificado |
+| Archivo                                                                          | Acción                                     |
+| -------------------------------------------------------------------------------- | ------------------------------------------ |
+| `db_back/src/main/resources/application.properties`                              | Modificado                                 |
+| `db_back/src/test/resources/application.properties`                              | **CREADO**                                 |
+| `db_back/src/main/resources/db/migration/V1__initial_schema.sql`                 | **CREADO**                                 |
+| `db_back/src/main/java/com/tfm/db_back/api/dto/*`                                | **CREADO** (4 DTOs)                        |
+| `db_back/src/main/java/com/tfm/db_back/domain/exception/*`                       | **CREADO** (2 Excepciones)                 |
+| `db_back/src/main/java/com/tfm/db_back/api/*`                                    | **CREADO** (Controller & ExceptionHandler) |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/HandshakeService.java`     | **CREADO**                                 |
+| `db_back/src/main/java/com/tfm/db_back/security/HandshakeJwtFilter.java`         | **CREADO**                                 |
+| `db_back/src/main/java/com/tfm/db_back/config/SecurityConfig.java`               | **CREADO**                                 |
+| `db_back/src/test/java/com/tfm/db_back/api/*`                                    | **CREADO** (2 Test Classes)                |
+| `db_back/src/test/java/com/tfm/db_back/domain/service/HandshakeServiceTest.java` | **CREADO**                                 |
+| `db_back/src/test/java/com/tfm/db_back/DbBackApplicationTests.java`              | **ELIMINADO**                              |
+| `.agents/AGENTS_CHANGELOG.md`                                                    | Modificado                                 |
 
 ---
 
@@ -4171,10 +4363,10 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `.agents/db_server_sprint1_detail.md` | **CREADO** |
-| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** (esta entrada) |
+| Archivo                               | Acción                        |
+| ------------------------------------- | ----------------------------- |
+| `.agents/db_server_sprint1_detail.md` | **CREADO**                    |
+| `.agents/AGENTS_CHANGELOG.md`         | **MODIFICADO** (esta entrada) |
 
 ---
 
@@ -4195,8 +4387,8 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo             | Acción                                                    |
+| ------------------- | --------------------------------------------------------- |
 | `presentation.html` | **MODIFICADO** (Inclusión de fundamentos de arquitectura) |
 
 ---
@@ -4219,8 +4411,8 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo             | Acción                                         |
+| ------------------- | ---------------------------------------------- |
 | `presentation.html` | **SOBREESCRITO** (Página única con Mermaid.js) |
 
 ---
@@ -4244,8 +4436,8 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo             | Acción     |
+| ------------------- | ---------- |
 | `presentation.html` | **CREADO** |
 
 ---
@@ -4275,9 +4467,9 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/**/*.model.ts` | **CREADOS** (7 nuevos archivos) |
+| Archivo                              | Acción                                        |
+| ------------------------------------ | --------------------------------------------- |
+| `front/src/app/**/*.model.ts`        | **CREADOS** (7 nuevos archivos)               |
 | `front/src/app/pages/*.component.ts` | Eliminación de modelos e inclusión de imports |
 | `front/src/app/core/**/*.service.ts` | Eliminación de modelos e inclusión de imports |
 
@@ -4308,11 +4500,11 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/*` | Renombrado de directorios y archivos (.ts, .html, .scss) |
-| `front/src/app/app.routes.ts` | Actualización de rutas |
-| `front/src/app/pages/**/*.scss` | Reemplazo de variables de color hardcodeadas |
+| Archivo                         | Acción                                                   |
+| ------------------------------- | -------------------------------------------------------- |
+| `front/src/app/pages/*`         | Renombrado de directorios y archivos (.ts, .html, .scss) |
+| `front/src/app/app.routes.ts`   | Actualización de rutas                                   |
+| `front/src/app/pages/**/*.scss` | Reemplazo de variables de color hardcodeadas             |
 
 ---
 
@@ -4346,15 +4538,15 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `docker-compose.yml` | Modificado (Nombres Dockerfile) |
-| `.github/workflows/main-ci.yml` | **REDISEÑADO** (Orquestador Full Stack) |
-| `db_back/.github/workflows/build-docker.yml` | Modificado (Fix lowercase) |
-| `middle_server/.github/workflows/middle_server_compile.yml` | Poblado (Node CI) |
-| `middle_server/.github/workflows/middle-server-docker.yml` | **CREADO** |
-| `front/.github/workflows/front_ci.yml` | Poblado (Angular CI) |
-| `front/.github/workflows/front_docker.yml` | **CREADO** |
+| Archivo                                                     | Acción                                  |
+| ----------------------------------------------------------- | --------------------------------------- |
+| `docker-compose.yml`                                        | Modificado (Nombres Dockerfile)         |
+| `.github/workflows/main-ci.yml`                             | **REDISEÑADO** (Orquestador Full Stack) |
+| `db_back/.github/workflows/build-docker.yml`                | Modificado (Fix lowercase)              |
+| `middle_server/.github/workflows/middle_server_compile.yml` | Poblado (Node CI)                       |
+| `middle_server/.github/workflows/middle-server-docker.yml`  | **CREADO**                              |
+| `front/.github/workflows/front_ci.yml`                      | Poblado (Angular CI)                    |
+| `front/.github/workflows/front_docker.yml`                  | **CREADO**                              |
 
 ---
 
@@ -4383,10 +4575,10 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/shared/components/navbar/navbar.component.ts` | Import de `LogoComponent` |
-| `front/src/app/shared/components/navbar/navbar.component.html` | Nueva estructura de grid |
+| Archivo                                                        | Acción                       |
+| -------------------------------------------------------------- | ---------------------------- |
+| `front/src/app/shared/components/navbar/navbar.component.ts`   | Import de `LogoComponent`    |
+| `front/src/app/shared/components/navbar/navbar.component.html` | Nueva estructura de grid     |
 | `front/src/app/shared/components/navbar/navbar.component.scss` | Rediseño completo de estilos |
 
 ---
@@ -4416,16 +4608,15 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Cambio |
-|---------|--------|
-| `front/src/styles.scss` | Refactor de layout base |
-| `front/src/app/pages/config/config.component.scss` | Rediseño responsivo |
-| `front/src/app/pages/game/game.component.scss` | Corrección de scroll (100%) |
-| `front/src/app/pages/home/home.component.scss` | Fix de grid de clanes |
-| `front/src/app/pages/statistics-view/statistics.component.scss` | Tipografía fluida |
+| Archivo                                                         | Cambio                      |
+| --------------------------------------------------------------- | --------------------------- |
+| `front/src/styles.scss`                                         | Refactor de layout base     |
+| `front/src/app/pages/config/config.component.scss`              | Rediseño responsivo         |
+| `front/src/app/pages/game/game.component.scss`                  | Corrección de scroll (100%) |
+| `front/src/app/pages/home/home.component.scss`                  | Fix de grid de clanes       |
+| `front/src/app/pages/statistics-view/statistics.component.scss` | Tipografía fluida           |
 
 ---
-
 
 ## [2026-04-20] Restauración de Layout y Corrección Técnica (ConfigComponent)
 
@@ -4450,10 +4641,10 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/config/config.component.ts` | Corrección técnica |
-| `front/src/app/pages/config/config.component.html` | Restauración de layout |
+| Archivo                                            | Acción                  |
+| -------------------------------------------------- | ----------------------- |
+| `front/src/app/pages/config/config.component.ts`   | Corrección técnica      |
+| `front/src/app/pages/config/config.component.html` | Restauración de layout  |
 | `front/src/app/pages/config/config.component.scss` | Restauración de estilos |
 
 ---
@@ -4474,8 +4665,8 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo                                      | Acción     |
+| -------------------------------------------- | ---------- |
 | `db_back/.github/workflows/build-docker.yml` | **CREADO** |
 
 ---
@@ -4504,11 +4695,11 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/config/config.component.html` | Rediseño completo de la estructura |
+| Archivo                                            | Acción                                            |
+| -------------------------------------------------- | ------------------------------------------------- |
+| `front/src/app/pages/config/config.component.html` | Rediseño completo de la estructura                |
 | `front/src/app/pages/config/config.component.scss` | Implementación de estilos integrados y responsive |
-| `front/src/app/pages/config/config.component.ts` | Actualización de lógica y señales |
+| `front/src/app/pages/config/config.component.ts`   | Actualización de lógica y señales                 |
 
 ---
 
@@ -4541,11 +4732,11 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/index.html` | Inyección de Google Fonts |
+| Archivo                                 | Acción                        |
+| --------------------------------------- | ----------------------------- |
+| `front/src/index.html`                  | Inyección de Google Fonts     |
 | `front/src/app/pages/personajes-page/*` | Rediseño completo (HTML/SCSS) |
-| `front/src/app/pages/reglas-page/*` | Rediseño completo (HTML/SCSS) |
+| `front/src/app/pages/reglas-page/*`     | Rediseño completo (HTML/SCSS) |
 
 ---
 
@@ -4568,11 +4759,11 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Cambio |
-|---------|--------|
-| `front/src/app/pages/home/home.component.ts` | Corregida navegación y eliminada advertencia |
-| `front/src/app/pages/game/game.component.ts` | Eliminación de `any` (tipado estricto) |
-| `front/src/app/pages/game/game.component.html` | Corrección de sintaxis SVG |
+| Archivo                                        | Cambio                                       |
+| ---------------------------------------------- | -------------------------------------------- |
+| `front/src/app/pages/home/home.component.ts`   | Corregida navegación y eliminada advertencia |
+| `front/src/app/pages/game/game.component.ts`   | Eliminación de `any` (tipado estricto)       |
+| `front/src/app/pages/game/game.component.html` | Corrección de sintaxis SVG                   |
 
 ---
 
@@ -4596,6 +4787,7 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
    - Sobrescrito `config.component.scss` con los nuevos estilos de cuadrícula, secciones, barra lateral y layout responsive.
 
 ---
+
 ## [2026-04-20] Finalización del CI para db_back
 
 **Agente**: Antigravity (Google DeepMind)
@@ -4611,13 +4803,12 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `.github/workflows/db-back-ci.yml` | **CREADO** |
-| `db_back/ci.yml` | **ELIMINADO** |
+| Archivo                            | Acción        |
+| ---------------------------------- | ------------- |
+| `.github/workflows/db-back-ci.yml` | **CREADO**    |
+| `db_back/ci.yml`                   | **ELIMINADO** |
 
 ---
-
 
 ## [2026-04-19] Implementación de Modo Debug Global
 
@@ -4644,13 +4835,13 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/core/debug/debug.service.ts` | **CREADO** |
+| Archivo                                                          | Acción                  |
+| ---------------------------------------------------------------- | ----------------------- |
+| `front/src/app/core/debug/debug.service.ts`                      | **CREADO**              |
 | `front/src/app/shared/components/debug/global-debug.component.*` | **CREADO** (3 archivos) |
-| `front/src/app/core/auth/auth.service.ts` | Modificado |
-| `front/src/app/app.*` | Modificado |
-| `front/src/app/pages/game/game.component.*` | Modificado |
+| `front/src/app/core/auth/auth.service.ts`                        | Modificado              |
+| `front/src/app/app.*`                                            | Modificado              |
+| `front/src/app/pages/game/game.component.*`                      | Modificado              |
 
 ---
 
@@ -4682,13 +4873,13 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/game/modals/reglas.modal.ts` | **CREADO** |
+| Archivo                                             | Acción     |
+| --------------------------------------------------- | ---------- |
+| `front/src/app/pages/game/modals/reglas.modal.ts`   | **CREADO** |
 | `front/src/app/pages/game/modals/reglas.modal.html` | **CREADO** |
 | `front/src/app/pages/game/modals/reglas.modal.scss` | **CREADO** |
-| `front/src/app/pages/game/game.component.ts` | Modificado |
-| `front/src/app/pages/game/game.component.html` | Modificado |
+| `front/src/app/pages/game/game.component.ts`        | Modificado |
+| `front/src/app/pages/game/game.component.html`      | Modificado |
 
 ---
 
@@ -4704,7 +4895,6 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
    - **Nuevos Tokens de Overlay**:
      - `$color-overlay-soft`: Reemplaza transparencias fijas de negro/blanco, adaptándose al fondo actual.
      - `$color-overlay-strong`: Reemplaza fondos de rejillas y capas de profundidad hardcodeadas.
-   
 2. **Eliminación de Colores Absolutos**:
    - Limpieza de `black`, `white`, `#000` y `#fff` en todos los archivos SCSS de `src/app`.
    - Sustitución por `var(--color-text-primary)` y `var(--color-text-inverse)` para garantizar contraste automático.
@@ -4720,30 +4910,30 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
    - Corregido error de importación SCSS en `game.component.scss`.
    - Auditoría final con `grep` confirmando la ausencia de colores hardcodeados en la capa de aplicación.
 
-2. **Refactorización de Componentes Principales**:
+6. **Refactorización de Componentes Principales**:
    - `game.component.scss`: Eliminación de `#hex` en barras de vida, paneles de debug y fondos de clanes (migrados a `color-mix`).
    - `admin.component.scss`: Corrección de colores en botones de acción de peligro.
    - `navbar.component.scss`: Ajuste de colores semantic en el menú desplegable.
 
-3. **Refactorización de Modales de Juego**:
+7. **Refactorización de Modales de Juego**:
    - `game-log.modal.scss`: Rediseño completo usando las nuevas variables de glassmorphism y eliminando fallbacks de `var()`.
    - `entrenar.modal.scss`, `visualizar-tropas.modal.scss`, `atacar.modal.scss`, `anadir-tropa-ataque.modal.scss`: Sustitución masiva de dorados hardcodeados (#d4af37) y rojos por los tokens oficiales `$color-gold` y `$color-error`.
 
-4. **Calidad y Verificación**:
+8. **Calidad y Verificación**:
    - Ejecutada auditoría con `grep` para asegurar la ausencia total de `#` arbitrarios en la carpeta `src/app`.
    - Verificada la compatibilidad con los temas **Dark** y **Light**.
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Cambio |
-|---------|--------|
-| `.agents/front_color_guide.md` | Actualizado con nuevos tokens |
-| `front/src/styles/tokens.scss` | Implementación de custom properties |
-| `front/src/styles/variables.scss` | Implementación de variables SCSS |
-| `front/src/app/pages/game/game.component.scss` | Refactorizado |
-| `front/src/app/pages/admin/admin.component.scss` | Refactorizado |
-| `front/src/app/shared/components/navbar/navbar.component.scss` | Refactorizado |
-| `front/src/app/pages/game/modals/*.scss` | Refactorización de todos los modales (5 archivos) |
+| Archivo                                                        | Cambio                                            |
+| -------------------------------------------------------------- | ------------------------------------------------- |
+| `.agents/front_color_guide.md`                                 | Actualizado con nuevos tokens                     |
+| `front/src/styles/tokens.scss`                                 | Implementación de custom properties               |
+| `front/src/styles/variables.scss`                              | Implementación de variables SCSS                  |
+| `front/src/app/pages/game/game.component.scss`                 | Refactorizado                                     |
+| `front/src/app/pages/admin/admin.component.scss`               | Refactorizado                                     |
+| `front/src/app/shared/components/navbar/navbar.component.scss` | Refactorizado                                     |
+| `front/src/app/pages/game/modals/*.scss`                       | Refactorización de todos los modales (5 archivos) |
 
 ---
 
@@ -4775,14 +4965,14 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/game/modals/game-log.modal.ts` | **CREADO** |
+| Archivo                                               | Acción     |
+| ----------------------------------------------------- | ---------- |
+| `front/src/app/pages/game/modals/game-log.modal.ts`   | **CREADO** |
 | `front/src/app/pages/game/modals/game-log.modal.html` | **CREADO** |
 | `front/src/app/pages/game/modals/game-log.modal.scss` | **CREADO** |
-| `front/src/app/pages/game/modals/attack.types.ts` | Modificado |
-| `front/src/app/pages/game/game.component.ts` | Modificado |
-| `front/src/app/pages/game/game.component.html` | Modificado |
+| `front/src/app/pages/game/modals/attack.types.ts`     | Modificado |
+| `front/src/app/pages/game/game.component.ts`          | Modificado |
+| `front/src/app/pages/game/game.component.html`        | Modificado |
 
 ---
 
@@ -4810,11 +5000,11 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo                                     | Cambio                                                       |
-| ------------------------------------------- | ------------------------------------------------------------ |
-| `front/src/app/pages/game/game.component.ts` | Añadidos signals de visibilidad y métodos de manipulación de estado. |
-| `front/src/app/pages/game/game.component.html` | Inclusión del panel y controles de debug.                    |
-| `front/src/app/pages/game/game.component.scss` | Estilos del panel de debug y botón disparador.               |
+| Archivo                                        | Cambio                                                               |
+| ---------------------------------------------- | -------------------------------------------------------------------- |
+| `front/src/app/pages/game/game.component.ts`   | Añadidos signals de visibilidad y métodos de manipulación de estado. |
+| `front/src/app/pages/game/game.component.html` | Inclusión del panel y controles de debug.                            |
+| `front/src/app/pages/game/game.component.scss` | Estilos del panel de debug y botón disparador.                       |
 
 ---
 
@@ -4845,13 +5035,13 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo                                          | Cambio                                                       |
-| ------------------------------------------------ | ------------------------------------------------------------ |
-| `front/src/app/pages/game/game.component.ts`      | Lógica de cola y progreso computado                          |
-| `front/src/app/pages/game/game.component.html`    | Binding de progreso al botón flotante                        |
-| `front/src/app/pages/game/game.component.scss`    | Estilo de llenado de fondo para botones                      |
-| `front/src/app/pages/game/modals/visualizar-tropas.modal.ts`   | Lógica de estados y ordenamiento                             |
-| `front/src/app/pages/game/modals/visualizar-tropas.modal.html` | UI con badges y estados de entrenamiento                     |
+| Archivo                                                        | Cambio                                                        |
+| -------------------------------------------------------------- | ------------------------------------------------------------- |
+| `front/src/app/pages/game/game.component.ts`                   | Lógica de cola y progreso computado                           |
+| `front/src/app/pages/game/game.component.html`                 | Binding de progreso al botón flotante                         |
+| `front/src/app/pages/game/game.component.scss`                 | Estilo de llenado de fondo para botones                       |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.ts`   | Lógica de estados y ordenamiento                              |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.html` | UI con badges y estados de entrenamiento                      |
 | `front/src/app/pages/game/modals/visualizar-tropas.modal.scss` | Efectos visuales de progreso y unidades en espera (grayscale) |
 
 ---
@@ -4882,8 +5072,8 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo                                          | Acción     |
-| ------------------------------------------------ | ---------- |
+| Archivo                                               | Acción     |
+| ----------------------------------------------------- | ---------- |
 | `front/src/app/pages/game/modals/entrenar.modal.ts`   | **CREADO** |
 | `front/src/app/pages/game/modals/entrenar.modal.html` | **CREADO** |
 | `front/src/app/pages/game/modals/entrenar.modal.scss` | **CREADO** |
@@ -4893,7 +5083,6 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ---
 
-
 ## [2026-04-19] Creación del Modal de Visualización de Tropas (Read-Only)
 
 **Agente**: Antigravity (Google DeepMind)
@@ -4902,44 +5091,45 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 ### 📝 Cambios Realizados:
 
 #### 1. **Componente `VisualizarTropasModalComponent`**
-   - **Lógica (`visualizar-tropas.modal.ts`)**:
-     - Componente independiente con `ChangeDetectionStrategy.OnPush`.
-     - Inputs: `title` y `troops` (usando `Signal` de Angular).
-     - Atributo computado `gridCols` para organizar la grilla dinámicamente.
-   - **Template (`visualizar-tropas.modal.html`)**:
-     - Estructura de modal con overlay y contenido centrado.
-     - Grilla de tropas que muestra icono, barra de vida y texto detallado (actual/máxima).
-     - Botón de cierre en el header y footer para facilitar la navegación.
-   - **Estilos (`visualizar-tropas.modal.scss`)**:
-     - Reutilización del diseño "vikingo": bordes dorados (#d4af37), fondos oscuros con degradados y glassmorphism.
-     - Ajuste de interactividad: celdas de tropas en modo `read-only` (sin cursor de mano ni efectos de escala).
-     - Barra de vida con gradiente verde (#2ecc71 → #27ae60).
+
+- **Lógica (`visualizar-tropas.modal.ts`)**:
+  - Componente independiente con `ChangeDetectionStrategy.OnPush`.
+  - Inputs: `title` y `troops` (usando `Signal` de Angular).
+  - Atributo computado `gridCols` para organizar la grilla dinámicamente.
+- **Template (`visualizar-tropas.modal.html`)**:
+  - Estructura de modal con overlay y contenido centrado.
+  - Grilla de tropas que muestra icono, barra de vida y texto detallado (actual/máxima).
+  - Botón de cierre en el header y footer para facilitar la navegación.
+- **Estilos (`visualizar-tropas.modal.scss`)**:
+  - Reutilización del diseño "vikingo": bordes dorados (#d4af37), fondos oscuros con degradados y glassmorphism.
+  - Ajuste de interactividad: celdas de tropas en modo `read-only` (sin cursor de mano ni efectos de escala).
+  - Barra de vida con gradiente verde (#2ecc71 → #27ae60).
 
 #### 2. **Preview Estático**
-   - **Archivo (`.agents/previews/visualizar-tropas-preview.html`)**:
-     - Creado para validación visual inmediata.
-     - Simula el estado del modal con 5 tropas de ejemplo con salud variable.
+
+- **Archivo (`.agents/previews/visualizar-tropas-preview.html`)**:
+  - Creado para validación visual inmediata.
+  - Simula el estado del modal con 5 tropas de ejemplo con salud variable.
 
 ### ✨ Características Implementadas
 
-| Requisito | Implementación |
-|-----------|-----------------|
+| Requisito               | Implementación                                                     |
+| ----------------------- | ------------------------------------------------------------------ |
 | **Consistencia Visual** | Mismo aspecto que el modal de ataque (grid 1x1, colores, fuentes). |
-| **Informativo** | Muestra el estado actual de las tropas (salud) de forma clara. |
-| **Read-Only** | Sin botones de añadir tropas o ejecutar ataque. |
-| **Grilla Dinámica** | El número de columnas se ajusta según la cantidad de tropas. |
+| **Informativo**         | Muestra el estado actual de las tropas (salud) de forma clara.     |
+| **Read-Only**           | Sin botones de añadir tropas o ejecutar ataque.                    |
+| **Grilla Dinámica**     | El número de columnas se ajusta según la cantidad de tropas.       |
 
 ### 🗂️ Archivos Creados:
 
-| Archivo | Tipo | Descripción |
-|---------|------|------------|
-| `front/src/app/pages/game/modals/visualizar-tropas.modal.ts` | Component | Lógica del modal informativo |
-| `front/src/app/pages/game/modals/visualizar-tropas.modal.html` | Template | UI del modal de visualización |
-| `front/src/app/pages/game/modals/visualizar-tropas.modal.scss` | Styles | Estilos vikingos y health bars |
-| `.agents/previews/visualizar-tropas-preview.html` | HTML | Vista previa estática interactiva |
+| Archivo                                                        | Tipo      | Descripción                       |
+| -------------------------------------------------------------- | --------- | --------------------------------- |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.ts`   | Component | Lógica del modal informativo      |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.html` | Template  | UI del modal de visualización     |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.scss` | Styles    | Estilos vikingos y health bars    |
+| `.agents/previews/visualizar-tropas-preview.html`              | HTML      | Vista previa estática interactiva |
 
 ---
-
 
 ## [2026-04-19] Implementación de Caminos de Ataque Animados (SVG Attack Path Visualization)
 
@@ -4949,64 +5139,67 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 ### 📝 Cambios Realizados:
 
 #### 1. **Estilos SVG en `game.component.scss`**
-   - Nuevo contenedor `.attack-path-svg`:
-     - Posicionamiento absoluto cubriendo todo el contenedor
-     - `pointer-events: none` para que no interfiera con clicks
-     - Z-index: 15 (por encima de nodos pero bajo modales)
-   
-   - Estilo del path `.attack-path`:
-     - Stroke con gradiente lineal (6 colores rojo degradado: #e74c3c → #c0392b → #a93226)
-     - `stroke-dasharray: 10, 5` para patrón de línea punteado
-     - Animación `attackPathFlow` (3s, linear, infinito)
-       - Offset de stroke viaja de 0 a -15px creando efecto de flujo
-     - Filter `drop-shadow` con glow rojo (#c0392b, 8px, 60% de opacidad)
-   
-   - Animación de punta de flecha `.attack-arrow-head circle`:
-     - `arrowPulse` (2s, ease-in-out, infinito)
-     - Varía el radio de 4px → 6px → 4px
-     - Varía opacidad del fill manteniendo glow
+
+- Nuevo contenedor `.attack-path-svg`:
+  - Posicionamiento absoluto cubriendo todo el contenedor
+  - `pointer-events: none` para que no interfiera con clicks
+  - Z-index: 15 (por encima de nodos pero bajo modales)
+
+- Estilo del path `.attack-path`:
+  - Stroke con gradiente lineal (6 colores rojo degradado: #e74c3c → #c0392b → #a93226)
+  - `stroke-dasharray: 10, 5` para patrón de línea punteado
+  - Animación `attackPathFlow` (3s, linear, infinito)
+    - Offset de stroke viaja de 0 a -15px creando efecto de flujo
+  - Filter `drop-shadow` con glow rojo (#c0392b, 8px, 60% de opacidad)
+
+- Animación de punta de flecha `.attack-arrow-head circle`:
+  - `arrowPulse` (2s, ease-in-out, infinito)
+  - Varía el radio de 4px → 6px → 4px
+  - Varía opacidad del fill manteniendo glow
 
 #### 2. **Template SVG en `game.component.html`**
-   - Contenedor condicional: `@if (activeAttack())`
-   - Elemento `<svg xmlns="http://www.w3.org/2000/svg">` con:
-     - `<defs>`: Define gradiente lineal `attack-gradient`
-       - 3 stops: #e74c3c (0%), #c0392b (50%), #a93226 (100%)
-       - Dirección diagonal: x1=0% y1=0% x2=100% y2=100%
-     - Elemento `<path>`:
-       - Clase `attack-path` (aplica animación)
-       - `[attr.d]="generateAttackPath()"` (curva Bezier dinámica)
-       - `[attr.id]="activeAttack()!.pathId"` (ID único per ataque)
-     - Grupo `<g class="attack-arrow-head">`:
-       - Circle con clase `arrow-dot` animada (pulso)
-       - Atributos cx/cy inicialmente en 0
+
+- Contenedor condicional: `@if (activeAttack())`
+- Elemento `<svg xmlns="http://www.w3.org/2000/svg">` con:
+  - `<defs>`: Define gradiente lineal `attack-gradient`
+    - 3 stops: #e74c3c (0%), #c0392b (50%), #a93226 (100%)
+    - Dirección diagonal: x1=0% y1=0% x2=100% y2=100%
+  - Elemento `<path>`:
+    - Clase `attack-path` (aplica animación)
+    - `[attr.d]="generateAttackPath()"` (curva Bezier dinámica)
+    - `[attr.id]="activeAttack()!.pathId"` (ID único per ataque)
+  - Grupo `<g class="attack-arrow-head">`:
+    - Circle con clase `arrow-dot` animada (pulso)
+    - Atributos cx/cy inicialmente en 0
 
 #### 3. **Lógica de Auto-Limpieza en `game.component.ts`**
-   - Método `onLaunchAttack()` modificado:
-     - Establecer el signal `activeAttack` con el objeto de ataque
-     - Añadir `setTimeout(() => { this.activeAttack.set(null); }, 5000)`
-     - Limpia automáticamente la visualización después de 5 segundos
-     - Comportamiento: "solo debe salir cuando se haya un ataque y durante el ataque"
+
+- Método `onLaunchAttack()` modificado:
+  - Establecer el signal `activeAttack` con el objeto de ataque
+  - Añadir `setTimeout(() => { this.activeAttack.set(null); }, 5000)`
+  - Limpia automáticamente la visualización después de 5 segundos
+  - Comportamiento: "solo debe salir cuando se haya un ataque y durante el ataque"
 
 ### ✨ Características Implementadas
 
-| Requisito | Implementación |
-|-----------|-----------------|
-| **Visualización SVG** | Overlay absoluto con path Bezier dinámico |
-| **Gradiente lineal** | Definido en `<defs>` con 3 stops de color rojo |
-| **Animación fluida** | `stroke-dasharray` offset (3s) crea efecto de flujo constante |
-| **Punta animada** | Circle pulsa entre 4px-6px (efecto de movimiento) |
-| **Auto-limpieza** | setTimeout 5s limpia activeAttack automáticamente |
-| **Condicional** | Solo renderiza cuando `activeAttack() !== null` |
-| **Z-indexing** | 15: visible sobre la mayoría, bajo modales |
-| **Sin interferencia** | `pointer-events: none` no bloquea interacciones |
+| Requisito             | Implementación                                                |
+| --------------------- | ------------------------------------------------------------- |
+| **Visualización SVG** | Overlay absoluto con path Bezier dinámico                     |
+| **Gradiente lineal**  | Definido en `<defs>` con 3 stops de color rojo                |
+| **Animación fluida**  | `stroke-dasharray` offset (3s) crea efecto de flujo constante |
+| **Punta animada**     | Circle pulsa entre 4px-6px (efecto de movimiento)             |
+| **Auto-limpieza**     | setTimeout 5s limpia activeAttack automáticamente             |
+| **Condicional**       | Solo renderiza cuando `activeAttack() !== null`               |
+| **Z-indexing**        | 15: visible sobre la mayoría, bajo modales                    |
+| **Sin interferencia** | `pointer-events: none` no bloquea interacciones               |
 
 ### 📋 Cambios Archivos:
 
-| Archivo | Cambios |
-|---------|---------|
+| Archivo                                        | Cambios                                                                                 |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `front/src/app/pages/game/game.component.scss` | Nuevos estilos: `.attack-path-svg`, `.attack-path`, `.attack-arrow-head` con @keyframes |
-| `front/src/app/pages/game/game.component.html` | @if condicional + SVG con defs, gradiente, path y arrow-head animado |
-| `front/src/app/pages/game/game.component.ts` | setTimeout(5s) en `onLaunchAttack()` para limpiar activeAttack |
+| `front/src/app/pages/game/game.component.html` | @if condicional + SVG con defs, gradiente, path y arrow-head animado                    |
+| `front/src/app/pages/game/game.component.ts`   | setTimeout(5s) en `onLaunchAttack()` para limpiar activeAttack                          |
 
 ### 🎨 Efectos Visuales:
 
@@ -5040,32 +5233,36 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 ### 📝 Cambios Realizados:
 
 #### 1. **Anademodalización en `AnadirTropaAtaqueModalComponent`**
-   - Nuevo signal local: `localSelectedIds` para gestionar selección temporal
-   - Constructor inicializa `localSelectedIds` con los valores del input `selectedTroopIds`
-   - Cambio de salida: `troopSelected: string` → `troopsSelected: string[]` (emite array)
-   - Métodos actualizados:
-     - `onTroopClick()`: toggle en `localSelectedIds` (no emite directamente)
-     - `onOkClick()`: emite array de IDs seleccionadas y cierra
-     - `onCancelClick()`: descarta cambios y cierra
+
+- Nuevo signal local: `localSelectedIds` para gestionar selección temporal
+- Constructor inicializa `localSelectedIds` con los valores del input `selectedTroopIds`
+- Cambio de salida: `troopSelected: string` → `troopsSelected: string[]` (emite array)
+- Métodos actualizados:
+  - `onTroopClick()`: toggle en `localSelectedIds` (no emite directamente)
+  - `onOkClick()`: emite array de IDs seleccionadas y cierra
+  - `onCancelClick()`: descarta cambios y cierra
 
 #### 2. **Template (`anadir-tropa-ataque.modal.html`)**
-   - Cambio en binding de event: `(troopSelected)` → `(troopsSelected)`
-   - Footer: añadido botón "OK" (verde) junto a "CANCELAR" (gris)
-   - Justificación: `justify-content: flex-end` para alinear botones a la derecha
+
+- Cambio en binding de event: `(troopSelected)` → `(troopsSelected)`
+- Footer: añadido botón "OK" (verde) junto a "CANCELAR" (gris)
+- Justificación: `justify-content: flex-end` para alinear botones a la derecha
 
 #### 3. **Estilos (`anadir-tropa-ataque.modal.scss`)**
-   - Nuevo botón `.btn-ok`:
-     - Gradiente verde (#27ae60 → #229954)
-     - Glow effect al hover
-     - Transición suave y shadow
-   - Footer ahora con `justify-content: flex-end` y gap de 12px
+
+- Nuevo botón `.btn-ok`:
+  - Gradiente verde (#27ae60 → #229954)
+  - Glow effect al hover
+  - Transición suave y shadow
+- Footer ahora con `justify-content: flex-end` y gap de 12px
 
 #### 4. **Integración en `AtacarModalComponent`**
-   - Actualización del método `onTroopSelected(newTroopIds: string[])`:
-     - Recibe array de IDs en lugar de string único
-     - Añade todas las nuevas tropas a `selectedTroopIds`
-     - Evita duplicados mediante verificación
-   - Template: `(troopSelected)` → `(troopsSelected)`
+
+- Actualización del método `onTroopSelected(newTroopIds: string[])`:
+  - Recibe array de IDs en lugar de string único
+  - Añade todas las nuevas tropas a `selectedTroopIds`
+  - Evita duplicados mediante verificación
+- Template: `(troopSelected)` → `(troopsSelected)`
 
 ### ✨ Flujo de Uso
 
@@ -5078,13 +5275,13 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 
 ### 📋 Cambios Archivos:
 
-| Archivo | Cambios |
-|---------|---------|
-| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.ts` | Signal local, constructor, nuevo output array, métodos actualizados |
-| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.html` | Binding event, botones dobles (OK + CANCELAR) |
-| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.scss` | Nuevos estilos `.btn-ok` (verde), footer ajustado |
-| `front/src/app/pages/game/modals/atacar.modal.ts` | Método `onTroopSelected()` actualizado (array) |
-| `front/src/app/pages/game/modals/atacar.modal.html` | Binding event actualizado |
+| Archivo                                                          | Cambios                                                             |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.ts`   | Signal local, constructor, nuevo output array, métodos actualizados |
+| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.html` | Binding event, botones dobles (OK + CANCELAR)                       |
+| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.scss` | Nuevos estilos `.btn-ok` (verde), footer ajustado                   |
+| `front/src/app/pages/game/modals/atacar.modal.ts`                | Método `onTroopSelected()` actualizado (array)                      |
+| `front/src/app/pages/game/modals/atacar.modal.html`              | Binding event actualizado                                           |
 
 ---
 
@@ -5096,96 +5293,102 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
 ### 📝 Cambios Realizados:
 
 #### 1. **Creación de Sistema de Tipos (`attack.types.ts`)**
-   - Tipo `ClanId`: unión de 6 clanes posibles
-   - Interfaz `Troop`: datos completos de una tropa (id, name, type, clan, health actual/máxima, icon, costo, etc.)
-   - Interfaz `EnemyTarget`: información del enemigo objetivo
-   - Interfaz `TroopGridCell`: representación visual de celda en grid
-   - Enum `TroopType`: tipos de tropas (infanteria, arqueria, caballeria)
+
+- Tipo `ClanId`: unión de 6 clanes posibles
+- Interfaz `Troop`: datos completos de una tropa (id, name, type, clan, health actual/máxima, icon, costo, etc.)
+- Interfaz `EnemyTarget`: información del enemigo objetivo
+- Interfaz `TroopGridCell`: representación visual de celda en grid
+- Enum `TroopType`: tipos de tropas (infanteria, arqueria, caballeria)
 
 #### 2. **Componente Principal: `AtacarModalComponent`**
-   - **Entrada**: `target` (enemigo), `availableTroops` (tropas disponibles)
-   - **Salida**: `closeModal`, `launchAttack` (IDs de tropas)
-   - **UI**: 
-     - Grid dinámico de tropas seleccionadas (Forge of Empires style)
-     - Cada celda muestra: icono + barra de vida (con % de salud actual)
-     - Botón "+" para añadir más tropas
-     - Botón "ATACAR" (habilitado solo si hay tropas)
-   - **Interacción**: Click en celda de tropa → la elimina de selección
-   - **Mock data**: 6 tropas de prueba con diferentes tipos y salud variable
+
+- **Entrada**: `target` (enemigo), `availableTroops` (tropas disponibles)
+- **Salida**: `closeModal`, `launchAttack` (IDs de tropas)
+- **UI**:
+  - Grid dinámico de tropas seleccionadas (Forge of Empires style)
+  - Cada celda muestra: icono + barra de vida (con % de salud actual)
+  - Botón "+" para añadir más tropas
+  - Botón "ATACAR" (habilitado solo si hay tropas)
+- **Interacción**: Click en celda de tropa → la elimina de selección
+- **Mock data**: 6 tropas de prueba con diferentes tipos y salud variable
 
 #### 3. **Componente Secundario: `AñadirTropaAtaqueModalComponent`**
-   - **Entrada**: `availableTroops`, `selectedTroopIds` (IDs ya seleccionadas)
-   - **Salida**: `troopSelected` (emite ID), `closeModal`
-   - **UI**:
-     - Grid 2 columnas de tropas disponibles
-     - Cada tarjeta: icono + nombre + health bar + costo
-     - Tropas seleccionadas previamente muestran checkmark (✓) y fondo/borde dorado
-   - **Interacción**: 
-     - Click en tropa no seleccionada → se añade a selección y muestra checkmark
-     - Click en tropa seleccionada → se elimina (toggle comportamiento)
-     - Click "CANCELAR" → cierra modal sin cambios
-   - **Z-index**: modal 2 por encima del modal 1
+
+- **Entrada**: `availableTroops`, `selectedTroopIds` (IDs ya seleccionadas)
+- **Salida**: `troopSelected` (emite ID), `closeModal`
+- **UI**:
+  - Grid 2 columnas de tropas disponibles
+  - Cada tarjeta: icono + nombre + health bar + costo
+  - Tropas seleccionadas previamente muestran checkmark (✓) y fondo/borde dorado
+- **Interacción**:
+  - Click en tropa no seleccionada → se añade a selección y muestra checkmark
+  - Click en tropa seleccionada → se elimina (toggle comportamiento)
+  - Click "CANCELAR" → cierra modal sin cambios
+- **Z-index**: modal 2 por encima del modal 1
 
 #### 4. **Estilos (`atacar.modal.scss` + `añadir-tropa-ataque.modal.scss`)**
-   - Tema vikingo: colores #d4af37 (dorado), #2a2a2a (gris oscuro), degradados
-   - Bordes dorados con glow effects
-   - Grid responsive con gap coherente
-   - Transiciones suaves (hover, active)
-   - Health bars con gradiente verde (#2ecc71 → #27ae60)
-   - Botones:
-     - "+" (dorado, grande, 48x48px)
-     - "ATACAR" (rojo, solo habilitado con tropas)
-     - "CANCELAR" (gris)
+
+- Tema vikingo: colores #d4af37 (dorado), #2a2a2a (gris oscuro), degradados
+- Bordes dorados con glow effects
+- Grid responsive con gap coherente
+- Transiciones suaves (hover, active)
+- Health bars con gradiente verde (#2ecc71 → #27ae60)
+- Botones:
+  - "+" (dorado, grande, 48x48px)
+  - "ATACAR" (rojo, solo habilitado con tropas)
+  - "CANCELAR" (gris)
 
 #### 5. **Integración en `GamePageComponent`**
-   - Imports: `AtacarModalComponent`, `AñadirTropaAtaqueModalComponent`, tipos
-   - Signals de control: `showAtacarModal`, `targetEnemy`, `selectedTroopsForAttack`
-   - Signal de datos: `availableTroops` (mock con 6 tropas)
-   - Método `onTerritoryClick(player)`:
-     - ✅ Comprueba que no sea el jugador local (no abre si haces clic en ti)
-     - ✅ Comprueba que fase !== PREPARACIÓN
-     - ✅ Abre modal con enemigo objetivo
-   - Métodos: `closeAtacarModal()`, `onLaunchAttack(troopIds)`
-   - Template: `@if (showAtacarModal() && targetEnemy())` para renderizar modal anidado
+
+- Imports: `AtacarModalComponent`, `AñadirTropaAtaqueModalComponent`, tipos
+- Signals de control: `showAtacarModal`, `targetEnemy`, `selectedTroopsForAttack`
+- Signal de datos: `availableTroops` (mock con 6 tropas)
+- Método `onTerritoryClick(player)`:
+  - ✅ Comprueba que no sea el jugador local (no abre si haces clic en ti)
+  - ✅ Comprueba que fase !== PREPARACIÓN
+  - ✅ Abre modal con enemigo objetivo
+- Métodos: `closeAtacarModal()`, `onLaunchAttack(troopIds)`
+- Template: `@if (showAtacarModal() && targetEnemy())` para renderizar modal anidado
 
 #### 6. **Previews HTML Generados**
-   - `.agents/previews/attack-modal-preview.html`: muestra modal vacío vs con 4 tropas
-   - `.agents/previews/add-troops-modal-preview.html`: grid 2x3 de tropas, algunas seleccionadas
+
+- `.agents/previews/attack-modal-preview.html`: muestra modal vacío vs con 4 tropas
+- `.agents/previews/add-troops-modal-preview.html`: grid 2x3 de tropas, algunas seleccionadas
 
 ### ✨ Características Clave
 
-| Requisito | Implementación |
-|-----------|-----------------|
-| **Grid visual** | CSS Grid dinámico, adapta columnas según raíz cuadrada de tropas |
-| **Health bars** | Barra de progreso animada, muestra `currentHealth/maxHealth` |
-| **Selección previa** | Al abrir modal añadir, tropas ya seleccionadas aparecen marcadas |
-| **Toggle selection** | Click en tropa seleccionada → se deselecciona (inversa lógica) |
-| **No ataque a ti mismo** | Comprobación en `onTerritoryClick()` del jugador local |
-| **Fase PREPARACIÓN** | Bloquea apertura del modal en fase prep |
-| **Botón ATACAR** | Deshabilitado si no hay tropas, emit con IDs al servidor |
-| **Estilo Forge of Empires** | Grid de celdas cuadradas con iconos, degradados dorados |
+| Requisito                   | Implementación                                                   |
+| --------------------------- | ---------------------------------------------------------------- |
+| **Grid visual**             | CSS Grid dinámico, adapta columnas según raíz cuadrada de tropas |
+| **Health bars**             | Barra de progreso animada, muestra `currentHealth/maxHealth`     |
+| **Selección previa**        | Al abrir modal añadir, tropas ya seleccionadas aparecen marcadas |
+| **Toggle selection**        | Click en tropa seleccionada → se deselecciona (inversa lógica)   |
+| **No ataque a ti mismo**    | Comprobación en `onTerritoryClick()` del jugador local           |
+| **Fase PREPARACIÓN**        | Bloquea apertura del modal en fase prep                          |
+| **Botón ATACAR**            | Deshabilitado si no hay tropas, emit con IDs al servidor         |
+| **Estilo Forge of Empires** | Grid de celdas cuadradas con iconos, degradados dorados          |
 
 ### 🗂️ Archivos Creados:
 
-| Archivo | Tipo | Descripción |
-|---------|------|------------|
-| `front/src/app/pages/game/modals/attack.types.ts` | TypeScript | Tipos e interfaces |
-| `front/src/app/pages/game/modals/atacar.modal.ts` | Component | Lógica del modal principal |
-| `front/src/app/pages/game/modals/atacar.modal.html` | Template | UI del modal atacar |
-| `front/src/app/pages/game/modals/atacar.modal.scss` | Styles | Estilos grid + health bars |
-| `front/src/app/pages/game/modals/añadir-tropa-ataque.modal.ts` | Component | Lógica de selección |
-| `front/src/app/pages/game/modals/añadir-tropa-ataque.modal.html` | Template | UI grid de tropas |
-| `front/src/app/pages/game/modals/añadir-tropa-ataque.modal.scss` | Styles | Estilos tarjetas + checkmark |
-| `.agents/previews/attack-modal-preview.html` | HTML | Preview visual del modal atacar |
-| `.agents/previews/add-troops-modal-preview.html` | HTML | Preview grid de añadir tropas |
+| Archivo                                                          | Tipo       | Descripción                     |
+| ---------------------------------------------------------------- | ---------- | ------------------------------- |
+| `front/src/app/pages/game/modals/attack.types.ts`                | TypeScript | Tipos e interfaces              |
+| `front/src/app/pages/game/modals/atacar.modal.ts`                | Component  | Lógica del modal principal      |
+| `front/src/app/pages/game/modals/atacar.modal.html`              | Template   | UI del modal atacar             |
+| `front/src/app/pages/game/modals/atacar.modal.scss`              | Styles     | Estilos grid + health bars      |
+| `front/src/app/pages/game/modals/añadir-tropa-ataque.modal.ts`   | Component  | Lógica de selección             |
+| `front/src/app/pages/game/modals/añadir-tropa-ataque.modal.html` | Template   | UI grid de tropas               |
+| `front/src/app/pages/game/modals/añadir-tropa-ataque.modal.scss` | Styles     | Estilos tarjetas + checkmark    |
+| `.agents/previews/attack-modal-preview.html`                     | HTML       | Preview visual del modal atacar |
+| `.agents/previews/add-troops-modal-preview.html`                 | HTML       | Preview grid de añadir tropas   |
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/game/game.component.ts` | Imports, signals, mock data, métodos de control |
+| Archivo                                        | Acción                                          |
+| ---------------------------------------------- | ----------------------------------------------- |
+| `front/src/app/pages/game/game.component.ts`   | Imports, signals, mock data, métodos de control |
 | `front/src/app/pages/game/game.component.html` | Añadido `@if` condicional para renderizar modal |
-| `.agents/AGENTS_CHANGELOG.md` | Documentación de cambios |
+| `.agents/AGENTS_CHANGELOG.md`                  | Documentación de cambios                        |
 
 ### 📋 Pruebas Manuales Sugeridas
 
@@ -5271,13 +5474,14 @@ Revisión archivo por archivo de todos los entregables definidos en `db_server_s
    - Redactada la presentación del # Changelog de Agentes
 
 ## [2026-04-22] - Internacionacionalización del Motor de Juego
+
 - **I18n**: Implementada la traducción completa de la página de juego (`GamePageComponent`) y todos sus modales.
 - **Diccionarios**: Ampliados `es.ts` y `en.ts` con estructuras complejas para fases, estadísticas, tipos de tropas, descripciones, logs de combate y leyes de Midgard.
 - **Modales**: Localización de `AtacarModal`, `EntrenarModal`, `LobbyModal`, `ReglasModal`, `ConfirmAbandonModal`, `VisualizarTropasModal`, `GameLogModal` y `AvisoModal`.
 - **Dinámico**: Refactorizado el sistema de logs y banners tácticos para soportar inyección de parámetros (`{{ target }}`, `{{ enemyClan }}`, `{{ troop }}`) en tiempo real.
-   - Detallada la arquitectura de microservicios y el stack tecnológico.
-   - Añadida guía de inicio rápido con comandos Docker Compose.
-   - Listado de servicios y puertos correspondientes.
+  - Detallada la arquitectura de microservicios y el stack tecnológico.
+  - Añadida guía de inicio rápido con comandos Docker Compose.
+  - Listado de servicios y puertos correspondientes.
 
 2. **Creación de `LICENSE`**:
    - Implementada una licencia MIT.
@@ -5608,14 +5812,13 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/home/home.component.ts` | **CREADO** |
-| `front/src/app/pages/home/home.component.html` | **CREADO** |
-| `front/src/app/pages/home/home.component.scss` | **CREADO** |
-| `front/src/app/app.routes.ts` | Modificado |
-| `front/public/viking-home-hero.png` | **CREADO** (Asset generado) |
-
+| Archivo                                        | Acción                      |
+| ---------------------------------------------- | --------------------------- |
+| `front/src/app/pages/home/home.component.ts`   | **CREADO**                  |
+| `front/src/app/pages/home/home.component.html` | **CREADO**                  |
+| `front/src/app/pages/home/home.component.scss` | **CREADO**                  |
+| `front/src/app/app.routes.ts`                  | Modificado                  |
+| `front/public/viking-home-hero.png`            | **CREADO** (Asset generado) |
 
 ## [2026-04-20] Refinamiento de Home Page (Inspiración Mythic VIKING)
 
@@ -5643,13 +5846,13 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/shared/components/logo/logo.component.ts` | **CREADO** |
-| `front/src/app/pages/home/home.component.ts` | Modificado |
-| `front/src/app/pages/home/home.component.html` | Modificado |
-| `front/src/app/pages/home/home.component.scss` | Modificado |
-| `front/public/viking_hero.png` | Vinculado (Copiado manualmente por usuario) |
+| Archivo                                                  | Acción                                      |
+| -------------------------------------------------------- | ------------------------------------------- |
+| `front/src/app/shared/components/logo/logo.component.ts` | **CREADO**                                  |
+| `front/src/app/pages/home/home.component.ts`             | Modificado                                  |
+| `front/src/app/pages/home/home.component.html`           | Modificado                                  |
+| `front/src/app/pages/home/home.component.scss`           | Modificado                                  |
+| `front/public/viking_hero.png`                           | Vinculado (Copiado manualmente por usuario) |
 
 ---
 
@@ -5673,11 +5876,11 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/src/main/java/com/tfm/db_back/domain/model/User.java` | Refactorizado sin Lombok |
-| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java` | Refactorizado sin Lombok |
-| `db_back/src/main/java/com/tfm/db_back/api/UserController.java` | Refactorizado sin Lombok |
+| Archivo                                                                         | Acción                   |
+| ------------------------------------------------------------------------------- | ------------------------ |
+| `db_back/src/main/java/com/tfm/db_back/domain/model/User.java`                  | Refactorizado sin Lombok |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java`     | Refactorizado sin Lombok |
+| `db_back/src/main/java/com/tfm/db_back/api/UserController.java`                 | Refactorizado sin Lombok |
 | `db_back/src/test/java/com/tfm/db_back/domain/service/UserServiceImplTest.java` | Ajustado para new User() |
 
 ---
@@ -5705,17 +5908,16 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 
 ### 🗂️ Archivos Creados (Solo se añadieron estos archivos. Nada modificado):
 
-| Archivo | Acción |
-|---------|--------|
-| `db_back/src/main/java/com/tfm/db_back/domain/model/Character.java` | CREADO |
-| `db_back/src/main/java/com/tfm/db_back/domain/repository/CharacterRepository.java` | CREADO |
-| `db_back/src/main/java/com/tfm/db_back/api/dto/CreateCharacterRequestDto.java` | CREADO |
-| `db_back/src/main/java/com/tfm/db_back/api/dto/CharacterResponseDto.java` | CREADO |
-| `db_back/src/main/java/com/tfm/db_back/domain/service/CharacterService.java` | CREADO |
-| `db_back/src/main/java/com/tfm/db_back/domain/service/CharacterServiceImpl.java` | CREADO |
-| `db_back/src/main/java/com/tfm/db_back/api/CharacterController.java` | CREADO |
+| Archivo                                                                              | Acción |
+| ------------------------------------------------------------------------------------ | ------ |
+| `db_back/src/main/java/com/tfm/db_back/domain/model/Character.java`                  | CREADO |
+| `db_back/src/main/java/com/tfm/db_back/domain/repository/CharacterRepository.java`   | CREADO |
+| `db_back/src/main/java/com/tfm/db_back/api/dto/CreateCharacterRequestDto.java`       | CREADO |
+| `db_back/src/main/java/com/tfm/db_back/api/dto/CharacterResponseDto.java`            | CREADO |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/CharacterService.java`         | CREADO |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/CharacterServiceImpl.java`     | CREADO |
+| `db_back/src/main/java/com/tfm/db_back/api/CharacterController.java`                 | CREADO |
 | `db_back/src/test/java/com/tfm/db_back/domain/service/CharacterServiceImplTest.java` | CREADO |
-
 
 ---
 
@@ -5735,11 +5937,10 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 
 ### 🗂️ Archivos Modificados/Creados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo              | Acción     |
+| -------------------- | ---------- |
 | `docker-compose.yml` | Modificado |
-| `ACCESS_DDBB.md` | **CREADO** |
-
+| `ACCESS_DDBB.md`     | **CREADO** |
 
 ---
 
@@ -5758,11 +5959,10 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo                         | Acción     |
+| ------------------------------- | ---------- |
 | `.github/workflows/main-ci.yml` | Modificado |
-| `docker-compose.gh.yml` | Modificado |
-
+| `docker-compose.gh.yml`         | Modificado |
 
 ---
 
@@ -5784,15 +5984,14 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.ts` | **CREADO** |
-| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.html` | **CREADO** |
-| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.scss` | **CREADO** |
+| Archivo                                                                                        | Acción     |
+| ---------------------------------------------------------------------------------------------- | ---------- |
+| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.ts`         | **CREADO** |
+| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.html`       | **CREADO** |
+| `front/src/app/pages/lobby-page/modals/sala-llena-modal/sala-llena-modal.component.scss`       | **CREADO** |
 | `front/src/app/pages/lobby-page/modals/unirse-partida-modal/unirse-partida-modal.component.ts` | Modificado |
-| `front/src/app/pages/lobby-page/lobby-page.component.ts` | Modificado |
-| `front/src/app/pages/lobby-page/lobby-page.component.html` | Modificado |
-
+| `front/src/app/pages/lobby-page/lobby-page.component.ts`                                       | Modificado |
+| `front/src/app/pages/lobby-page/lobby-page.component.html`                                     | Modificado |
 
 ---
 
@@ -5811,10 +6010,9 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo                                      | Acción                |
+| -------------------------------------------- | --------------------- |
 | `front/src/app/pages/game/game.component.ts` | Modificado (Limpieza) |
-
 
 ## [2026-04-22] Frontend — Corrección de Desbordamiento en Lobby Móvil
 
@@ -5834,8 +6032,8 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo                                                    | Acción     |
+| ---------------------------------------------------------- | ---------- |
 | `front/src/app/pages/lobby-page/lobby-page.component.scss` | Modificado |
 
 ---
@@ -5846,12 +6044,14 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 **Objetivo**: Evitar que el navbar oculte la parte superior de la imagen de fondo y del logo en la home.
 
 ### Resumen de Cambios:
+
 - Se añadió margin-top: 72px y se ajustó la altura a calc(100vh - 72px) en .hero-section dentro de home.component.scss para empujar toda la sección por debajo de la navbar fija.
 - Se ajustó el background-position a center top para garantizar que la imagen original se muestre íntegramente desde la parte superior.
 
 ### Archivos Modificados:
-| Archivo | Acción |
-|---------|--------|
+
+| Archivo                                      | Acción     |
+| -------------------------------------------- | ---------- |
 | front/src/app/pages/home/home.component.scss | Modificado |
 
 ---
@@ -5862,12 +6062,14 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 **Objetivo**: Arreglar el recorte del logo en pantallas donde el contenido era más alto que el contenedor flex centrado.
 
 ### Resumen de Cambios:
+
 - Se reemplazó height por min-height en .hero-section (tanto global como en móvil) para permitir que el contenedor crezca y evitar que el flexbox "corte" el contenido superior (el logo).
 - Se añadió un padding vertical de 40px a .hero-content para garantizar un margen de seguridad superior e inferior.
 
 ### Archivos Modificados:
-| Archivo | Acción |
-|---------|--------|
+
+| Archivo                                      | Acción     |
+| -------------------------------------------- | ---------- |
 | front/src/app/pages/home/home.component.scss | Modificado |
 
 ---
@@ -5878,12 +6080,14 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 **Objetivo**: Eliminar el espacio ("hueco") entre la navbar y el inicio de la imagen de fondo, manteniendo el logo visible y sin recortes.
 
 ### Resumen de Cambios:
+
 - Se eliminó el margin-top: 72px de .hero-section y se restauró min-height: 100vh (y 100dvh en móvil) para que la imagen de fondo ocupe la pantalla completa y arranque desde el tope superior sin dejar huecos.
 - Se aumentó el padding-top de .hero-content a 100px para asegurar que el logo (<app-logo>) sea empujado hacia abajo lo suficiente como para no quedar escondido detrás de la navbar de 72px.
 
 ### Archivos Modificados:
-| Archivo | Acción |
-|---------|--------|
+
+| Archivo                                      | Acción     |
+| -------------------------------------------- | ---------- |
 | front/src/app/pages/home/home.component.scss | Modificado |
 
 ---
@@ -5908,17 +6112,17 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `front/src/app/pages/game/modals/attack.types.ts` | Modificado |
-| `front/src/app/core/game/clans.data.ts` | **CREADO** |
-| `front/src/app/pages/game/modals/arbol-tecnologico.modal.ts` | **CREADO** |
+| Archivo                                                        | Acción     |
+| -------------------------------------------------------------- | ---------- |
+| `front/src/app/pages/game/modals/attack.types.ts`              | Modificado |
+| `front/src/app/core/game/clans.data.ts`                        | **CREADO** |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.ts`   | **CREADO** |
 | `front/src/app/pages/game/modals/arbol-tecnologico.modal.html` | **CREADO** |
 | `front/src/app/pages/game/modals/arbol-tecnologico.modal.scss` | **CREADO** |
-| `front/src/app/pages/game/game.component.ts` | Modificado |
-| `front/src/app/pages/game/game.component.html` | Modificado |
-| `front/src/app/core/i18n/languages/en.ts` | Modificado |
-| `front/src/app/core/i18n/languages/es.ts` | Modificado |
+| `front/src/app/pages/game/game.component.ts`                   | Modificado |
+| `front/src/app/pages/game/game.component.html`                 | Modificado |
+| `front/src/app/core/i18n/languages/en.ts`                      | Modificado |
+| `front/src/app/core/i18n/languages/es.ts`                      | Modificado |
 
 ---
 
@@ -5940,11 +6144,11 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 
 ### 🗂️ Archivos Creados/Modificados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo                                      | Acción     |
+| -------------------------------------------- | ---------- |
 | `middle_server/scripts/verify-clans-sync.js` | **CREADO** |
-| `middle_server/package.json` | Modificado |
-| `.github/workflows/main-ci.yml` | Modificado |
+| `middle_server/package.json`                 | Modificado |
+| `.github/workflows/main-ci.yml`              | Modificado |
 
 ---
 
@@ -5965,8 +6169,8 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo                                      | Acción     |
+| -------------------------------------------- | ---------- |
 | `middle_server/src/socket/socket-handler.js` | Modificado |
 | `front/src/app/pages/game/game.component.ts` | Modificado |
 
@@ -6000,16 +6204,17 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
+| Archivo                                            | Acción     |
+| -------------------------------------------------- | ---------- |
 | `middle_server/src/game/engine/victory-checker.js` | Modificado |
-| `middle_server/src/db/db-connector.js` | Modificado |
-| `MISSING_FEATURES.md` | Modificado |
-| `audit_incongruencias.md` | Modificado |
+| `middle_server/src/db/db-connector.js`             | Modificado |
+| `MISSING_FEATURES.md`                              | Modificado |
+| `audit_incongruencias.md`                          | Modificado |
 
 ## [2026-05-12] Centralización y Persistencia del Log de Batalla
 
 ### 🎯 Objetivo:
+
 Resolver el problema de desincronización y pérdida de historial del log de batalla al reconectar o unirse tarde a una partida.
 
 ### 🛠️ Cambios Realizados:
@@ -6035,19 +6240,19 @@ Resolver el problema de desincronización y pérdida de historial del log de bat
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/models/game.js` | Modificado |
-| `middle_server/src/game/engine/time-wheel.js` | Modificado |
+| Archivo                                          | Acción     |
+| ------------------------------------------------ | ---------- |
+| `middle_server/src/models/game.js`               | Modificado |
+| `middle_server/src/game/engine/time-wheel.js`    | Modificado |
 | `middle_server/src/game/actions/game-actions.js` | Modificado |
-| `middle_server/src/game/engine/fog-of-war.js` | Modificado |
-| `middle_server/src/socket/socket-handler.js` | Modificado |
-| `front/src/app/pages/game/game.component.ts` | Modificado |
-
+| `middle_server/src/game/engine/fog-of-war.js`    | Modificado |
+| `middle_server/src/socket/socket-handler.js`     | Modificado |
+| `front/src/app/pages/game/game.component.ts`     | Modificado |
 
 ## [2026-05-12] Centralización y Persistencia del Log de Batalla
 
 ### 🎯 Objetivo:
+
 Resolver el problema de desincronización y pérdida de historial del log de batalla al reconectar o unirse tarde a una partida.
 
 ### 🛠️ Cambios Realizados:
@@ -6073,12 +6278,11 @@ Resolver el problema de desincronización y pérdida de historial del log de bat
 
 ### 🗂️ Archivos Modificados:
 
-| Archivo | Acción |
-|---------|--------|
-| `middle_server/src/models/game.js` | Modificado |
-| `middle_server/src/game/engine/time-wheel.js` | Modificado |
+| Archivo                                          | Acción     |
+| ------------------------------------------------ | ---------- |
+| `middle_server/src/models/game.js`               | Modificado |
+| `middle_server/src/game/engine/time-wheel.js`    | Modificado |
 | `middle_server/src/game/actions/game-actions.js` | Modificado |
-| `middle_server/src/game/engine/fog-of-war.js` | Modificado |
-| `middle_server/src/socket/socket-handler.js` | Modificado |
-| `front/src/app/pages/game/game.component.ts` | Modificado |
-
+| `middle_server/src/game/engine/fog-of-war.js`    | Modificado |
+| `middle_server/src/socket/socket-handler.js`     | Modificado |
+| `front/src/app/pages/game/game.component.ts`     | Modificado |
