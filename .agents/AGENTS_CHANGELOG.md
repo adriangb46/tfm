@@ -1,3 +1,83 @@
+## [2026-05-12] - Frontend: Refinamiento de Configuración y Subida de Avatar
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Mejorar la experiencia de usuario en la página de configuración mediante un layout de panel completo, eliminación de navegación redundante e implementación de la subida de avatares a MinIO.
+
+### 📝 Resumen de Cambios:
+1. **Frontend (Angular)**:
+  - ✅ **Gestión de Avatar**: Implementado un nuevo modal de selección de avatar (`SelectorAvatarModalComponent`). Incluye una rejilla de 8 avatares predeterminados (estilo vikingo/avataaars) y la opción de subir una foto personalizada.
+  - ✅ **Sincronización**: Integrado con `AuthService` para actualizar la URL del avatar en tiempo real en toda la aplicación.
+  - ✅ **UI/UX**: Añadido botón circular de edición (estilo lápiz) sobre el avatar que ahora abre el modal de selección.
+  - ✅ **Layout Premium**: Refactorizado el área de ajustes para que ocupe todo el alto disponible dentro de un panel con estilo "glassmorphism".
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/core/auth/auth-api.service.ts` | **MODIFICADO** | Nuevo método `uploadAvatar`. |
+| `front/src/app/core/auth/auth.service.ts` | **MODIFICADO** | Gestión de señal `avatarUrl` y persistencia. |
+| `front/src/app/core/auth/auth.model.ts` | **MODIFICADO** | Extensión de `SessionState`. |
+| `front/src/app/pages/user-config/user-config.component.ts` | **MODIFICADO** | Lógica de subida y manejo de archivos. |
+| `front/src/app/pages/user-config/user-config.component.html` | **MODIFICADO** | Nueva estructura de paneles y botón de avatar. |
+| `front/src/app/pages/user-config/user-config.component.scss` | **MODIFICADO** | Estilos de panel completo y botón de edición. |
+
+---
+
+## [2026-05-12] - Frontend: Corrección de Sintaxis e I18n
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir errores de sintaxis en los archivos de traducción que bloqueaban la compilación y asegurar que los estados de las tropas se traduzcan correctamente.
+
+### 📝 Resumen de Cambios:
+1. **I18n**:
+   - ✅ **Relocalización de Keys**: Se han movido las claves de traducción de `GAME.MODALS.STATUS` a `GAME.STATUS` en `es.ts` y `en.ts`.
+   - ✅ **Corrección de Sintaxis**: Eliminadas llaves de cierre extra (`},`) que se introdujeron accidentalmente durante la migración de las claves, resolviendo los errores de compilación ("ADMIN must be initialized").
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Reparada estructura de objetos. |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Reparada estructura de objetos. |
+
+---
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Mejorar la información táctica en los modales mostrando los puntos de acción (AP) y los nombres de las tropas en lugar de solo el icono/tipo.
+
+### 📝 Resumen de Cambios:
+1. **Frontend (Angular)**:
+   - ✅ **Interfaces**: Añadida la propiedad `power` (AP) a las interfaces `Troop` y `TrainableTroopOption`.
+   - ✅ **Lógica de Datos**: Poblada la propiedad `power` en las señales `availableTroops` y `trainableTroopOptions` usando los datos base de los clanes.
+   - ✅ **Modal Entrenar**: Ahora muestra los AP junto al nombre de la tropa (ej: "Devorador de Almas (45 AP)").
+   - ✅ **Modal Ver Tropas / Ataque**: Reemplazado el icono de tipo por el nombre de la tropa y sus AP para mayor claridad táctica.
+   - ✅ **Estilos**: Actualizados los SCSS de los modales para acomodar el nuevo texto de información de tropa.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/game/modals/attack.types.ts` | **MODIFICADO** | Actualización de interfaces. |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Población de datos de AP. |
+| `front/src/app/pages/game/modals/entrenar.modal.html` | **MODIFICADO** | UI de entrenamiento. |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.html` | **MODIFICADO** | UI de visualización. |
+| `front/src/app/pages/game/modals/atacar.modal.html` | **MODIFICADO** | UI de ataque. |
+| `front/src/app/pages/game/modals/anadir-tropa-ataque.modal.html` | **MODIFICADO** | UI de selección de tropas. |
+| `front/src/app/pages/game/modals/*.scss` | **MODIFICADO** | Estilos de los modales. |
+
+---
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Mejorar la limpieza visual de la interfaz eliminando los decimales en los porcentajes de progreso de entrenamiento de tropas y de investigación.
+
+### 📝 Resumen de Cambios:
+1. **Frontend (Angular)**:
+   - ✅ **Redondeo de Progreso**: Se ha aplicado `Math.floor()` al cálculo del porcentaje de progreso en `availableTroops` y `researchProgress` dentro de `game.component.ts`.
+   - ✅ **Consistencia en Modales**: Actualizado el método `getTrainingProgress` en `visualizar-tropas.modal.ts` para asegurar que siempre devuelva un número entero, evitando saturación visual con decimales (ej: "45%" en lugar de "45.23%").
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Redondeo en señales computadas de progreso. |
+| `front/src/app/pages/game/modals/visualizar-tropas.modal.ts` | **MODIFICADO** | Redondeo preventivo en el helper del modal. |
+
+---
+
 ## [2026-05-11] - Frontend: Usabilidad del Árbol Tecnológico y Sincronización de Investigaciones
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Mejorar la experiencia de usuario en el árbol tecnológico añadiendo feedback visual en tiempo real de las investigaciones y corregir la sincronización que impedía que las tropas desbloqueadas aparecieran para entrenar.
@@ -5900,3 +5980,79 @@ Registro de los cambios sustanciales realizados por agentes de asistencia para m
 | `middle_server/src/db/db-connector.js` | Modificado |
 | `MISSING_FEATURES.md` | Modificado |
 | `audit_incongruencias.md` | Modificado |
+
+## [2026-05-12] Centralización y Persistencia del Log de Batalla
+
+### 🎯 Objetivo:
+Resolver el problema de desincronización y pérdida de historial del log de batalla al reconectar o unirse tarde a una partida.
+
+### 🛠️ Cambios Realizados:
+
+1. **Persistencia en el Servidor ()**:
+   - Añadido array `battleLog` al estado de la partida.
+   - Implementado método `addLogEntry` con generación automática de IDs y timestamps.
+   - Soporte para visibilidad selectiva (`public` o `characterId`) para respetar la niebla de guerra.
+
+2. **Generación de Logs en el Motor ( & )**:
+   - Automatizada la creación de logs para: Inicio de partida, transiciones de fase (Guerra, Fin), lanzamientos de ataques, resultados de batallas (daño y eliminación), inicio y fin de investigaciones/entrenamientos.
+   - Las investigaciones y entrenamientos se registran con visibilidad privada para el jugador propietario.
+
+3. **Sincronización y Fog of War ( & )**:
+   - Actualizado `buildGameView` para incluir el `battleLog` filtrado según el observador.
+   - Modificado el evento `game:state-sync` para enviar el historial completo al cliente.
+   - Modificado `game:send-log` para persistir los logs enviados por clientes antes de retransmitirlos.
+
+4. **Refactorización del Frontend ()**:
+   - Eliminada la lógica de generación de logs locales redundantes.
+   - El componente ahora prioriza el `battleLog` recibido del servidor en cada sincronización.
+   - Implementada deduplicación de logs por ID para evitar parpadeos entre el tiempo real y el sync.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/models/game.js` | Modificado |
+| `middle_server/src/game/engine/time-wheel.js` | Modificado |
+| `middle_server/src/game/actions/game-actions.js` | Modificado |
+| `middle_server/src/game/engine/fog-of-war.js` | Modificado |
+| `middle_server/src/socket/socket-handler.js` | Modificado |
+| `front/src/app/pages/game/game.component.ts` | Modificado |
+
+
+## [2026-05-12] Centralización y Persistencia del Log de Batalla
+
+### 🎯 Objetivo:
+Resolver el problema de desincronización y pérdida de historial del log de batalla al reconectar o unirse tarde a una partida.
+
+### 🛠️ Cambios Realizados:
+
+1. **Persistencia en el Servidor (`models/game.js`)**:
+   - Añadido array `battleLog` al estado de la partida.
+   - Implementado método `addLogEntry` con generación automática de IDs y timestamps.
+   - Soporte para visibilidad selectiva (`public` o `characterId`) para respetar la niebla de guerra.
+
+2. **Generación de Logs en el Motor (`time-wheel.js` & `game-actions.js`)**:
+   - Automatizada la creación de logs para: Inicio de partida, transiciones de fase (Guerra, Fin), lanzamientos de ataques, resultados de batallas (daño y eliminación), inicio y fin de investigaciones/entrenamientos.
+   - Las investigaciones y entrenamientos se registran con visibilidad privada para el jugador propietario.
+
+3. **Sincronización y Fog of War (`fog-of-war.js` & `socket-handler.js`)**:
+   - Actualizado `buildGameView` para incluir el `battleLog` filtrado según el observador.
+   - Modificado el evento `game:state-sync` para enviar el historial completo al cliente.
+   - Modificado `game:send-log` para persistir los logs enviados por clientes antes de retransmitirlos.
+
+4. **Refactorización del Frontend (`game.component.ts`)**:
+   - Eliminada la lógica de generación de logs locales redundantes.
+   - El componente ahora prioriza el `battleLog` recibido del servidor en cada sincronización.
+   - Implementada deduplicación de logs por ID para evitar parpadeos entre el tiempo real y el sync.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción |
+|---------|--------|
+| `middle_server/src/models/game.js` | Modificado |
+| `middle_server/src/game/engine/time-wheel.js` | Modificado |
+| `middle_server/src/game/actions/game-actions.js` | Modificado |
+| `middle_server/src/game/engine/fog-of-war.js` | Modificado |
+| `middle_server/src/socket/socket-handler.js` | Modificado |
+| `front/src/app/pages/game/game.component.ts` | Modificado |
+

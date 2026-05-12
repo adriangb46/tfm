@@ -11,3 +11,4 @@ test_db_endpoints.py
 audit_incongruencias.md
 docker-compose-ddbb.yml
 MISSING_FEATURES.md
+obsidian_vault/
