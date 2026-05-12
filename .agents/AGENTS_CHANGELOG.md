@@ -1,3 +1,29 @@
+## [2026-05-12] - Seguridad: Auditoría Completa e Implementación de Silent Refresh
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Realizar una auditoría de seguridad del proyecto y resolver las debilidades encontradas, principalmente la falta de renovación de tokens y la validación estática de roles.
+
+### 📝 Resumen de Cambios:
+1. **Auditoría de Seguridad**:
+   - ✅ **Global Score: 82/100**. Se evaluaron 10 categorías (Auth, Passwords, Input Validation, etc.).
+   - ✅ **Identificación de Findings**: 1 Alto (Autorización JWT estática), 3 Medios (CORS, Cabeceras, MinIO) y 3 Bajos.
+2. **Middle Server (Silent Refresh)**:
+   - ✅ **Controlador**: Implementado `refreshController` que verifica el estado del usuario en la DB antes de emitir un nuevo JWT.
+   - ✅ **Endpoint**: Registrada la ruta `POST /api/auth/refresh`.
+3. **Frontend (Renovación Proactiva)**:
+   - ✅ **Automatización**: El `AuthService` ahora calcula el tiempo de vida del token y programa una renovación automática 5 minutos antes de que expire.
+   - ✅ **Persistencia**: El mecanismo se re-activa automáticamente al recargar la página si hay una sesión válida.
+   - ✅ **Memoria**: Limpieza automática de temporizadores al cerrar sesión.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/http/auth-controller.js` | **MODIFICADO** | Implementación de `refreshController`. |
+| `middle_server/src/http/routes.js` | **MODIFICADO** | Registro de ruta `/auth/refresh`. |
+| `front/src/app/core/auth/auth-api.service.ts` | **MODIFICADO** | Nuevo método `refreshToken()`. |
+| `front/src/app/core/auth/auth.service.ts` | **MODIFICADO** | Lógica de temporización y auto-refresh. |
+
+---
+
 ## [2026-05-12] - Frontend: Refinamiento de Configuración y Subida de Avatar
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Mejorar la experiencia de usuario en la página de configuración mediante un layout de panel completo, eliminación de navegación redundante e implementación de la subida de avatares a MinIO.
