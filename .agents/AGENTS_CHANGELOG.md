@@ -1,3 +1,50 @@
+## [2026-05-11] - Frontend: Usabilidad del Árbol Tecnológico y Sincronización de Investigaciones
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Mejorar la experiencia de usuario en el árbol tecnológico añadiendo feedback visual en tiempo real de las investigaciones y corregir la sincronización que impedía que las tropas desbloqueadas aparecieran para entrenar.
+
+### 📝 Resumen de Cambios:
+1. **Frontend (Angular)**:
+   - ✅ **Animación de Progreso**: Implementada una barra de progreso visual en las tarjetas del Árbol Tecnológico que se actualiza en tiempo real mediante un ticker local de 100ms.
+   - ✅ **Acción de Botón**: El botón de "Investigar" en el panel principal ahora muestra un anillo de progreso dinámico (CSS `--progress`) sincronizado con el servidor.
+   - ✅ **Sincronización de Estado**: Refactorizada la gestión de `unlockedResearches` y `researchInProgress` usando señales computadas (`computed`). Ahora el estado del árbol se deriva directamente de la información del jugador (`me()`), garantizando que sea la "fuente de verdad" del servidor.
+   - ✅ **Fix de Tropas Desbloqueadas**: Se corrigió el flujo de sincronización en `game:state-sync` para asegurar que las nuevas unidades desbloqueadas se inyecten correctamente en la cola de entrenamiento (`trainableTroopOptions`) al completarse la investigación.
+   - ✅ **Internacionalización**: Añadidas claves de traducción `RESEARCHING` en español e inglés y actualizadas las leyendas del modal.
+   - ✅ **Feedback en Logs**: Sincronizados los manejadores de socket `player:research-started` y `player:research-complete` para mostrar logs informativos y actualizar los créditos de investigación (`researchCredits`) correctamente.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Lógica de sincronización, señales computadas y listeners de socket. |
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO** | Inyección de variables CSS para el progreso del botón. |
+| `front/src/app/pages/game/game.model.ts` | **MODIFICADO** | Extensión de la interfaz `PlayerNode` con datos de investigación. |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.ts` | **MODIFICADO** | Ticker de tiempo real y lógica reactiva de tarjetas. |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.html` | **MODIFICADO** | UI de barras de progreso y actualización de leyenda. |
+| `front/src/app/pages/game/modals/arbol-tecnologico.modal.scss` | **MODIFICADO** | Animaciones (`pulse-research`, `spin`) y estilos de progreso. |
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Nuevas claves de i18n. |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Nuevas claves de i18n. |
+
+---
+
+## [2026-05-11] - Full Stack: Retematización de Tropas de Ataque
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Sustituir todas las tropas de tipo 'ATK' (Ataque) por nuevas unidades inventadas con nombres y descripciones más inmersivos y temáticos para cada clan.
+
+### 📝 Resumen de Cambios:
+1. **Frontend (Angular)**:
+   - ✅ **Datos de Clanes**: Actualizado `front/src/app/core/game/clans.data.ts` sustituyendo los 12 identificadores, nombres y descripciones de las tropas de ataque.
+   - ✅ **Consistencia**: Se han actualizado las descripciones de las tecnologías que hacían referencia a las unidades antiguas (ej: "Devastador Rúnico" por "Martillo del Abismo").
+2. **Middle Server (Node.js)**:
+   - ✅ **Configuración**: Actualizado `middle_server/clans.yml` para reflejar exactamente los mismos cambios que en el frontend, manteniendo la sincronización de costes, poder y tiempos de entrenamiento.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/core/game/clans.data.ts` | **MODIFICADO** | Actualización de 12 unidades ATK y descripciones tech. |
+| `middle_server/clans.yml` | **MODIFICADO** | Sincronización de IDs, nombres y descripciones. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
 ## [2026-05-10] - Frontend: Soporte para Unión a Partida en Curso y Fix de Sincronización
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Permitir que los jugadores que entran a una partida con ataques ya lanzados vean las animaciones en tiempo real y corregir el bloqueo por desfase de reloj.
