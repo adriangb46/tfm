@@ -1,3 +1,51 @@
+## [2026-05-13] - Frontend: Paginación del Grid de Tropas en Modal de Ataque (Refine UI)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Mejorar la UX del modal `AtacarModalComponent` reemplazando el grid dinámico de tropas (con `aspect-ratio` y columnas calculadas por JS) por un layout fijo de 3 columnas y paginación de 6 tropas por página con controles ◀ ▶.
+
+### 📝 Resumen de Cambios:
+
+1. **Preview** (`.agents/previews/atacar-preview.html`):
+   - ✅ Generado y refinado iterativamente con el usuario.
+   - ✅ 4 escenarios: vacío, 4 tropas (1 página), 1 tropa con desventaja, 9 tropas (paginación activa).
+   - ✅ Confirmado por el usuario antes de aplicar a producción.
+
+2. **AtacarModalComponent** (`.ts`):
+   - ✅ Eliminado `gridCols` (computed que calculaba columnas dinámicamente).
+   - ✅ Añadida constante `PAGE_SIZE = 6`.
+   - ✅ Añadido signal `currentPage`.
+   - ✅ Añadidos computed: `totalPages`, `pagedTroopGrid`, `showPagination`, `canGoPrev`, `canGoNext`.
+   - ✅ `onRemoveTroop`: retrocede página si la actual queda vacía tras eliminar.
+   - ✅ `onTroopSelected`: navega a la última página para mostrar las tropas recién añadidas.
+   - ✅ Añadidos métodos `onPrevPage()` y `onNextPage()`.
+
+3. **AtacarModalComponent** (`.html`):
+   - ✅ Eliminado binding `[style.grid-template-columns]` (columnas ahora fijas en SCSS).
+   - ✅ `@for` cambiado de `troopGrid()` a `pagedTroopGrid()`.
+   - ✅ Añadidos controles de paginación con `@if (showPagination())` entre el grid y el botón `+`.
+
+4. **AtacarModalComponent** (`.scss`):
+   - ✅ `.troops-grid`: añadido `grid-template-columns: repeat(3, 1fr)` y `grid-auto-rows: 88px`.
+   - ✅ `.grid-cell`: reemplazado `aspect-ratio: 1` por `height: 88px; min-width: 0; overflow: hidden` (evita desbordamiento).
+   - ✅ Añadidos estilos `.pagination-controls`, `.btn-page-nav`, `.page-indicator`.
+
+5. **i18n** (`es.ts`, `en.ts`):
+   - ✅ Añadidas claves `GAME.MODALS.ATTACK.PREV_PAGE` y `GAME.MODALS.ATTACK.NEXT_PAGE`.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/game/modals/atacar.modal.ts` | **MODIFICADO** | Paginación por señales, eliminado gridCols. |
+| `front/src/app/pages/game/modals/atacar.modal.html` | **MODIFICADO** | pagedTroopGrid, controles de paginación. |
+| `front/src/app/pages/game/modals/atacar.modal.scss` | **MODIFICADO** | Grid fijo 3 cols, height 88px, estilos paginación. |
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Claves PREV_PAGE / NEXT_PAGE. |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Claves PREV_PAGE / NEXT_PAGE. |
+| `.agents/previews/atacar-preview.html` | **MODIFICADO** | Preview iterativo del modal. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
 ## [2026-05-12] - Documentación: Generación de Datos de Acceso y Persistencia
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Proporcionar el esquema SQL consolidado y el resumen de la capa de persistencia para el proyecto intermodular.
