@@ -1,3 +1,50 @@
+## [2026-05-13] - Middle Server: Corrección de Métricas del Panel de Administrador
+**Agente**: Antigravity (Google Deepmind)
+**Objetivo**: Restaurar la precisión de las métricas en tiempo real (usuarios activos, partidas finalizadas, carga del servidor) en el dashboard de administración.
+
+### 📝 Resumen de Cambios:
+1. **Middle Server**:
+   - ✅ **Socket.IO Integration**: Vinculada la instancia de `io` con la aplicación Express (`app.set('io', io)`) para permitir el acceso a `engine.clientsCount` desde controladores HTTP.
+   - ✅ **Métricas en Vivo**:
+     - Implementado el seguimiento de partidas finalizadas en la última hora dentro de `GameStore`.
+     - Sustituido el cálculo dummy de carga del servidor por métricas reales del sistema usando `os.loadavg()`.
+   - ✅ **Resiliencia**: Mejorado `getAdminStatsController` con manejo de errores y valores por defecto para evitar fallos del panel si el DB Server no responde.
+   - ✅ **Victory Checker**: Integrado el registro de partidas finalizadas al completarse un juego.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/index.js` | **MODIFICADO** | Vinculación de `io` con Express. |
+| `middle_server/src/game/state/game-store.js` | **MODIFICADO** | Log de partidas finalizadas. |
+| `middle_server/src/game/engine/victory-checker.js` | **MODIFICADO** | Registro de fin de partida. |
+| `middle_server/src/http/admin-controller.js` | **MODIFICADO** | Refactorización de métricas y robustez. |
+
+---
+
+## [2026-05-13] - Auditoría: Sincronización de Arquitectura y Seguridad
+**Agente**: Antigravity (Google Deepmind)
+**Objetivo**: Realizar una auditoría completa del sistema y sincronizar la documentación oficial con la implementación real del proyecto (JWT, Ciclo Hexagonal, Flujos de UI).
+
+### 📝 Resumen de Cambios:
+1. **Documentación de Arquitectura (`proyect_arquitecture.md` y `security.md`)**:
+   - ✅ **JWT Payload**: Actualizada la especificación para reflejar el payload real `{ sub, username, role, jti }`. Se aclara que `characterId` y `clanId` se gestionan como estado de juego dinámico (Socket.IO).
+   - ✅ **Mecánicas de Juego**: Documentado el **Ciclo de Ventajas Hexagonal** real (FURY > IRON > DIVINE > SHADOW > STORM > FROST > FURY) y la lista de los 6 clanes implementados en `clans.yml`.
+2. **Documentación de Interfaz (`ui_screens.md`)**:
+   - ✅ **Flujo de Autenticación**: Eliminadas las rutas `/signin` y `/signup` para reflejar que el acceso se realiza mediante el modal unificado `AuthComponent`.
+   - ✅ **Nuevas Pantallas**: Añadida la documentación para la página de información de personajes (`CharactersPageComponent`).
+3. **Auditoría Técnica**:
+   - ✅ **Rate Limiting**: Identificado endpoint crítico sin protección (`GET /games/:code/availability`). Tarea de remediación pendiente.
+   - ✅ **Seguridad Docker**: Verificado cumplimiento de usuario no-root en todos los contenedores.
+   - ✅ **Sincronización DB/Middle**: Verificada la normalización de estados (Casing) y el uso de UUIDs.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `.agents/proyect_arquitecture.md` | **MODIFICADO** | Sincronización de JWT y Ciclo de Clanes. |
+| `.agents/rules/security.md` | **MODIFICADO** | Consistencia del payload JWT. |
+| `.agents/ui_screens.md` | **MODIFICADO** | Actualización de rutas y componentes de UI. |
+
+---
 ## [2026-05-12] - Documentación: Generación de Datos de Acceso y Persistencia
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Proporcionar el esquema SQL consolidado y el resumen de la capa de persistencia para el proyecto intermodular.

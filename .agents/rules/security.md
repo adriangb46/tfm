@@ -25,7 +25,8 @@
 ## 2. Authentication & JWT
 
 - Every JWT must contain a `jti` field (UUID). This enables blacklisting on logout and ban.
-- JWT payload: `{ userId, characterId, clanId, jti, iat, exp }`. Nothing else — no passwords, no emails, no sensitive profile data.
+- JWT payload: `{ sub, username, role, jti, iat, exp }`. Nothing else — no passwords, no emails, no sensitive profile data.
+- **Note:** `characterId` and `clanId` are NOT part of the JWT session. They are handled as game state and resolved via WebSocket.
 - **Never log JWT contents.** Log only the `jti` if needed for audit trails.
 - Token expiry must be short. `[PROPOSED — define exp duration, suggest 2h]`
 - The JWT secret (`MIDDLE_JWT_SECRET`) must be at least 256 bits of entropy. Generate with `openssl rand -hex 32`. Never commit it.

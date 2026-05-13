@@ -11,8 +11,7 @@
 ```
 (no session)
   ├── home (landing page)
-  ├── signUp
-  └── signIn
+  └── [modal] authModal (login/signup)
         │
         ▼
       lobby ──────────────────────────────────────────────────────┐
@@ -67,53 +66,33 @@
 
 ---
 
-## 1. signUp
+## 1. authModal (login/signup)
 
-**Route:** `/signup`
-**Angular component:** `SignUpComponent`
-**Prerequisites:** No active session. User not registered.
+**Trigger:** "ENTER VALHALLA" in home (if no session) or "?login=true" query param
+**Angular component:** `AuthComponent`
+**Prerequisites:** None.
 
 ### Layout elements
-- Game title / thematic header
-- Section title: "Register" / "Sign Up"
-- Input: username (`placeholder: 'Tu nombre de usuario'`)
-- Input: password (`placeholder: 'Contraseña'`, type password)
-- Input: repeat password (`placeholder: 'Repite tu contraseña'`, type password)
-- Primary CTA button: "REGISTRARSE"
-- Secondary link: "INICIAR SESIÓN" → navigates to `/signin`
+- Thematic modal container.
+- Tab selector: "INICIAR SESIÓN" | "REGISTRARSE".
+- **Login Tab**:
+  - Input: username.
+  - Input: password (type password).
+  - Primary CTA: "ENTRAR".
+- **Register Tab**:
+  - Input: username.
+  - Input: email.
+  - Input: password (type password).
+  - Input: repeat password.
+  - Primary CTA: "CREAR CUENTA".
 
 ### Actions & results
 | Action | Result |
 |--------|--------|
-| Fill all fields + click "REGISTRARSE" | Account created, session started, redirect to `/lobby` |
-| Username already exists | Show inline error under username field |
-| Passwords do not match | Show inline error under repeat-password field |
-
-### Notes
-- The "close / VOLVER A LA SOMBRA" button in the mockup: navigates back (browser history or `/`).
-
----
-
-## 2. signIn
-
-**Route:** `/signin`
-**Angular component:** `SignInComponent`
-**Prerequisites:** No active session. User already registered.
-
-### Layout elements
-- Game title / thematic header
-- Section title: "Sign In" / "Iniciar sesión"
-- Input: username
-- Input: password (type password)
-- Link: "¿Has olvidado la contraseña?" (below password)
-- Primary CTA button: "INICIAR SESIÓN"
-- Secondary link: "CREAR UNA CUENTA" → navigates to `/signup`
-
-### Actions & results
-| Action | Result |
-|--------|--------|
-| Fill fields + click button | Session started, redirect to `/lobby` |
-| Wrong credentials | Show inline error message |
+| Successful Login | Session started, modal closes, redirect to `/lobby` |
+| Successful Register | Account created, session started, modal closes, redirect to `/lobby` |
+| Wrong credentials | Show error message within modal |
+| Passwords mismatch | Show inline error |
 
 ---
 
@@ -152,7 +131,7 @@
 | `Config` (user menu) | Navigate to `userConfig` |
 | `Estadísticas` (user menu) | Navigate to global `estadísticas` for this user |
 | `Admin` (user menu) | Navigate to `adminPage` (only shown if user is admin) |
-| `Salir` (user menu) | Log out → redirect to `/signin` |
+| `Salir` (user menu) | Log out → redirect to `/` |
 
 ---
 
@@ -514,3 +493,15 @@
 
 ### Notes
 - If the user is not admin, the `Admin` option does not appear in the user menu. Navigating to `/admin` directly redirects to `/lobby`.
+
+---
+
+## 19. personajes (info page)
+
+**Route:** `/personajes`
+**Angular component:** `CharactersPageComponent`
+**Prerequisites:** None.
+
+### Layout elements
+- List of clans with their icons and descriptions.
+- Thematic background and styling consistent with the rest of the app.

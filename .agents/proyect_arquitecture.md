@@ -102,7 +102,8 @@ Redis is the ephemeral store — it only holds JWT blacklist entries and rate li
 - When a user logs out or is banned, the Middle writes the token's `jti` (JWT ID) to a Redis Set with a TTL equal to the token's remaining validity time.
 - Every inbound request validated by the auth middleware checks Redis for the `jti` after verifying the JWT signature. If found → reject with `401`.
 - Redis auto-expires the entry when the token's natural expiry is reached, so the blacklist never grows unbounded.
-- Requires adding a `jti` field (UUID) to every issued JWT payload: `{ userId, characterId, clanId, jti, iat, exp }`.
+- Requires adding a `jti` field (UUID) to every issued JWT payload: `{ sub, username, role, jti, iat, exp }`.
+- **Note:** `sub` is used as the standard subject field for the `userId`. `characterId` and `clanId` are resolved as game state, not session state.
 
 **Rate Limiting**
 - Applied to all public HTTP endpoints on the Middle Server (login, register, join game, avatar upload).
@@ -128,7 +129,7 @@ Redis is the ephemeral store — it only holds JWT blacklist entries and rate li
 
 - Issued by the Middle Server when a user logs in.
 - Signed with `MIDDLE_JWT_SECRET` (environment variable, never committed).
-- Payload: `{ userId, characterId, clanId, iat, exp }`.
+- Payload: `{ sub, username, role, jti, iat, exp }`.
 - Attached as `Authorization: Bearer <token>` on HTTPS requests and in the Socket.IO handshake.
 - Validated by Socket.IO middleware on every connection and reconnection.
 
@@ -356,31 +357,31 @@ Individual battle outcomes for win-rate and damage statistics.
 Six clans, each with a unique archetype that determines type advantages.
 Game data is loaded from `clans.yml` at Middle Server startup. This file is the single source of truth for troop stats, spell stats, and research trees.
 
-| Clan | Archetype | Base Troop(s) |
-|------|-----------|---------------|
-| Berserkers | FURY | Guerrero Frenético (ATK, 60 power) |
-| Valkirias | DIVINE | Doncella Escudera (ATK, 50 power), Sanadora Divina (HEAL, 30 power) |
-| Jarls | IRON | Huscarle Pesado (ATK, 75 power) |
-| Skalds | SONG | Vanguardia Inspirada (ATK, 40 power), Bardo Sanador (HEAL, 20 power) |
-| Seidr | RUNE | Acólito Rúnico (ATK, 30 power — high AP cost, slow but resilient) |
-| Draugr | DEATH | Campeón Renacido (ATK, 150 power — very high cost and long training) |
+| Clan | Archetype | Description |
+|------|-----------|-------------|
+| Berserkers | FURY | Primal rage and bloodlust. High ATK. |
+| Valkirias | DIVINE | Divine grace and healing support. HEAL/DEF. |
+| Jarls | IRON | Heavy armor and strong defense. High DEF. |
+| Sombras | SHADOW | Stealth and venomous attacks. ATK/SUPP. |
+| Frost Guard | FROST | Battlefield control and resilience. DEF/ATK. |
+| Storm Bringers | STORM | Area damage and elemental chaos. ATK. |
 
 ### 7.2 Clan Advantage Cycle
 
-A closed 6-way cycle, similar to a type-advantage system. Each clan deals bonus damage against the next clan in the chain.
+A closed 6-way hexagonal cycle. Each clan has advantage over **two** other archetypes.
 
 ```
-FURY → SONG → DEATH → DIVINE → RUNE → IRON → FURY
+FURY > IRON > DIVINE > SHADOW > STORM > FROST > FURY
 ```
 
-| Attacker | Advantage over | Lore reason |
-|----------|----------------|-------------|
-| **FURY** (Berserkers) | **SONG** (Skalds) | Primal rage silences the mystical melodies |
-| **SONG** (Skalds) | **DEATH** (Draugr) | Divine harmonies bring peace and rest to the restless dead |
-| **DEATH** (Draugr) | **DIVINE** (Valkirias) | The entropy of Helheim consumes even celestial light |
-| **DIVINE** (Valkirias) | **RUNE** (Seidr) | Celestial authority overrides ancient primal runes |
-| **RUNE** (Seidr) | **IRON** (Jarls) | Magic bypasses and corrupts the strongest steel |
-| **IRON** (Jarls) | **FURY** (Berserkers) | Disciplined steel and heavy armor withstand the wild rage |
+| Clan | Advantage over |
+|------|----------------|
+| **FURY** (Berserkers) | IRON, FROST |
+| **DIVINE** (Valkirias) | FURY, SHADOW |
+| **IRON** (Jarls) | STORM, DIVINE |
+| **SHADOW** (Sombras) | DIVINE, IRON |
+| **FROST** (Frost Guard) | FURY, STORM |
+| **STORM** (Storm Bringers) | SHADOW, FROST |
 
 **Multipliers:**
 - **Attacker Advantage:** `1.5x` (Applied to damage output).
