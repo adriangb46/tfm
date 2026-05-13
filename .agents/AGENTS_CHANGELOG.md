@@ -1,4 +1,45 @@
+## [2026-05-12] - Documentación: Generación de Datos de Acceso y Persistencia
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Proporcionar el esquema SQL consolidado y el resumen de la capa de persistencia para el proyecto intermodular.
+
+### 📝 Resumen de Cambios:
+1. **Documentación de Datos (`DATOS_ACCESO.md`)**:
+   - ✅ Generado el esquema SQL completo de PostgreSQL incluyendo migraciones de roles y baneos.
+   - ✅ Redactado el resumen de la estrategia de persistencia híbrida (PostgreSQL + MongoDB).
+   - ✅ Explicación del flujo de datos asíncrono entre Middle Server y DB Server.
+2. **Git (`.gitignore`)**:
+   - ✅ Añadido `DATOS_ACCESO.md` al archivo `.gitignore` por petición del usuario.
+
+### 🗂️ Archivos Creados/Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `DATOS_ACCESO.md` | **CREADO** | Información técnica de la BD. |
+| `.gitignore` | **MODIFICADO** | Exclusión del nuevo archivo. |
+
+---
+
+## [2026-05-12] - Proyecto: Generación de Documentación Intermodular
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Elaborar la documentación completa del proyecto "Viking Clan Wars" siguiendo la plantilla oficial para el Ciclo Formativo de Grado Superior en DAM.
+
+### 📝 Resumen de Cambios:
+1. **Documentación Global (`DOCUMENTACION_PROYECTO.md`)**:
+   - ✅ **Definición y Temática**: Detallada la narrativa del juego, mecánicas de RTS y el sistema de balanceo de los 6 clanes vikingos.
+   - ✅ **Gestión Ágil**: Documentado el proceso basado en Sprints, roles del equipo y seguimiento mediante Product Backlog y Kanban.
+   - ✅ **Arquitectura**: Descripción técnica de la infraestructura distribuida (Angular 20, Node.js/Socket.IO, Java 25/Spring Boot).
+   - ✅ **Persistencia**: Incluido el modelo Entidad-Relación y la estrategia de persistencia híbrida (PostgreSQL + MongoDB).
+   - ✅ **DevOps**: Detalles sobre la containerización con Docker, CI/CD con GitHub Actions y despliegue en la nube.
+   - ✅ **Calidad**: Definición de la estrategia de Git y el plan de pruebas integradas.
+
+### 🗂️ Archivos Creados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `DOCUMENTACION_PROYECTO.md` | **CREADO** | Documento maestro de 2º DAM. |
+
+---
+
 ## [2026-05-12] - DB Server: Actualización de Script de Pruebas de Endpoints
+
 
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Actualizar el script `test_db_endpoints.py` para incluir la totalidad de los endpoints REST disponibles en el DB Server (Spring Boot), asegurando una cobertura de pruebas completa para la integración con el Middle Server.
