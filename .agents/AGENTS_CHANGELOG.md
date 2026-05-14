@@ -1,4 +1,27 @@
-<<<<<<< HEAD
+## [2026-05-14] - Auditoría de Estrés y Seguridad de los Servidores
+**Agente**: Antigravity (Google Deepmind)
+**Objetivo**: Validar el rendimiento y la seguridad del DB Server y Middle Server mediante pruebas de estrés masivas y auditorías de integridad de datos.
+
+### 📝 Resumen de Cambios:
+1. **Auditoría de API**:
+   - ✅ Revisión del 100% de los controladores del DB Server.
+2. **Pruebas de Estrés**:
+   - ✅ `stress_test_db.py`: Validación de persistencia (PostgreSQL/MongoDB) con 241 req/s.
+   - ✅ `stress_test_middle.py`: Pruebas de Socket.IO con 20.000 recepciones verificadas sin pérdida de datos.
+3. **Seguridad Avanzada**:
+   - ✅ `advanced_security_tests.py`: Validación de **Fog of War**, **Reconexión**, **Sanitización XSS**, **Aislamiento de salas** y **Límites de carga**.
+4. **Master Test Suite**:
+   - ✅ `test_viking_system.py`: Orquestador integral que ejecuta todas las pruebas anteriores y genera informes automáticos en Markdown dentro de la carpeta `reports/`.
+
+### 🗂️ Archivos Creados/Modificados:
+- `test_viking_system.py` (Creado e ignorado)
+- `reports/` (Carpeta de informes, ignorada)
+- `stress_test_db.py` (Refactorizado para ser importable)
+- `test_db_endpoints.py` (Refactorizado para ser importable)
+- `.gitignore` (Actualizado con `reports/` y `test_viking_system.py`)
+
+---
+
 ## [2026-05-13] - Middle Server: Corrección de Métricas del Panel de Administrador
 **Agente**: Antigravity (Google Deepmind)
 **Objetivo**: Restaurar la precisión de las métricas en tiempo real (usuarios activos, partidas finalizadas, carga del servidor) en el dashboard de administración.
@@ -46,7 +69,6 @@
 | `.agents/ui_screens.md` | **MODIFICADO** | Actualización de rutas y componentes de UI. |
 
 ---
-=======
 ## [2026-05-13] - Frontend: Paginación del Grid de Tropas en Modal de Ataque (Refine UI)
 
 **Agente**: Antigravity (Google DeepMind)
@@ -94,8 +116,6 @@
 | `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
 
 ---
-
->>>>>>> refs/remotes/origin/main
 ## [2026-05-12] - Documentación: Generación de Datos de Acceso y Persistencia
 **Agente**: Antigravity (Google DeepMind)
 **Objetivo**: Proporcionar el esquema SQL consolidado y el resumen de la capa de persistencia para el proyecto intermodular.

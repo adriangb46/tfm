@@ -6,6 +6,11 @@ node_modules
 package.json
 package-lock.json
 test_db_endpoints.py
+stress_test_db.py
+stress_test_middle.py
+advanced_security_tests.py
+test_viking_system.py
+reports/
 .agents/db_server_sprints
 .agents/previews
 audit_incongruencias.md
@@ -13,4 +18,8 @@ docker-compose-ddbb.yml
 MISSING_FEATURES.md
 obsidian_vault/
 DATOS_ACCESO.md
+enviroment/
+__pycache__/
+
+
 
