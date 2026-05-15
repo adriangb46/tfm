@@ -1,3 +1,21 @@
+## [2026-05-15] - Fix: Error de parseo JSON en volcados de analítica
+**Agente**: Antigravity (Google Deepmind)
+**Objetivo**: Corregir el error "Unexpected end of JSON input" que ocurría durante el volcado periódico de analíticas a MongoDB.
+
+### 📝 Resumen de Cambios:
+1. **Middle Server (Robustez)**:
+   - ✅ **DbConnector**: Modificado `fetchWithAuth` para manejar cuerpos de respuesta vacíos. Ahora lee la respuesta como texto y solo intenta el parseo JSON si hay contenido. Esto permite soportar correctamente códigos como `202 Accepted` o `204 No Content` (u otros éxitos sin body) sin lanzar excepciones.
+2. **DB Server (Consistencia)**:
+   - ✅ **AnalyticsController**: Cambiado el código de respuesta del endpoint `/internal/analytics/snapshots` de `202 Accepted` a `204 No Content`. Esto unifica el comportamiento con el resto de endpoints de volcado y es semánticamente más preciso para una operación "fire and forget" sin retorno de datos.
+
+### 🗂️ Archivos Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/db/db-connector.js` | **MODIFICADO** | Robustez en el parseo de respuestas HTTP. |
+| `db_back/src/main/java/com/tfm/db_back/api/AnalyticsController.java` | **MODIFICADO** | Cambio de status code 202 -> 204. |
+
+---
+
 ## [2026-05-14] - Auditoría de Estrés y Seguridad de los Servidores
 **Agente**: Antigravity (Google Deepmind)
 **Objetivo**: Validar el rendimiento y la seguridad del DB Server y Middle Server mediante pruebas de estrés masivas y auditorías de integridad de datos.
