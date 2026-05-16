@@ -1,4 +1,40 @@
+## [2026-05-16] - Middle Server: Suite de Tests Unitarios con Jest (150 tests)
+**Agente**: Antigravity (Google Deepmind)
+**Objetivo**: Crear una suite completa de tests unitarios para el motor de juego del Middle Server usando Jest con soporte ESM nativo.
+
+### 📝 Resumen de Cambios:
+1. **Infraestructura de Testing**:
+   - ✅ Instalado `jest` y `@jest/globals` como `devDependencies`.
+   - ✅ Creado `jest.config.js` con configuración para ESM nativo (`transform: {}`).
+   - ✅ Actualizado script `test` en `package.json` para usar `node --experimental-vm-modules`.
+2. **Tests Creados — 8 suites, 150 tests en total (100% passing)**:
+   - ✅ `src/models/troop.test.js` — 19 tests: constructor, deploy, returnHome, takeDamage, isDead, toJSON.
+   - ✅ `src/models/player.test.js` — 20 tests: constructor, addTroop, cleanupDeadTroops, getDefendingTroops, getTotalDefensePower, toJSON.
+   - ✅ `src/models/game.test.js` — 19 tests: addPlayer, removePlayer, getPlayer, setPhase (con mock de config), addLogEntry, toJSON.
+   - ✅ `src/game/state/game-store.test.js` — 18 tests: addGame, getGame, getGameByShortId, removeGame, getAll, count, recordFinishedGame, countFinishedGamesInLastHour, clear.
+   - ✅ `src/game/engine/fog-of-war.test.js` — 16 tests: selfView (datos propios), rivalView (censura de datos tácticos, sumario de tropas), battleLog filtering.
+   - ✅ `src/game/engine/combat-resolver.test.js` — 15 tests: multiplicador de tipo, daño a tropas, overflow a capital, daño de retorno, créditos de investigación, eliminación.
+   - ✅ `src/game/engine/victory-checker.test.js` — 14 tests: fases inválidas, >2 jugadores, transición END, victoria, empate, idempotencia, victory en preparation (con mocks de dbConnector, syncManager, gameStore, logger).
+   - ✅ `src/game/actions/game-actions.test.js` — 29 tests: startGame, trainTroop, launchAttack, abandonGame, startResearch (con mocks de gameData y config).
+
+### 🗂️ Archivos Creados/Modificados:
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/jest.config.js` | **CREADO** | Configuración Jest para ESM nativo. |
+| `middle_server/package.json` | **MODIFICADO** | Script `test` y devDependencies jest. |
+| `middle_server/src/models/troop.test.js` | **CREADO** | 19 tests unitarios de Troop. |
+| `middle_server/src/models/player.test.js` | **CREADO** | 20 tests unitarios de Player. |
+| `middle_server/src/models/game.test.js` | **CREADO** | 19 tests unitarios de Game. |
+| `middle_server/src/game/state/game-store.test.js` | **CREADO** | 18 tests unitarios de GameStore. |
+| `middle_server/src/game/engine/fog-of-war.test.js` | **CREADO** | 16 tests unitarios de FogOfWar. |
+| `middle_server/src/game/engine/combat-resolver.test.js` | **CREADO** | 15 tests unitarios de CombatResolver. |
+| `middle_server/src/game/engine/victory-checker.test.js` | **CREADO** | 14 tests unitarios de VictoryChecker. |
+| `middle_server/src/game/actions/game-actions.test.js` | **CREADO** | 29 tests unitarios de GameActions. |
+
+---
+
 ## [2026-05-15] - Fix: Error de parseo JSON en volcados de analítica
+
 **Agente**: Antigravity (Google Deepmind)
 **Objetivo**: Corregir el error "Unexpected end of JSON input" que ocurría durante el volcado periódico de analíticas a MongoDB.
 
