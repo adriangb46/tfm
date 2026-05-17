@@ -1,3 +1,250 @@
+## [2026-05-17] - Frontend & Middle Server: Fix Definitivo de Estado de Victoria y Limpieza UI
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir de forma definitiva la persistencia del estado de "Victoria" que se perdía en las partidas recién terminadas que aún residían en memoria, y eliminar el botón de borrar partida terminada por desuso.
+
+### 📝 Resumen de Cambios:
+
+1. **Middle Server (Node.js)**:
+   - ✅ **Game Model (`game.js`)**: Añadido el atributo `winnerCharacterId` al modelo de partida y a su método de serialización `toJSON()`. Antes, la información del ganador se emitía pero no se guardaba en el objeto de memoria de la partida.
+   - ✅ **Victory Checker (`victory-checker.js`)**: Ahora asigna explícitamente `game.winnerCharacterId = winnerCharacterId` en el objeto de memoria al finalizar la partida, antes de guardarlo en el log de partidas terminadas.
+   - ✅ **Socket Handler (`socket-handler.js`)**: En el evento `game:list`, al mapear las `memoryGames` a la lista devuelta, ahora se incluye la propiedad `winnerCharacterId` extraída de `game.winnerCharacterId`. Esto previene que las partidas en memoria sobrescriban silenciosamente la respuesta de la DB eliminando el ganador.
+
+2. **Frontend (Angular)**:
+   - ✅ **LobbyPageComponent (`lobby-page.component.ts`)**: Se fortaleció la lectura del `characterId` propio usando de base la sesión estable (previamente implementado).
+   - ✅ **UI (`lobby-page.component.html`)**: Eliminado el botón "Eliminar" (LOBBY.DELETE) de las tarjetas de partidas finalizadas según los requisitos.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `middle_server/src/models/game.js` | **MODIFICADO** | Adición de `winnerCharacterId` al estado en memoria. |
+| `middle_server/src/game/engine/victory-checker.js` | **MODIFICADO** | Persistencia del ganador en el objeto Game. |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Inclusión de `winnerCharacterId` en listado de partidas. |
+| `front/src/app/pages/lobby-page/lobby-page.component.html` | **MODIFICADO** | Eliminación de botón inactivo. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-17] - Frontend: Barra de Desplazamiento Global Tematizada y Premium (Desktop Scrollbar)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Personalizar las barras de desplazamiento (scrollbars) globales en modo escritorio para integrarse plenamente con el estilo nórdico y de alta calidad visual de Viking Clan Wars, adaptándose automáticamente entre los modos oscuro y claro (Dark/Light).
+
+### 📝 Resumen de Cambios:
+
+1. **Frontend (Angular - Estilos Globales)**:
+   - ✅ **Soporte Global**: Añadidos selectores universales `*` y selectores específicos de Webkit (`*::-webkit-scrollbar*`) al final del archivo global [styles.scss](file:///Users/adrian/Documents/TFM/tfm/front/src/styles.scss).
+   - ✅ **Tematización Dinámica**: Enlazados los colores de fondo de la barra y del deslizador a las variables CSS ya existentes `--color-scrollbar-track` y `--color-scrollbar-thumb` de [tokens.scss](file:///Users/adrian/Documents/TFM/tfm/front/src/styles/tokens.scss).
+   - ✅ **Interactividad Vikinga Premium**: Incorporados efectos de transición suaves y toques dorados (`--color-gold` / `--color-gold-dark`) interactivos en los estados hover y active de la barra de desplazamiento para brindar una sensación pulida y sumamente cuidada.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/styles.scss` | **MODIFICADO** | Integración global de barras de desplazamiento tematizadas e interactivas. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-17] - Frontend: Persistencia de Conexión WebSocket al Salir o Abandonar Partidas desde el Lobby
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir el bug por el cual un jugador desaparecía de los usuarios activos y perdía su conexión WebSocket al salir o abandonar una partida en el lobby, manteniéndolo conectado activamente en la aplicación hasta el logout formal.
+
+### 📝 Resumen de Cambios:
+
+1. **Servicio de Juego (Angular)**:
+   - ✅ **GameService** (`game.service.ts`): Removida la llamada a `this.socketService.disconnect()` dentro del método `clearGameContext()`. De este modo, los jugadores que regresan de una partida al lobby o abandonan una partida en fase de espera mantienen su canal de comunicación en tiempo real y siguen contando como usuarios activos.
+2. **Barra de Navegación (Angular)**:
+   - ✅ **NavbarComponent** (`navbar.component.ts`): Importado e inyectado el servicio `SocketService`. Implementado el método unificado `logout()` que cierra la sesión de forma segura (`authService.clearSession()`) y desconecta explícitamente el WebSocket (`socketService.disconnect()`).
+   - ✅ **NavbarComponent HTML** (`navbar.component.html`): Modificados los botones de "Cerrar sesión" en las vistas de móvil y escritorio para que invoquen al nuevo método `logout()`.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/core/game/game.service.ts` | **MODIFICADO** | Evitado la desconexión del socket al limpiar el contexto de juego. |
+| `front/src/app/shared/components/navbar/navbar.component.ts` | **MODIFICADO** | Añadido método logout() inyectando el SocketService. |
+| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** | Enlazados los botones de cerrar sesión a la nueva lógica. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-17] - Admin: Monitoreo en Tiempo Real (Auto-Refresh), Conteo Robusto e Indicador de Carga Optimizado
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Conseguir que el monitoreo de "Usuarios Activos", "Partidas Activas" y "Carga del Servidor" en el Panel de Administrador funcione en tiempo real de forma dinámica y robusta. Se resuelve la inactividad de los contadores y se optimiza el cálculo del CPU con un enfoque síncrono en background ultra-ligero y de alta precisión.
+
+### 📝 Resumen de Cambios:
+
+1. **Frontend (Angular)**:
+   - ✅ **AdminPageComponent** (`admin-page.component.ts`): Implementada la interfaz `OnDestroy`. Añadido un temporizador periódico (`setInterval`) de **5 segundos** en `ngOnInit` para refrescar las estadísticas automáticamente sin requerir recargar la página. Se destruye limpiamente con `clearInterval` en `ngOnDestroy` para evitar fugas de memoria.
+2. **Middle Server (Node.js)**:
+   - ✅ **Admin Controller** (`admin-controller.js`):
+     - **Conteo de Sockets**: Refactorizado el conteo de `activeUsers` en `getAdminStatsController` para leer el tamaño del mapa de sockets activos (`io.sockets.sockets.size`) en lugar del contador del motor que puede diferir. Añadidos fallbacks de compatibilidad robustos (`io.engine.clientsCount`).
+     - **Carga de CPU Optimizada**: Implementado un tracker de ticks de CPU en segundo plano (`os.cpus()`) cada 3 segundos. El controlador HTTP obtiene este valor instantáneamente en tiempo $O(1)$, evitando retrasos en la respuesta de red y mejorando drásticamente la precisión del indicador sin restarle potencia a la aplicación Node.js. Incorporado `.unref()` para evitar que los tests de integración queden colgados.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/admin-page/admin-page.component.ts` | **MODIFICADO** | Añadido refresco automático periódico y ciclo de vida OnDestroy. |
+| `middle_server/src/http/admin-controller.js` | **MODIFICADO** | Conteo de sockets robusto y cálculo de CPU ultra-ligero en background. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-17] - Frontend: Fix de TypeError al leer 'totalUsers' en Panel de Administrador
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir la excepción `TypeError: Cannot read properties of undefined (reading 'totalUsers')` en el panel de administrador, originada por un desajuste entre el formato de respuesta del Middle Server (`{ status, data: stats }` con campos planos) y la interfaz esperada en el frontend (`AdminStats` con campos anidados).
+
+### 📝 Resumen de Cambios:
+
+1. **Frontend (Angular)**:
+   - ✅ **AdminPageComponent** (`admin-page.component.ts`): Refactorizada la función `refreshData` para desempaquetar de forma robusta la respuesta del backend. Soporta tanto el formato anidado original como el formato plano devuelto por el Middle Server (`response?.data || response`).
+   - ✅ **AdminPageComponent** (`admin-page.component.html`): Añadido el operador de navegación segura (`?.`) al leer las propiedades de los signals `globalStats` y `monitoringMetrics` en la plantilla HTML (`globalStats()?.totalUsers`, etc.). Esto actúa como una capa adicional de protección frente a estados temporales vacíos/no inicializados.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/admin-page/admin-page.component.ts` | **MODIFICADO** | Lógica robusta de desempaquetado de estadísticas. |
+| `front/src/app/pages/admin-page/admin-page.component.html` | **MODIFICADO** | Operadores de navegación segura en la plantilla. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-17] - Frontend: Refactorización de Alerts Nativos a Modales Vikingos Premium
+
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Reemplazar todas las llamadas nativas bloqueantes `alert()` y `confirm()` del navegador por un sistema global, reactivo y no bloqueante de notificaciones modales con temática y estética vikinga premium.
+
+### 📝 Resumen de Cambios:
+
+1. **Infraestructura de Modales**:
+   - ✅ **NotificationModalService**: Creado un servicio inyectable globalmente (`providedIn: 'root'`) que gestiona el estado del modal de forma reactiva a través de Angular Signals (`signal<ModalConfig | null>(null)`). Expone métodos dedicados: `showWarning()`, `showConfirm()`, `showSuccess()`, `showError()` e `showInfo()`.
+   - ✅ **NotificationModalComponent**: Diseñado e implementado un componente standalone montado a nivel de aplicación raíz (`app.html`) que escucha el estado del servicio y renderiza dinámicamente el modal con efectos de "glassmorphism", desenfoques (`backdrop-filter`), sombras con colores HSL personalizados, animaciones CSS fluidas de entrada y responsive adaptable.
+   
+2. **Refactorización de Puntos Críticos (0 nativos restantes)**:
+   - ✅ **socket.service.ts**: Reemplazado `window.alert()` de baneo por `notificationModal.showError()`, redirigiendo al inicio de forma segura tras confirmación asíncrona.
+   - ✅ **user-config.component.ts**: Reemplazado `alert()` de error de correo duplicado por `notificationModal.showWarning()`.
+   - ✅ **lobby-page.component.ts**: Sustituido el `confirm()` nativo por `notificationModal.showConfirm()` con callbacks asíncronos para confirmar el abandono del lobby de espera. Asimismo, se reemplazó el `alert()` de error por `notificationModal.showWarning()`.
+   - ✅ **game.component.ts**: Reemplazado el `alert()` nativo de conclusión del juego (`game:ended`) por un modal contextual `showSuccess()` o `showError()` que muestra el veredicto final y viaja de vuelta al lobby al pulsar el botón vikingo.
+
+3. **Internacionalización (i18n)**:
+   - ✅ Añadidas traducciones para los botones comunes (`SHARED.MODAL.BTN_OK`, `SHARED.MODAL.BTN_CONFIRM`, `SHARED.MODAL.BTN_CANCEL`), títulos específicos de error/advertencia y estados en los diccionarios de español (`es.ts`) e inglés (`en.ts`).
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/shared/services/notification-modal.service.ts` | **CREADO** | Servicio global de modales mediante Angular Signals. |
+| `front/src/app/shared/components/notification-modal/notification-modal.component.ts` | **CREADO** | Controlador TS standalone del modal. |
+| `front/src/app/shared/components/notification-modal/notification-modal.component.html` | **CREADO** | Plantilla HTML con variantes de iconos SVG dinámicos. |
+| `front/src/app/shared/components/notification-modal/notification-modal.component.scss` | **CREADO** | Estilos Viking premium con glassmorphism y HSL variables. |
+| `front/src/app/app.ts` | **MODIFICADO** | Importación y registro global del componente. |
+| `front/src/app/app.html` | **MODIFICADO** | Inyección del componente en el árbol DOM del layout raíz. |
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Localización de títulos y etiquetas en español. |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Localización de títulos y etiquetas en inglés. |
+| `front/src/app/core/game/socket.service.ts` | **MODIFICADO** | Refactorización de baneo del usuario. |
+| `front/src/app/pages/user-config/user-config.component.ts` | **MODIFICADO** | Refactorización de alertas de guardado. |
+| `front/src/app/pages/lobby-page/lobby-page.component.ts` | **MODIFICADO** | Refactorización de abandono de lobby. |
+| `front/src/app/pages/game/game.component.ts` | **MODIFICADO** | Refactorización de aviso del fin de partida. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-17] - Frontend: Fix de Navegación entre Estadísticas de Partida y de Personaje
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir el bug donde navegar desde `/stats?gameId=xxx` (estadísticas de partida) a `/stats` (estadísticas de personaje) desde el navbar no actualizaba los datos mostrados.
+
+### 📝 Resumen de Cambios:
+
+1. **Frontend (Angular)**:
+   - ✅ **StatisticsComponent**: Sustituido `this.route.snapshot.queryParamMap` (lectura única en `ngOnInit`) por una suscripción reactiva a `this.route.queryParamMap` (Observable). Esto permite que el componente reaccione cuando Angular reutiliza la instancia al cambiar solo los query params dentro de la misma ruta base `/stats`.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/statistics/statistics.component.ts` | **MODIFICADO** | Suscripción reactiva a queryParams. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-17] - Frontend: Marca de agua de Espectador para jugadores eliminados
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Añadir feedback visual en la tarjeta de estadísticas superior para los jugadores que han sido eliminados o han abandonado la partida (vida = 0), mostrando una marca de agua de "ESPECTADOR".
+
+### 📝 Resumen de Cambios:
+
+1. **Frontend (UI/UX)**:
+   - ✅ **Tarjeta de Estadísticas**: Envuelto el contenido de vida y recursos dentro de `.stats-content` y añadida la clase dinámica `is-spectator` en `game.component.html` cuando `health().current <= 0`.
+   - ✅ **Estilos (CSS)**: Modificado `game.component.scss` para desenfocar, decolorar y reducir la opacidad del contenido estadístico en modo espectador. Se ha añadido un sello rotado y translúcido de "ESPECTADOR" respetando la paleta de colores inactivos/deshabilitados del tema oficial oscuro (`--color-text-disabled`, `--color-bg-overlay`).
+   - ✅ **Internacionalización**: Añadida la clave `GAME.SPECTATOR` en `es.ts` y `en.ts`.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/game/game.component.html` | **MODIFICADO** | UI y renderizado condicional de espectador. |
+| `front/src/app/pages/game/game.component.scss` | **MODIFICADO** | Clases CSS `is-spectator` y `spectator-watermark`. |
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Traducción clave SPECTATOR (ES). |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Traducción clave SPECTATOR (EN). |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-17] - Middle Server & DB Server: Fix Juegos abandonados que persisten
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir el bug por el cual las partidas abandonadas desde el lobby por el último jugador seguían apareciendo al recargar la página.
+
+### 📝 Resumen de Cambios:
+
+1. **DB Server**:
+   - ✅ **Endpoint `/leave`**: Añadido `POST /internal/games/{id}/leave` en `GameController` y `GameService`.
+   - ✅ **Borrado en Cascada**: El método `leaveGame` en `GameServiceImpl` ahora borra el `GameParticipant` asociado. Si la partida se queda con 0 participantes, se borra entera la partida de PostgreSQL.
+2. **Middle Server**:
+   - ✅ **`db-connector.js`**: Añadido método `leaveGame` para invocar el nuevo endpoint.
+   - ✅ **`socket-handler.js`**: Llamada a `dbConnector.leaveGame` en `game:abandon` y `lobby:leave` cuando el método de lógica devuelve `removed: true` (es decir, el usuario ha salido en fase de `waiting`).
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `db_back/src/main/java/com/tfm/db_back/api/GameController.java` | **MODIFICADO** | Nuevo endpoint `/leave`. |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/GameService.java` | **MODIFICADO** | Definida `leaveGame`. |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/GameServiceImpl.java` | **MODIFICADO** | Lógica de borrado de participantes y partida si vacía. |
+| `middle_server/src/db/db-connector.js` | **MODIFICADO** | Consumo del nuevo endpoint. |
+| `middle_server/src/socket/socket-handler.js` | **MODIFICADO** | Conexión con DB Server al abandonar lobby. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-17] - Frontend: Corrección de Claves de i18n para Arquetipos en Modal de Creación de Partida
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir el bug donde `GAME.troop_types.IRON` y otros arquetipos de clanes se mostraban de forma literal sin traducir en el modal de creación de partidas.
+
+### 📝 Resumen de Cambios:
+
+1. **Internacionalización (i18n)**:
+   - ✅ **Añadidas Claves de Arquetipos**: Añadidas las claves de traducción de los 6 arquetipos de clanes (`FURY`, `DIVINE`, `IRON`, `SHADOW`, `FROST`, `STORM`) bajo `GAME.troop_types` tanto en el archivo de localización español (`es.ts`) como en el inglés (`en.ts`). Esto corrige el renderizado de la insignia de arquetipo en el modal de selección de clan para crear partida.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Añadidas traducciones de arquetipos en español. |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Añadidas traducciones de arquetipos en inglés. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
 ## [2026-05-16] - Middle Server: Suite de Tests Unitarios con Jest (150 tests)
 **Agente**: Antigravity (Google Deepmind)
 **Objetivo**: Crear una suite completa de tests unitarios para el motor de juego del Middle Server usando Jest con soporte ESM nativo.
@@ -6496,6 +6743,105 @@ Resolver el problema de desincronización y pérdida de historial del log de bat
 | `middle_server/src/models/game.js`               | Modificado |
 | `middle_server/src/game/engine/time-wheel.js`    | Modificado |
 | `middle_server/src/game/actions/game-actions.js` | Modificado |
-| `middle_server/src/game/engine/fog-of-war.js`    | Modificado |
-| `middle_server/src/socket/socket-handler.js`     | Modificado |
-| `front/src/app/pages/game/game.component.ts`     | Modificado |
+| `middle_server/src/game/engine/    - ✅ **Enlace en Barra de Navegación**: Integrado el enlace de navegación público al `/ranking` directamente en el `NavbarComponent` (tanto en la barra superior de escritorio como en el menú lateral móvil) y añadidas las respectivas traducciones `NAV.RANKING: 'Ranking'` en los diccionarios en español (`es.ts`) e inglés (`en.ts`).
+    - ✅ **Limpieza Estética de Ranking**: Eliminada la sección del banner de la fórmula matemática y el botón inferior de "Volver al Inicio" en la página del ranking ([ranking-page.component.html](file:///Users/adrian/Documents/TFM/tfm/front/src/app/pages/ranking-page/ranking-page.component.html) y [ranking-page.component.scss](file:///Users/adrian/Documents/TFM/tfm/front/src/app/pages/ranking-page/ranking-page.component.scss)), para lograr un diseño rúnico más limpio, directo y enfocado únicamente en los guerreros vikingos del podio.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `db_back/src/main/java/com/tfm/db_back/domain/service/AnalyticsServiceImpl.java` | **MODIFICADO** | Conversión de `gloriaInt` en variable efectivamente final. |
+| `test_db_endpoints.py` | **MODIFICADO** | Incorporadas pruebas automatizadas para `/ranking` y `/leave`. |
+| `front/src/app/pages/admin-page/admin-page.component.html` | **MODIFICADO** | Corrección de llamadas `?.` a signals no nulos. |
+| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** | Integración del enlace de navegación `/ranking`. |
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Añadida la clave de traducción `NAV.RANKING`. |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Añadida la clave de traducción `NAV.RANKING`. |
+| `front/src/app/pages/ranking-page/ranking-page.component.html` | **MODIFICADO** | Remoción de sección de fórmula y botón de retorno. |
+| `front/src/app/pages/ranking-page/ranking-page.component.scss` | **MODIFICADO** | Limpieza de reglas de estilo de fórmula y pie. |
+| `front/src/app/shared/components/notification-modal/notification-modal.component.ts` | **MODIFICADO** | Remoción de `TranslatePipe` importado redundante. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |nternal/users/ranking` en `UserController.java`.
+
+3. **Recalculación y Sincronización Automática (DB Server)**:
+   - Implementado `recalculateUserGloriaEterna(userId)` en `AnalyticsServiceImpl` que calcula la Gloria Eterna bajo la fórmula combinada `(Victorias * 1000) + (Ataques * 50) + (Créditos / 10)` leyendo PostgreSQL y MongoDB.
+   - Añadido disparador asíncrono tras guardar snapshots analíticos en `saveSnapshot`.
+   - Añadido un inicializador al arranque de la aplicación `@EventListener(ApplicationReadyEvent.class)` para recalcular retrospectivamente la puntuación de todas las cuentas existentes.
+
+4. **Pasarela API y Rutas (Middle Server)**:
+   - Agregada la llamada `getRanking()` en el cliente REST `db-connector.js`.
+   - Creado el controlador público `getRankingController` en `stats-controller.js`.
+   - Registrada la ruta pública `/ranking` con protección de rate limiting (`publicApiLimiter`) en `routes.js`.
+
+5. **Interfaz Angular Standalone (Angular 20)**:
+   - Creado el cliente API `getRanking()` en `statistics-api.service.ts`.
+   - Configuradas las traducciones en inglés (`en.ts`) y español (`es.ts`) bajo la clave `RANKING`.
+   - Registrada la ruta `/ranking` en `app.routes.ts` de forma pública y lazy-loaded.
+   - Creado el componente standalone `RankingPageComponent` (TS, HTML, SCSS) con diseño rúnico premium, efectos visuales de ambiente y micro-animaciones en hover.
+   - Agregado el enlace al Ranking en el Footer de `home.component.html`.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción |
+| --- | --- |
+| `db_back/src/main/resources/db/migration/V6__add_gloria_eterna_to_users.sql` | **CREADO** |
+| `db_back/src/main/java/com/tfm/db_back/domain/model/User.java` | Modificado |
+| `db_back/src/main/java/com/tfm/db_back/api/dto/UserResponseDto.java` | Modificado |
+| `db_back/src/main/java/com/tfm/db_back/api/dto/RankingUserResponseDto.java` | **CREADO** |
+| `db_back/src/main/java/com/tfm/db_back/domain/repository/UserRepository.java` | Modificado |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserService.java` | Modificado |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/UserServiceImpl.java` | Modificado |
+| `db_back/src/main/java/com/tfm/db_back/api/UserController.java` | Modificado |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/AnalyticsService.java` | Modificado |
+| `db_back/src/main/java/com/tfm/db_back/domain/service/AnalyticsServiceImpl.java` | Modificado |
+| `middle_server/src/db/db-connector.js` | Modificado |
+| `middle_server/src/http/stats-controller.js` | Modificado |
+| `middle_server/src/http/routes.js` | Modificado |
+| `front/src/app/core/statistics/statistics-api.service.ts` | Modificado |
+| `front/src/app/core/i18n/languages/es.ts` | Modificado |
+| `front/src/app/core/i18n/languages/en.ts` | Modificado |
+| `front/src/app/app.routes.ts` | Modificado |
+| `front/src/app/pages/ranking-page/ranking-page.component.ts` | **CREADO** |
+| `front/src/app/pages/ranking-page/ranking-page.component.html` | **CREADO** |
+| `front/src/app/pages/ranking-page/ranking-page.component.scss` | **CREADO** |
+| `front/src/app/pages/home/home.component.html` | Modificado |
+
+---
+
+## [2026-05-17] - Spring Boot & Frontend: Corrección de Compilación Java, Actualización de Pruebas de Endpoints y Limpieza de Advertencias de Angular
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir error de compilación en `AnalyticsServiceImpl.java` (variables no efectivamente finales en lambda), agregar cobertura de pruebas para los nuevos endpoints `/ranking` y `/leave` en `test_db_endpoints.py`, y eliminar todas las advertencias del compilador Angular en la consola de desarrollo de la aplicación.
+
+### 📝 Resumen de Cambios:
+
+1. **DB Server (Spring Boot)**:
+   - ✅ **Corrección de compilación**: Modificada la reasignación de `gloriaInt` en `AnalyticsServiceImpl.java` por un operando ternario de asignación única (`final int gloriaInt = gloria < 0 ? 0 : (int) gloria;`), lo que la hace efectivamente final para ser usada dentro de la expresión lambda de `.ifPresent(...)`.
+
+2. **Pruebas de Integración**:
+   - ✅ **Actualización de `test_db_endpoints.py`**: Añadidas pruebas automatizadas completas para los endpoints nuevos:
+     - `GET /internal/users/ranking` (sección 2.2).
+     - `POST /internal/games/{id}/leave` (sección 4, ejecutada tras unir temporalmente a un personaje).
+
+3. **Frontend (Angular)**:
+   - ✅ **Limpieza de advertencias de encadenamiento opcional (`NG8107`)**: Corregido `admin-page.component.html` para acceder de forma directa con `.` en lugar de `?.` a `globalStats()` y `monitoringMetrics()`, ya que dichos signals se inician con objetos por defecto no nulos.
+   - ✅ **Limpieza de advertencias de importaciones redundantes (`NG8113`)**: Eliminada la importación no utilizada de `TranslatePipe` en `notification-modal.component.ts`, logrando que toda la consola del build y desarrollo de Angular compile 100% limpia sin advertencias.
+   - ✅ **Enlace en Barra de Navegación**: Integrado el enlace de navegación público al `/ranking` directamente en el `NavbarComponent` (tanto en la barra superior de escritorio como en el menú lateral móvil) y añadidas las respectivas traducciones `NAV.RANKING: 'Ranking'` en los diccionarios en español (`es.ts`) e inglés (`en.ts`).
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `db_back/src/main/java/com/tfm/db_back/domain/service/AnalyticsServiceImpl.java` | **MODIFICADO** | Conversión de `gloriaInt` en variable efectivamente final. |
+| `test_db_endpoints.py` | **MODIFICADO** | Incorporadas pruebas automatizadas para `/ranking` y `/leave`. |
+| `front/src/app/pages/admin-page/admin-page.component.html` | **MODIFICADO** | Corrección de llamadas `?.` a signals no nulos. |
+| `front/src/app/shared/components/navbar/navbar.component.html` | **MODIFICADO** | Integración del enlace de navegación `/ranking`. |
+| `front/src/app/core/i18n/languages/es.ts` | **MODIFICADO** | Añadida la clave de traducción `NAV.RANKING`. |
+| `front/src/app/core/i18n/languages/en.ts` | **MODIFICADO** | Añadida la clave de traducción `NAV.RANKING`. |
+| `front/src/app/shared/components/notification-modal/notification-modal.component.ts` | **MODIFICADO** | Remoción de `TranslatePipe` importado redundante. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+### 2026-05-17 - Prevent actions for dead players
+- Modificado `front/src/app/pages/game/game.component.ts`: Evita abrir el modal de ataque si el jugador local tiene vida 0 o menor.
+- Modificado `front/src/app/pages/game/game.component.html`: Oculta el botón de "Abandonar" si el jugador está muerto.
+- Modificado `front/src/app/pages/lobby-page/lobby-page.component.ts`: Se parsea `latestStateJson` para verificar la salud y se asigna el estado `isDead` a la partida en la lista de partidas activas.
+- Modificado `front/src/app/pages/lobby-page/lobby-page.component.html`: Oculta el botón de "Abandonar" de las tarjetas de partidas activas si el jugador en esa partida está muerto.
+- Modificado `front/src/app/pages/game/game.component.ts`: Añadida condición extra para evitar abrir el modal de ataque si el jugador objetivo (enemigo) tiene 0 de vida o menos.
