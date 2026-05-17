@@ -1,3 +1,82 @@
+## [2026-05-17] - Frontend: Progressive Web App (PWA) — Instalable en Android e iOS
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Convertir el frontend Angular 20 de Viking Clan Wars en una Progressive Web App (PWA) instalable en dispositivos móviles como una aplicación nativa, con icono personalizado, splash screen oscura y experiencia standalone sin barra de navegador.
+
+### 📝 Resumen de Cambios:
+
+1. **Paquete PWA (`@angular/pwa`)**:
+   - ✅ Instalado `@angular/service-worker` como dependencia del proyecto.
+   - ✅ Configurado el schematic de Angular PWA que genera la infraestructura base (manifest, SW, iconos placeholder).
+
+2. **Web App Manifest (`manifest.webmanifest`)**:
+   - ✅ Personalizado con identidad Viking Clan Wars: `name`, `short_name` ("VCW"), `description`.
+   - ✅ Colores del tema oscuro extraídos de los tokens de diseño: `theme_color` y `background_color` = `#0d0c18` (`--color-bg-primary`).
+   - ✅ Modo `standalone` con orientación `portrait` para experiencia móvil óptima.
+
+3. **Iconos PWA (8 tamaños)**:
+   - ✅ Generado un icono base de 512x512px con estética Viking: lobo dorado con hachas cruzadas y runas sobre fondo oscuro.
+   - ✅ Redimensionado a 72, 96, 128, 144, 152, 192, 384 y 512px usando `sips` (macOS).
+   - ✅ Todos los iconos con `purpose: "maskable any"` para compatibilidad con Android Adaptive Icons.
+
+4. **Meta Tags HTML (`index.html`)**:
+   - ✅ Eliminado `<link rel="manifest">` duplicado generado por el schematic.
+   - ✅ Añadido `<meta name="theme-color">` para la barra de estado del navegador.
+   - ✅ Añadidos meta tags Apple/iOS: `apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style`, `apple-mobile-web-app-title`, `apple-touch-icon`.
+   - ✅ Añadido `<meta name="description">` para SEO.
+
+5. **Service Worker (`ngsw-config.json`)**:
+   - ✅ Corregida referencia a `favicon.ico` → `favicon.svg` (archivo real del proyecto).
+   - ✅ Configurada caché de Google Fonts (URLs externas) para carga más rápida.
+   - ✅ Añadidas rutas de avatares e iconos a la caché lazy.
+   - ✅ **Sin caché de datos/API**: el juego requiere conexión en tiempo real (WebSockets).
+
+6. **Registro del Service Worker (`app.config.ts`)**:
+   - ✅ Eliminado `provideServiceWorker` duplicado generado por doble ejecución del schematic.
+   - ✅ Configurado con `enabled: !isDevMode()` (solo producción) y `registerWhenStable:30000` (registro diferido).
+
+7. **Compatibilidad con Builds en Producción (`dockerfile` y `.npmrc`)**:
+   - ✅ Creado el archivo `.npmrc` con `legacy-peer-deps=true` en el directorio frontend para solucionar colisiones de versiones de peer dependencies.
+   - ✅ Modificado el `dockerfile` de producción del frontend para copiar `.npmrc` antes del `npm install`, previniendo fallos en GitHub Actions (GHCR) durante la integración continua.
+
+### 🗂️ Archivos Creados/Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/public/manifest.webmanifest` | **CREADO** | Manifest PWA con identidad Viking Clan Wars. |
+| `front/ngsw-config.json` | **CREADO** | Configuración de caché del Service Worker. |
+| `front/public/icons/icon-*.png` (x8) | **CREADO** | Iconos PWA en 8 tamaños (72→512px). |
+| `front/front/.npmrc` | **CREADO** | Configuración de legacy-peer-deps=true para npm. |
+| `front/src/index.html` | **MODIFICADO** | Meta tags PWA, iOS, SEO y theme-color. |
+| `front/src/app/app.config.ts` | **MODIFICADO** | Registro de `provideServiceWorker`. |
+| `front/angular.json` | **MODIFICADO** | Registro de Service Worker en build de producción. |
+| `front/package.json` | **MODIFICADO** | Dependencia `@angular/service-worker` relajada a `^20.3.0`. |
+| `front/dockerfile` | **MODIFICADO** | Copia de `.npmrc` en la fase de dependencias para asegurar builds exitosos en GitHub Actions. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
+## [2026-05-17] - Frontend: Centrado y Posicionamiento Equidistante de Icono de Reglas en Móvil (Sin Solapamiento)
+
+**Agente**: Antigravity (Google DeepMind)
+**Objetivo**: Corregir el centrado del icono "i" (reglas) en su botón circular en la versión móvil del panel de juego y posicionarlo equidistantemente (a medio camino) entre el recuadro de la fase de juego y el botón de abandonar, garantizando que nunca se solapen en pantallas pequeñas.
+
+### 📝 Resumen de Cambios:
+
+1. **Frontend (Estilos - `game.component.scss`)**:
+   - ✅ **Alineación del Icono**: Se añadió `justify-content: center` al botón circular `.btn-rules` para centrar radialmente el icono de la "i".
+   - ✅ **Distribución Fluida y Sin Solapamiento**: Se aplicó `display: contents;` en móviles a los contenedores `.topbar-left`, `.topbar-center` y `.topbar-right`. Esto hace que sus hijos directos (`.btn-back`, `.phase-indicator`, `.btn-rules` y `.btn-abandon`) se expongan directamente a la cuadrícula flexbox del elemento `.topbar` principal. 
+   - ✅ Gracias al `justify-content: space-between` de `.topbar`, los elementos se distribuyen de forma perfectamente proporcional por toda la pantalla (con un `gap: 5px` de seguridad). Con esto, el botón "i" se coloca exactamente a medio camino en el espacio libre entre el indicador central y el botón derecho, adaptándose fluidamente al ancho de cualquier dispositivo móvil sin causar solapamientos ni desbordamientos.
+
+### 🗂️ Archivos Modificados:
+
+| Archivo | Acción | Detalles |
+|---------|--------|----------|
+| `front/src/app/pages/game/game.component.scss` | **MODIFICADO** | Refactorización de topbar en móviles mediante `display: contents` para una distribución fluida y equidistante. |
+| `.agents/AGENTS_CHANGELOG.md` | **MODIFICADO** | (esta entrada) |
+
+---
+
 ## [2026-05-17] - Frontend & Middle Server: Fix Definitivo de Estado de Victoria y Limpieza UI
 
 **Agente**: Antigravity (Google DeepMind)
